@@ -39,6 +39,7 @@ function App() {
         <ChildSelector 
           onChildSelect={setCurrentChild}
           currentChild={currentChild}
+          onStartGame={handleStartGame}
         />
       );
     }
