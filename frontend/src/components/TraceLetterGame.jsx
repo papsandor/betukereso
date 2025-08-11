@@ -6,7 +6,7 @@ import { ArrowLeft, Star, Volume2, RotateCcw, CheckCircle, Loader2 } from 'lucid
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
-const TraceLetterGame = ({ child, onBack, soundEnabled }) => {
+const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const canvasRef = useRef(null);
   const [currentTarget, setCurrentTarget] = useState('');
   const [score, setScore] = useState(0);
