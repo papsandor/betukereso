@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Dict
-from ..services.child_service import ChildService
-from ..models import GraphemeInfo
+from services.child_service import ChildService
+from models import GraphemeInfo
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
