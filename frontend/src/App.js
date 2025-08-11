@@ -34,6 +34,7 @@ function App() {
   const handleBackToChildren = () => {
     setCurrentChild(null);
     setCurrentGameMode(null);
+    setShowChildSelector(true);
   };
 
   const renderCurrentScreen = () => {
