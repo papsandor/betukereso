@@ -140,7 +140,7 @@ const GameModeSelector = ({
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-blue-600">{Object.keys(child.progress).length}</div>
+              <div className="text-2xl font-bold text-blue-600">{Object.keys(child.progress || {}).length}</div>
               <div className="text-sm text-gray-600">Tanult betűk</div>
             </div>
             <div>
