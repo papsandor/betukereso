@@ -8,6 +8,7 @@ import soundService from '../services/SoundService';
 
 const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [currentTarget, setCurrentTarget] = useState('');
+  const [currentDisplayLetter, setCurrentDisplayLetter] = useState('');
   const [gridLetters, setGridLetters] = useState([]);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
