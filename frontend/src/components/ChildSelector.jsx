@@ -60,13 +60,12 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
                   <span className="text-xl">{child.name}</span>
                 </div>
                 <Button
-                  variant="ghost"
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteChild(child.id);
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="bg-red-100 hover:bg-red-200 text-red-700 border-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
