@@ -57,15 +57,15 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const handleLetterClick = async (clickedLetter) => {
     const isCorrect = clickedLetter === currentTarget;
     
-    try {
-      // Record the game session
-      const progressData = await ApiService.recordProgress(child.id, {
-        game_mode: 'find-letter',
-        grapheme: currentTarget,
-        is_correct: isCorrect
-      });
+    if (isCorrect) {
+      try {
+        // Only record progress for CORRECT answers
+        const progressData = await ApiService.recordProgress(child.id, {
+          game_mode: 'find-letter',
+          grapheme: currentTarget,
+          is_correct: true
+        });
 
-      if (isCorrect) {
         setScore(score + 1);
         setStreak(progressData.new_streak);
         setFeedback({ 
@@ -87,21 +87,34 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           setRound(round + 1);
           generateNewRound();
         }, 1500);
-      } else {
-        setStreak(0);
-        setFeedback({ type: 'error', message: 'Próbáld újra!' });
         
-        if (soundEnabled) {
-          soundService.playErrorSound();
-        }
-        
-        setTimeout(() => {
-          setFeedback(null);
-        }, 1000);
+      } catch (err) {
+        console.error('Error recording progress:', err);
+        setError('Failed to save progress');
       }
-    } catch (err) {
-      console.error('Error recording progress:', err);
-      setError('Failed to save progress');
+    } else {
+      // Handle incorrect answer - don't send to API, just reset streak locally
+      setStreak(0);
+      setFeedback({ type: 'error', message: 'Próbáld újra!' });
+      
+      // Record the incorrect attempt for analytics (optional)
+      try {
+        await ApiService.recordProgress(child.id, {
+          game_mode: 'find-letter',
+          grapheme: currentTarget,
+          is_correct: false
+        });
+      } catch (err) {
+        console.error('Error recording incorrect attempt:', err);
+      }
+      
+      if (soundEnabled) {
+        soundService.playErrorSound();
+      }
+      
+      setTimeout(() => {
+        setFeedback(null);
+      }, 1000);
     }
   };
 
