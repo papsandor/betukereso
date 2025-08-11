@@ -104,31 +104,71 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const startDrawing = (e) => {
+    e.preventDefault();
     setIsDrawing(true);
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     
+    // Get coordinates
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
     ctx.beginPath();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.moveTo(x, y);
   };
 
   const draw = (e) => {
+    e.preventDefault();
     if (!isDrawing) return;
     
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     
-    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    // Get coordinates
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.lineTo(x, y);
     ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
   };
 
-  const stopDrawing = () => {
+  const stopDrawing = (e) => {
+    e.preventDefault();
     if (isDrawing) {
       setIsDrawing(false);
       checkTraceCompletion();
     }
+  };
+
+  // Add touch support for mobile devices
+  const startTouchDrawing = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousedown", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    startDrawing(mouseEvent);
+  };
+
+  const touchDraw = (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent("mousemove", {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    draw(mouseEvent);
+  };
+
+  const stopTouchDrawing = (e) => {
+    e.preventDefault();
+    const mouseEvent = new MouseEvent("mouseup", {});
+    stopDrawing(mouseEvent);
   };
 
   const checkTraceCompletion = () => {
