@@ -83,7 +83,7 @@ class BetukeresoAPITester:
 
     def test_get_children_empty(self):
         """Test GET /api/children - should return empty array initially"""
-        success, data, status = self.make_request("GET", "/children")
+        success, data, status = self.make_request("GET", "/children/")
         
         if success and isinstance(data, list) and len(data) == 0:
             self.log_test("GET Children (Empty)", True, "Returns empty array as expected")
@@ -93,7 +93,7 @@ class BetukeresoAPITester:
     def test_create_child(self):
         """Test POST /api/children with body {"name": "Teszt Gyerek"}"""
         child_data = {"name": "Teszt Gyerek"}
-        success, data, status = self.make_request("POST", "/children", child_data)
+        success, data, status = self.make_request("POST", "/children/", child_data)
         
         if success and isinstance(data, dict) and "id" in data and data.get("name") == "Teszt Gyerek":
             self.created_child_id = data["id"]
@@ -103,7 +103,7 @@ class BetukeresoAPITester:
 
     def test_get_children_with_data(self):
         """Test GET /api/children - should now show the created child"""
-        success, data, status = self.make_request("GET", "/children")
+        success, data, status = self.make_request("GET", "/children/")
         
         if success and isinstance(data, list) and len(data) > 0:
             child = data[0]
