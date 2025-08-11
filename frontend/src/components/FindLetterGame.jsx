@@ -92,10 +92,10 @@ const FindLetterGame = ({ child, onBack, onProgress, soundEnabled }) => {
               <p className="text-lg text-gray-600">Nagyszerű munka, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={generateNewRound} className="bg-green-600 hover:bg-green-700">
+              <Button onClick={generateNewRound} className="bg-green-500 hover:bg-green-600 text-white border-0">
                 Újra játék
               </Button>
-              <Button variant="outline" onClick={onBack}>
+              <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
                 Vissza a főmenübe
               </Button>
             </div>
