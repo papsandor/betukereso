@@ -136,9 +136,8 @@ const FindLetterGame = ({ child, onBack, onProgress, soundEnabled }) => {
         </div>
         {soundEnabled && (
           <Button 
-            variant="outline" 
             size="sm" 
-            className="flex items-center gap-2 mx-auto"
+            className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
             onClick={() => console.log('Playing letter sound:', currentTarget)}
           >
             <Volume2 className="h-4 w-4" />
