@@ -317,11 +317,15 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <div className="inline-block bg-white rounded-lg shadow-lg p-4">
           <canvas
             ref={canvasRef}
-            className="border-2 border-gray-200 rounded-lg cursor-crosshair"
+            className="border-2 border-gray-300 rounded-lg cursor-crosshair select-none"
             onMouseDown={startDrawing}
             onMouseMove={draw}
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
+            onTouchStart={startTouchDrawing}
+            onTouchMove={touchDraw}
+            onTouchEnd={stopTouchDrawing}
+            style={{ touchAction: 'none' }}
           />
           
           <div className="flex justify-center gap-4 mt-4">
