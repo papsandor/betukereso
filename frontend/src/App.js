@@ -38,12 +38,11 @@ function App() {
   };
 
   const renderCurrentScreen = () => {
-    if (!currentChild) {
+    if (showChildSelector || !currentChild) {
       return (
         <ChildSelector 
-          onChildSelect={setCurrentChild}
+          onChildSelect={handleChildSelect}
           currentChild={currentChild}
-          onStartGame={handleStartGame}
         />
       );
     }
