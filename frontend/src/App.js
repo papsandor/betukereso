@@ -11,7 +11,10 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(mockSettings.soundEnabled);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Game progress handler
+  const handleStartGame = () => {
+    // Navigate to game mode selector when start game is clicked
+    return; // Do nothing since we're already showing the game modes after selecting child
+  };
   const handleProgress = (grapheme, isCorrect) => {
     console.log(`Child ${currentChild.name} ${isCorrect ? 'correctly' : 'incorrectly'} identified: ${grapheme}`);
     // This would update the child's progress in the backend
