@@ -251,15 +251,12 @@ class ScoringBugTester:
                 return
         
         # Check if sticker was earned at streak 3
-        child_state = self.get_child_current_state()
-        if not child_state:
-            child_state = {}
-            success, child_state, status = self.make_request("GET", f"/children/{sticker_test_child_id}")
+        success, child_state, status = self.make_request("GET", f"/children/{sticker_test_child_id}")
         
-        if child_state and child_state.get("streak") == 3 and child_state.get("total_stickers", 0) >= 1:
+        if success and child_state and child_state.get("streak") == 3 and child_state.get("total_stickers", 0) >= 1:
             self.log_test("Scenario 2 - Threshold 3", True, f"Sticker earned at streak 3, total stickers: {child_state.get('total_stickers')}")
         else:
-            self.log_test("Scenario 2 - Threshold 3", False, f"Expected streak=3 with sticker, got streak={child_state.get('streak')}, stickers={child_state.get('total_stickers')}")
+            self.log_test("Scenario 2 - Threshold 3", False, f"Expected streak=3 with sticker, got streak={child_state.get('streak') if child_state else 'unknown'}, stickers={child_state.get('total_stickers') if child_state else 'unknown'}")
         
         # Send incorrect answer to reset streak
         session_data = {
