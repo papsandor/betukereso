@@ -26,10 +26,10 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   }, []);
 
   useEffect(() => {
-    if (canvasRef.current && currentTarget) {
+    if (canvasRef.current && currentDisplayLetter) {
       setupCanvas();
     }
-  }, [currentTarget]);
+  }, [currentDisplayLetter]);
 
   const generateNewRound = async () => {
     if (round > maxRounds) {
