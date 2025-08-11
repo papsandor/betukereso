@@ -130,14 +130,15 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const handleTraceComplete = async (isCorrect) => {
-    try {
-      const progressData = await ApiService.recordProgress(child.id, {
-        game_mode: 'trace-letter',
-        grapheme: currentTarget,
-        is_correct: isCorrect
-      });
+    if (isCorrect) {
+      try {
+        // Only record progress for successful traces
+        const progressData = await ApiService.recordProgress(child.id, {
+          game_mode: 'trace-letter',
+          grapheme: currentTarget,
+          is_correct: true
+        });
 
-      if (isCorrect) {
         setScore(score + 1);
         setStreak(progressData.new_streak);
         
@@ -153,10 +154,11 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           setRound(round + 1);
           generateNewRound();
         }, 2000);
+        
+      } catch (err) {
+        console.error('Error recording progress:', err);
+        setError('Failed to save progress');
       }
-    } catch (err) {
-      console.error('Error recording progress:', err);
-      setError('Failed to save progress');
     }
   };
 
