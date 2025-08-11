@@ -53,7 +53,6 @@ function App() {
         <FindLetterGame
           child={currentChild}
           onBack={handleBackToModes}
-          onProgress={handleProgress}
           soundEnabled={soundEnabled}
         />
       );
