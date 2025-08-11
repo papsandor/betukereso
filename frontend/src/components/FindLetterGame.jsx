@@ -2,83 +2,137 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Star, Volume2 } from 'lucide-react';
-import { getRandomGraphemes, getGraphemeCase, mockSettings } from '../data/mock';
+import { ArrowLeft, Star, Volume2, Loader2 } from 'lucide-react';
+import ApiService, { getGraphemeCase } from '../services/ApiService';
 
-const FindLetterGame = ({ child, onBack, onProgress, soundEnabled }) => {
+const FindLetterGame = ({ child, onBack, soundEnabled }) => {
   const [currentTarget, setCurrentTarget] = useState('');
   const [gridLetters, setGridLetters] = useState([]);
   const [score, setScore] = useState(0);
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(child.streak || 0);
   const [gameOver, setGameOver] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [round, setRound] = useState(1);
-  const [maxRounds] = useState(mockSettings.lettersPerSession);
+  const [maxRounds] = useState(child.settings?.letters_per_session || 9);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     generateNewRound();
   }, []);
 
-  const generateNewRound = () => {
+  const generateNewRound = async () => {
     if (round > maxRounds) {
       setGameOver(true);
       return;
     }
 
-    const gridSize = mockSettings.difficulty === 'Easy' ? 6 : 
-                    mockSettings.difficulty === 'Hard' ? 12 : 9;
-    
-    const randomLetters = getRandomGraphemes(gridSize, mockSettings.includeForeignLetters);
-    const targetLetter = randomLetters[0];
-    
-    setCurrentTarget(targetLetter);
-    setGridLetters(randomLetters.sort(() => Math.random() - 0.5));
-    setFeedback(null);
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const gridSize = child.settings?.difficulty === 'Easy' ? 6 : 
+                      child.settings?.difficulty === 'Hard' ? 12 : 9;
+      
+      const randomLetters = await ApiService.getRandomGraphemes(
+        gridSize, 
+        child.settings?.include_foreign_letters || false,
+        true
+      );
+      
+      const targetLetter = randomLetters[0];
+      
+      setCurrentTarget(targetLetter);
+      setGridLetters([...randomLetters].sort(() => Math.random() - 0.5));
+      setFeedback(null);
+    } catch (err) {
+      setError('Failed to load game data');
+      console.error('Error generating round:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLetterClick = (clickedLetter) => {
+  const handleLetterClick = async (clickedLetter) => {
     const isCorrect = clickedLetter === currentTarget;
     
-    if (isCorrect) {
-      setScore(score + 1);
-      setStreak(streak + 1);
-      setFeedback({ type: 'success', message: 'Nagyszerű!' });
-      
-      // Simulate progress update
-      onProgress(currentTarget, true);
-      
-      if (soundEnabled) {
-        // Would play success sound
-        console.log('Playing success sound');
+    try {
+      // Record the game session
+      const progressData = await ApiService.recordProgress(child.id, {
+        game_mode: 'find-letter',
+        grapheme: currentTarget,
+        is_correct: isCorrect
+      });
+
+      if (isCorrect) {
+        setScore(score + 1);
+        setStreak(progressData.new_streak);
+        setFeedback({ 
+          type: 'success', 
+          message: progressData.sticker_earned ? 
+            `Nagyszerű! ${progressData.sticker_earned.name}` : 
+            'Nagyszerű!'
+        });
+        
+        if (soundEnabled) {
+          console.log('Playing success sound');
+        }
+        
+        setTimeout(() => {
+          setRound(round + 1);
+          generateNewRound();
+        }, 1500);
+      } else {
+        setStreak(0);
+        setFeedback({ type: 'error', message: 'Próbáld újra!' });
+        
+        if (soundEnabled) {
+          console.log('Playing error sound');
+        }
+        
+        setTimeout(() => {
+          setFeedback(null);
+        }, 1000);
       }
-      
-      setTimeout(() => {
-        setRound(round + 1);
-        generateNewRound();
-      }, 1500);
-    } else {
-      setStreak(0);
-      setFeedback({ type: 'error', message: 'Próbáld újra!' });
-      
-      onProgress(currentTarget, false);
-      
-      if (soundEnabled) {
-        // Would play error sound
-        console.log('Playing error sound');
-      }
-      
-      setTimeout(() => {
-        setFeedback(null);
-      }, 1000);
+    } catch (err) {
+      console.error('Error recording progress:', err);
+      setError('Failed to save progress');
     }
   };
 
   const getDisplayLetter = (letter) => {
-    const caseType = mockSettings.letterCase === 'mixed' ? 
+    const caseType = child.settings?.letter_case === 'mixed' ? 
       ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
-      mockSettings.letterCase;
+      child.settings?.letter_case || 'mixed';
     return getGraphemeCase(letter, caseType);
   };
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto p-6 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+        <p className="text-gray-600">Loading game...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full max-w-4xl mx-auto p-6 text-center">
+        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+          {error}
+        </div>
+        <div className="flex gap-4 justify-center">
+          <Button onClick={generateNewRound} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+            Try Again
+          </Button>
+          <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+            Back to Menu
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (gameOver) {
     return (
