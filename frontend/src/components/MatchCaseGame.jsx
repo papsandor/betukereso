@@ -116,9 +116,13 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             `Szuper párosítás! ${progressData.sticker_earned.name}` : 
             'Szuper párosítás!'
         });
+
+        if (progressData.sticker_earned && onStickerEarned) {
+          onStickerEarned(progressData.sticker_earned);
+        }
         
         if (soundEnabled) {
-          console.log('Playing success sound');
+          soundService.playSuccessSound();
         }
 
         // Check if all pairs are matched
@@ -133,7 +137,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setFeedback({ type: 'error', message: 'Próbáld újra!' });
         
         if (soundEnabled) {
-          console.log('Playing error sound');
+          soundService.playErrorSound();
         }
       }
       
