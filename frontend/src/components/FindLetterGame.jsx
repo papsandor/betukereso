@@ -6,7 +6,7 @@ import { ArrowLeft, Star, Volume2, Loader2 } from 'lucide-react';
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
-const FindLetterGame = ({ child, onBack, soundEnabled }) => {
+const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [currentTarget, setCurrentTarget] = useState('');
   const [gridLetters, setGridLetters] = useState([]);
   const [score, setScore] = useState(0);
