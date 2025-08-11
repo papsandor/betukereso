@@ -18,9 +18,10 @@ function App() {
       setShowChildSelector(false);
     }
   };
+  // Game progress handler - now handled by API
   const handleProgress = (grapheme, isCorrect) => {
+    // This is now handled within the game components via API calls
     console.log(`Child ${currentChild.name} ${isCorrect ? 'correctly' : 'incorrectly'} identified: ${grapheme}`);
-    // This would update the child's progress in the backend
   };
 
   const handleModeSelect = (modeId) => {
