@@ -210,7 +210,7 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             <Button 
               size="lg" 
               className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
-              onClick={() => console.log('Playing letter sound:', currentTarget)}
+              onClick={() => soundService.playLetterSound(currentTarget)}
             >
               <Volume2 className="h-5 w-5" />
               Segítség: Hangot lejátszani
