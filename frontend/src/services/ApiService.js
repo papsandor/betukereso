@@ -8,7 +8,7 @@ class ApiService {
   // Children endpoints
   static async getChildren() {
     try {
-      const response = await axios.get(`${API}/children`);
+      const response = await axios.get(`${API}/children/`);
       return response.data;
     } catch (error) {
       console.error('Error fetching children:', error);
