@@ -225,7 +225,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Keresd meg:</h2>
         <div className="bg-blue-100 rounded-2xl p-8 mb-6 inline-block">
           <div className="text-8xl font-bold text-blue-800">
-            {getDisplayLetter(currentTarget)}
+            {currentDisplayLetter}
           </div>
         </div>
         {soundEnabled && (
