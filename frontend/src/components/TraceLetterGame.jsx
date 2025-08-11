@@ -141,8 +141,12 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setScore(score + 1);
         setStreak(progressData.new_streak);
         
+        if (progressData.sticker_earned && onStickerEarned) {
+          onStickerEarned(progressData.sticker_earned);
+        }
+        
         if (soundEnabled) {
-          console.log('Playing success sound');
+          soundService.playSuccessSound();
         }
         
         setTimeout(() => {
