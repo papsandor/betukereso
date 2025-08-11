@@ -114,10 +114,10 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
                   autoFocus
                 />
                 <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={() => setIsAddingChild(false)}>
+                  <Button className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0" onClick={() => setIsAddingChild(false)}>
                     Mégse
                   </Button>
-                  <Button onClick={handleAddChild} disabled={!newChildName.trim()}>
+                  <Button className="bg-blue-500 hover:bg-blue-600 text-white border-0" onClick={handleAddChild} disabled={!newChildName.trim()}>
                     Hozzáadás
                   </Button>
                 </div>
