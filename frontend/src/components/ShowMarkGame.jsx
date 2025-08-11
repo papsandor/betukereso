@@ -6,7 +6,7 @@ import { ArrowLeft, Star, Volume2, Check, X, Award, Loader2 } from 'lucide-react
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
-const ShowMarkGame = ({ child, onBack, soundEnabled }) => {
+const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [currentTarget, setCurrentTarget] = useState('');
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
