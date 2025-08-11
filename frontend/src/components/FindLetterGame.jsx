@@ -77,14 +77,14 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const handleLetterClick = async (clickedLetter) => {
-    const isCorrect = clickedLetter === currentTarget;
+    const isCorrect = clickedLetter === currentDisplayLetter; // Compare with the display letter
     
     if (isCorrect) {
       try {
         // Only record progress for CORRECT answers
         const progressData = await ApiService.recordProgress(child.id, {
           game_mode: 'find-letter',
-          grapheme: currentTarget,
+          grapheme: currentTarget, // Still use the base grapheme for progress tracking
           is_correct: true
         });
 
