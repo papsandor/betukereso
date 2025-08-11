@@ -582,9 +582,18 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend endpoints tested successfully"
+    - "Child Management System - Loading State"
+    - "Child Management System - Add New Child"
+    - "Child Management System - Display Child Cards"
+    - "Child Management System - Child Selection Flow"
+    - "Game Mode Selection - Display Game Modes"
+    - "Find Letter Game - Game Loading and Setup"
+    - "Find Letter Game - Target Letter Display"
+    - "Find Letter Game - Letter Grid Display"
+    - "API Integration - Children Loading"
+    - "API Integration - Hungarian Graphemes"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
