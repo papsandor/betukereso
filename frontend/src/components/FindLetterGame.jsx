@@ -250,16 +250,16 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <Button
             key={index}
             className={`h-24 text-4xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
-              feedback?.type === 'error' && letter !== currentTarget ? 
+              feedback?.type === 'error' && letter !== currentDisplayLetter ? 
                 'opacity-50 bg-gray-50 border-gray-200 text-gray-500' : 
-                letter === currentTarget && feedback?.type === 'success' ? 
+                letter === currentDisplayLetter && feedback?.type === 'success' ? 
                   'bg-green-100 text-green-800 border-green-400' : 
                   'bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-400 text-gray-800'
             }`}
             onClick={() => handleLetterClick(letter)}
             disabled={feedback !== null}
           >
-            {getDisplayLetter(letter)}
+            {letter}
           </Button>
         ))}
       </div>
