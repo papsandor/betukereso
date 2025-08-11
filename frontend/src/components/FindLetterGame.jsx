@@ -74,9 +74,13 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             `Nagyszerű! ${progressData.sticker_earned.name}` : 
             'Nagyszerű!'
         });
+
+        if (progressData.sticker_earned && onStickerEarned) {
+          onStickerEarned(progressData.sticker_earned);
+        }
         
         if (soundEnabled) {
-          console.log('Playing success sound');
+          soundService.playSuccessSound();
         }
         
         setTimeout(() => {
@@ -88,7 +92,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setFeedback({ type: 'error', message: 'Próbáld újra!' });
         
         if (soundEnabled) {
-          console.log('Playing error sound');
+          soundService.playErrorSound();
         }
         
         setTimeout(() => {
