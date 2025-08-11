@@ -274,7 +274,305 @@ backend:
           comment: "API correctly validates input parameters, returns 400 for invalid grapheme count (must be 1-20)"
 
 frontend:
-  # No frontend testing performed as per instructions
+  - task: "Child Management System - Loading State"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test loading state when app starts with empty children list"
+
+  - task: "Child Management System - Add New Child"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test adding new child via dialog and API integration"
+
+  - task: "Child Management System - Display Child Cards"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test child cards display with name, streak, stickers, learned letters"
+
+  - task: "Child Management System - Child Selection Flow"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test child selection and navigation to game modes"
+
+  - task: "Child Management System - Delete Child"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test child deletion via trash icon"
+
+  - task: "Game Mode Selection - Display Game Modes"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GameModeSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test 4 game mode cards display: Keresd, Rajzold, Párosítsd, Mutasd & Jelöld"
+
+  - task: "Game Mode Selection - Child Info Header"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GameModeSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test child info display in header with name, streak, stickers"
+
+  - task: "Game Mode Selection - Sound Toggle and Settings"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GameModeSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test sound toggle and settings button functionality"
+
+  - task: "Game Mode Selection - Navigation Controls"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/GameModeSelector.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test Gyerek váltása button to return to child selector"
+
+  - task: "Find Letter Game - Game Loading and Setup"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test game loading with Hungarian graphemes from API"
+
+  - task: "Find Letter Game - Target Letter Display"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test target letter displays correctly in large blue box"
+
+  - task: "Find Letter Game - Letter Grid Display"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test 3x3 letter grid with proper Hungarian graphemes including cs, gy, ny, sz, ty, zs, dzs"
+
+  - task: "Find Letter Game - Correct Letter Selection"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test correct letter selection shows success feedback"
+
+  - task: "Find Letter Game - Incorrect Letter Selection"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test incorrect letter selection shows error feedback"
+
+  - task: "Find Letter Game - Game Progression"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test game progression through rounds 1/9, 2/9, etc."
+
+  - task: "Find Letter Game - Score and Streak Tracking"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test score and streak tracking during gameplay"
+
+  - task: "Find Letter Game - Game Completion Flow"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test game completion flow and final score screen"
+
+  - task: "Find Letter Game - Navigation Buttons"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/FindLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test Újra játék and Vissza a főmenübe buttons"
+
+  - task: "API Integration - Children Loading"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/services/ApiService.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to verify children are loaded from real API, not mock data"
+
+  - task: "API Integration - Child Creation"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/services/ApiService.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test child creation saves to backend"
+
+  - task: "API Integration - Game Progress Recording"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/services/ApiService.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test game progress is recorded via API calls"
+
+  - task: "API Integration - Hungarian Graphemes"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/services/ApiService.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to verify Hungarian graphemes are fetched from /api/game/graphemes/random"
+
+  - task: "UI/UX Features - Button Styling"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ui/button.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test soft-colored button styling with proper fill colors"
+
+  - task: "UI/UX Features - Hungarian Text Display"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to verify Hungarian text displays correctly"
+
+  - task: "Error Handling - API Failures"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/ChildSelector.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test error handling for API failures"
 
 metadata:
   created_by: "testing_agent"
