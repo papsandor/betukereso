@@ -87,6 +87,14 @@ const GameModeSelector = ({
         </div>
 
         <div className="flex items-center gap-4">
+          <Button
+            onClick={onStickerBookOpen}
+            className="flex items-center gap-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 border-0"
+          >
+            <Award className="h-4 w-4" />
+            Matrica Gyűjtemény
+          </Button>
+          
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-600">Hang nélkül játszom</span>
             <Switch 
