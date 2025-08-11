@@ -10,10 +10,13 @@ function App() {
   const [currentGameMode, setCurrentGameMode] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(mockSettings.soundEnabled);
   const [showSettings, setShowSettings] = useState(false);
+  const [showChildSelector, setShowChildSelector] = useState(true);
 
-  const handleStartGame = () => {
-    // Navigate to game mode selector when start game is clicked
-    return; // Do nothing since we're already showing the game modes after selecting child
+  const handleChildSelect = (child) => {
+    setCurrentChild(child);
+    if (child) {
+      setShowChildSelector(false);
+    }
   };
   const handleProgress = (grapheme, isCorrect) => {
     console.log(`Child ${currentChild.name} ${isCorrect ? 'correctly' : 'incorrectly'} identified: ${grapheme}`);
