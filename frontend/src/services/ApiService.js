@@ -18,7 +18,7 @@ class ApiService {
 
   static async createChild(name) {
     try {
-      const response = await axios.post(`${API}/children`, { name });
+      const response = await axios.post(`${API}/children/`, { name });
       return response.data;
     } catch (error) {
       console.error('Error creating child:', error);
