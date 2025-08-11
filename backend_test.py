@@ -51,13 +51,13 @@ class BetukeresoAPITester:
         url = f"{self.base_url}{endpoint}"
         try:
             if method.upper() == "GET":
-                response = requests.get(url, params=params, timeout=10)
+                response = requests.get(url, params=params, timeout=10, allow_redirects=True)
             elif method.upper() == "POST":
-                response = requests.post(url, json=data, timeout=10)
+                response = requests.post(url, json=data, timeout=10, allow_redirects=True)
             elif method.upper() == "PUT":
-                response = requests.put(url, json=data, timeout=10)
+                response = requests.put(url, json=data, timeout=10, allow_redirects=True)
             elif method.upper() == "DELETE":
-                response = requests.delete(url, timeout=10)
+                response = requests.delete(url, timeout=10, allow_redirects=True)
             else:
                 return False, f"Unsupported method: {method}", 0
             
