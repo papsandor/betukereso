@@ -20,6 +20,7 @@ const GameModeSelector = ({
   child, 
   onModeSelect, 
   onSettingsOpen, 
+  onStickerBookOpen,
   onChildChange,
   soundEnabled,
   onSoundToggle 
