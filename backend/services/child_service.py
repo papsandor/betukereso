@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from ..models import (
+from models import (
     Child, ChildCreate, ChildUpdate, GameSession, GameSessionCreate, 
     Sticker, ProgressUpdateResponse, GraphemeProgress,
     HUNGARIAN_GRAPHEMES, FOREIGN_GRAPHEMES, PHONEME_MAP_HU, TROUBLE_GRAPHEMES
