@@ -127,17 +127,6 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
           </Dialog>
         </Card>
       </div>
-
-      {currentChild && (
-        <div className="text-center">
-          <Button 
-            size="lg" 
-            className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold"
-          >
-            Játék kezdése - {currentChild.name}
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
