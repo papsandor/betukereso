@@ -3,7 +3,6 @@ import './App.css';
 import ChildSelector from './components/ChildSelector';
 import GameModeSelector from './components/GameModeSelector';
 import FindLetterGame from './components/FindLetterGame';
-import { mockSettings } from './data/mock';
 
 function App() {
   const [currentChild, setCurrentChild] = useState(null);
