@@ -65,9 +65,8 @@ const GameModeSelector = ({
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div className="flex items-center gap-4">
           <Button
-            variant="outline"
             onClick={onChildChange}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-purple-100 hover:bg-purple-200 text-purple-700 border-0"
           >
             <User className="h-4 w-4" />
             Gyerek váltása
