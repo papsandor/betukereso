@@ -6,7 +6,7 @@ import { ArrowLeft, Star, Volume2, Shuffle, CheckCircle, Loader2 } from 'lucide-
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
-const MatchCaseGame = ({ child, onBack, soundEnabled }) => {
+const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [pairs, setPairs] = useState([]);
   const [selectedUppercase, setSelectedUppercase] = useState(null);
   const [selectedLowercase, setSelectedLowercase] = useState(null);
