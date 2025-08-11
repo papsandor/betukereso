@@ -133,6 +133,7 @@ const ChildSelector = ({ onChildSelect, currentChild, onStartGame }) => {
           <Button 
             size="lg" 
             className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold"
+            onClick={() => onStartGame && onStartGame()}
           >
             Játék kezdése - {currentChild.name}
           </Button>
