@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from ..models import (
     Child, ChildCreate, ChildUpdate, GameSession, GameSessionCreate, 
     Sticker, ProgressUpdateResponse, GraphemeProgress,
-    HUNGARIAN_GRAPHEMES, PHONEME_MAP_HU, TROUBLE_GRAPHEMES
+    HUNGARIAN_GRAPHEMES, FOREIGN_GRAPHEMES, PHONEME_MAP_HU, TROUBLE_GRAPHEMES
 )
 import asyncio
 
