@@ -99,14 +99,15 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     const isMatch = selectedUppercase.letter === selectedLowercase.letter;
     setAttempts(attempts + 1);
 
-    try {
-      const progressData = await ApiService.recordProgress(child.id, {
-        game_mode: 'match-case',
-        grapheme: selectedUppercase.letter,
-        is_correct: isMatch
-      });
+    if (isMatch) {
+      try {
+        // Only record progress for correct matches
+        const progressData = await ApiService.recordProgress(child.id, {
+          game_mode: 'match-case',
+          grapheme: selectedUppercase.letter,
+          is_correct: true
+        });
 
-      if (isMatch) {
         setMatchedPairs(prev => new Set([...prev, selectedUppercase.letter]));
         setScore(score + 1);
         setStreak(progressData.new_streak);
@@ -133,27 +134,39 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           }, 2000);
         }
         
-      } else {
-        setFeedback({ type: 'error', message: 'Próbáld újra!' });
-        
-        if (soundEnabled) {
-          soundService.playErrorSound();
-        }
+      } catch (err) {
+        console.error('Error recording progress:', err);
+        setError('Failed to save progress');
+      }
+    } else {
+      // Handle incorrect match - reset streak locally and give feedback
+      setStreak(0);
+      setFeedback({ type: 'error', message: 'Próbáld újra!' });
+      
+      // Record the incorrect attempt for analytics (optional)
+      try {
+        await ApiService.recordProgress(child.id, {
+          game_mode: 'match-case',
+          grapheme: selectedUppercase.letter,
+          is_correct: false
+        });
+      } catch (err) {
+        console.error('Error recording incorrect attempt:', err);
       }
       
-      // Clear selections after feedback
-      setTimeout(() => {
-        setSelectedUppercase(null);
-        setSelectedLowercase(null);
-        if (!isMatch) {
-          setFeedback(null);
-        }
-      }, 1500);
-      
-    } catch (err) {
-      console.error('Error recording progress:', err);
-      setError('Failed to save progress');
+      if (soundEnabled) {
+        soundService.playErrorSound();
+      }
     }
+    
+    // Clear selections after feedback
+    setTimeout(() => {
+      setSelectedUppercase(null);
+      setSelectedLowercase(null);
+      if (!isMatch) {
+        setFeedback(null);
+      }
+    }, 1500);
   };
 
   const shuffleLetters = () => {
