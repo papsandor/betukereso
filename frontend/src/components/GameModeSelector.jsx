@@ -80,7 +80,7 @@ const GameModeSelector = ({
             </Badge>
             <Badge variant="outline" className="flex items-center gap-1">
               <Award className="h-3 w-3" />
-              {child.totalStickers} matrica
+              {child.total_stickers} matrica
             </Badge>
           </div>
         </div>
