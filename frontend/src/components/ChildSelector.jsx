@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Trash2, Plus, UserCheck, Star, Award } from 'lucide-react';
 import { mockChildren } from '../data/mock';
 
-const ChildSelector = ({ onChildSelect, currentChild, onStartGame }) => {
+const ChildSelector = ({ onChildSelect, currentChild }) => {
   const [children, setChildren] = useState(mockChildren);
   const [newChildName, setNewChildName] = useState('');
   const [isAddingChild, setIsAddingChild] = useState(false);
