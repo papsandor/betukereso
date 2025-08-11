@@ -7,7 +7,7 @@ import FindLetterGame from './components/FindLetterGame';
 function App() {
   const [currentChild, setCurrentChild] = useState(null);
   const [currentGameMode, setCurrentGameMode] = useState(null);
-  const [soundEnabled, setSoundEnabled] = useState(mockSettings.soundEnabled);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showChildSelector, setShowChildSelector] = useState(true);
 
