@@ -43,9 +43,30 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       );
       
       const targetLetter = randomLetters[0];
-      
       setCurrentTarget(targetLetter);
-      setGridLetters([...randomLetters].sort(() => Math.random() - 0.5));
+      
+      // Generate the display letter case ONCE and store it
+      const caseType = child.settings?.letter_case === 'mixed' ? 
+        ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
+        child.settings?.letter_case || 'lowercase';
+      
+      const displayLetter = getGraphemeCase(targetLetter, caseType);
+      setCurrentDisplayLetter(displayLetter);
+      
+      // Generate grid letters with consistent casing for the target
+      const gridLettersFormatted = randomLetters.map(letter => {
+        if (letter === targetLetter) {
+          return displayLetter; // Use the same case as the target display
+        } else {
+          // Other letters can use mixed casing for difficulty
+          const randomCase = child.settings?.letter_case === 'mixed' ? 
+            ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
+            child.settings?.letter_case || 'lowercase';
+          return getGraphemeCase(letter, randomCase);
+        }
+      });
+      
+      setGridLetters([...gridLettersFormatted].sort(() => Math.random() - 0.5));
       setFeedback(null);
     } catch (err) {
       setError('Failed to load game data');
