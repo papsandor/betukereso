@@ -49,7 +49,17 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         true
       );
       
-      setCurrentTarget(randomLetters[0]);
+      const targetLetter = randomLetters[0];
+      setCurrentTarget(targetLetter);
+      
+      // Generate the display letter case ONCE and store it
+      const caseType = child.settings?.letter_case === 'mixed' ? 
+        ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
+        child.settings?.letter_case || 'lowercase';
+      
+      const displayLetter = getGraphemeCase(targetLetter, caseType);
+      setCurrentDisplayLetter(displayLetter);
+      
     } catch (err) {
       setError('Failed to load game data');
       console.error('Error generating round:', err);
