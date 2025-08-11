@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from ..models import Child, ChildCreate, ChildUpdate, GameSessionCreate, ProgressUpdateResponse, Sticker
-from ..services.child_service import ChildService
+from models import Child, ChildCreate, ChildUpdate, GameSessionCreate, ProgressUpdateResponse, Sticker
+from services.child_service import ChildService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
