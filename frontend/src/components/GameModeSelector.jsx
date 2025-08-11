@@ -148,7 +148,7 @@ const GameModeSelector = ({
               <div className="text-sm text-gray-600">Jelenlegi sorozat</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-orange-600">{child.totalStickers}</div>
+              <div className="text-2xl font-bold text-orange-600">{child.total_stickers}</div>
               <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
             </div>
             <div>
