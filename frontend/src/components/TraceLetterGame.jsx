@@ -70,7 +70,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
   const setupCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !currentDisplayLetter) return;
 
     const ctx = canvas.getContext('2d');
     
@@ -83,7 +83,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw letter outline/guide in light gray
+    // Draw letter outline/guide in light gray - using the SAME letter as displayed
     ctx.strokeStyle = '#D1D5DB';
     ctx.fillStyle = '#F3F4F6';
     ctx.lineWidth = 4;
@@ -91,12 +91,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
-    const displayLetter = getDisplayLetter(currentTarget);
-    
-    // Draw filled letter background first
-    ctx.fillText(displayLetter, canvas.width / 2, canvas.height / 2);
-    // Then draw the outline
-    ctx.strokeText(displayLetter, canvas.width / 2, canvas.height / 2);
+    // Use the stored display letter to ensure consistency
+    ctx.fillText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
+    ctx.strokeText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
     
     // Set up drawing context for user drawing
     ctx.strokeStyle = '#3B82F6';
