@@ -105,6 +105,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const getDisplayLetter = (letter) => {
+    // This function is now only used for sound - the display letter is stored in state
     const caseType = child.settings?.letter_case === 'mixed' ? 
       ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
       child.settings?.letter_case || 'lowercase';
