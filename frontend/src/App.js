@@ -3,20 +3,36 @@ import './App.css';
 import ChildSelector from './components/ChildSelector';
 import GameModeSelector from './components/GameModeSelector';
 import FindLetterGame from './components/FindLetterGame';
+import TraceLetterGame from './components/TraceLetterGame';
+import MatchCaseGame from './components/MatchCaseGame';
+import ShowMarkGame from './components/ShowMarkGame';
+import StickerBook from './components/StickerBook';
+import ParentalSettings from './components/ParentalSettings';
+import StickerReward from './components/StickerReward';
+import soundService from './services/SoundService';
 
 function App() {
   const [currentChild, setCurrentChild] = useState(null);
   const [currentGameMode, setCurrentGameMode] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [showSettings, setShowSettings] = useState(false);
   const [showChildSelector, setShowChildSelector] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showStickerBook, setShowStickerBook] = useState(false);
+  const [pendingSticker, setPendingSticker] = useState(null);
+
+  useEffect(() => {
+    // Set sound service enabled state
+    soundService.setEnabled(soundEnabled);
+  }, [soundEnabled]);
 
   const handleChildSelect = (child) => {
     setCurrentChild(child);
     if (child) {
       setShowChildSelector(false);
+      soundService.playTransitionSound();
     }
   };
+
   // Game progress handler - now handled by API
   const handleProgress = (grapheme, isCorrect) => {
     // This is now handled within the game components via API calls
@@ -25,16 +41,49 @@ function App() {
 
   const handleModeSelect = (modeId) => {
     setCurrentGameMode(modeId);
+    soundService.playTransitionSound();
   };
 
   const handleBackToModes = () => {
     setCurrentGameMode(null);
+    soundService.playTransitionSound();
   };
 
   const handleBackToChildren = () => {
     setCurrentChild(null);
     setCurrentGameMode(null);
     setShowChildSelector(true);
+    setShowSettings(false);
+    setShowStickerBook(false);
+  };
+
+  const handleSettingsOpen = () => {
+    setShowSettings(true);
+  };
+
+  const handleSettingsClose = () => {
+    setShowSettings(false);
+  };
+
+  const handleStickerBookOpen = () => {
+    setShowStickerBook(true);
+  };
+
+  const handleStickerBookClose = () => {
+    setShowStickerBook(false);
+  };
+
+  const handleSettingsUpdate = (updatedChild) => {
+    setCurrentChild(updatedChild);
+  };
+
+  const handleStickerEarned = (sticker) => {
+    setPendingSticker(sticker);
+    soundService.playStickerSound();
+  };
+
+  const closeStickerReward = () => {
+    setPendingSticker(null);
   };
 
   const renderCurrentScreen = () => {
@@ -47,58 +96,66 @@ function App() {
       );
     }
 
+    if (showSettings) {
+      return (
+        <ParentalSettings
+          child={currentChild}
+          onBack={handleSettingsClose}
+          onSettingsUpdate={handleSettingsUpdate}
+        />
+      );
+    }
+
+    if (showStickerBook) {
+      return (
+        <StickerBook
+          child={currentChild}
+          onBack={handleStickerBookClose}
+        />
+      );
+    }
+
     if (currentGameMode === 'find-letter') {
       return (
         <FindLetterGame
           child={currentChild}
           onBack={handleBackToModes}
           soundEnabled={soundEnabled}
+          onStickerEarned={handleStickerEarned}
         />
       );
     }
 
     if (currentGameMode === 'trace-letter') {
       return (
-        <div className="w-full max-w-4xl mx-auto p-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Rajzold le a betűt!</h2>
-          <p className="text-gray-600 mb-8">Ez a játékmód hamarosan elérhető lesz...</p>
-          <button 
-            onClick={handleBackToModes}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Vissza a játékmódokhoz
-          </button>
-        </div>
+        <TraceLetterGame
+          child={currentChild}
+          onBack={handleBackToModes}
+          soundEnabled={soundEnabled}
+          onStickerEarned={handleStickerEarned}
+        />
       );
     }
 
     if (currentGameMode === 'match-case') {
       return (
-        <div className="w-full max-w-4xl mx-auto p-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Párosítsd a betűket!</h2>
-          <p className="text-gray-600 mb-8">Ez a játékmód hamarosan elérhető lesz...</p>
-          <button 
-            onClick={handleBackToModes}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Vissza a játékmódokhoz
-          </button>
-        </div>
+        <MatchCaseGame
+          child={currentChild}
+          onBack={handleBackToModes}
+          soundEnabled={soundEnabled}
+          onStickerEarned={handleStickerEarned}
+        />
       );
     }
 
     if (currentGameMode === 'show-mark') {
       return (
-        <div className="w-full max-w-4xl mx-auto p-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Mutasd & Jelöld - Tanár mód</h2>
-          <p className="text-gray-600 mb-8">Ez a játékmód hamarosan elérhető lesz...</p>
-          <button 
-            onClick={handleBackToModes}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg"
-          >
-            Vissza a játékmódokhoz
-          </button>
-        </div>
+        <ShowMarkGame
+          child={currentChild}
+          onBack={handleBackToModes}
+          soundEnabled={soundEnabled}
+          onStickerEarned={handleStickerEarned}
+        />
       );
     }
 
@@ -106,7 +163,8 @@ function App() {
       <GameModeSelector
         child={currentChild}
         onModeSelect={handleModeSelect}
-        onSettingsOpen={() => setShowSettings(true)}
+        onSettingsOpen={handleSettingsOpen}
+        onStickerBookOpen={handleStickerBookOpen}
         onChildChange={handleBackToChildren}
         soundEnabled={soundEnabled}
         onSoundToggle={setSoundEnabled}
@@ -117,6 +175,15 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
       {renderCurrentScreen()}
+      
+      {/* Sticker Reward Overlay */}
+      {pendingSticker && (
+        <StickerReward
+          sticker={pendingSticker}
+          onClose={closeStickerReward}
+          soundEnabled={soundEnabled}
+        />
+      )}
     </div>
   );
 }
