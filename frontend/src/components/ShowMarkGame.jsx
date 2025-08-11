@@ -54,14 +54,15 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const handleTeacherResponse = async (isCorrect) => {
     if (waitingForNext) return;
     
-    try {
-      const progressData = await ApiService.recordProgress(child.id, {
-        game_mode: 'show-mark',
-        grapheme: currentTarget,
-        is_correct: isCorrect
-      });
+    if (isCorrect) {
+      try {
+        // Only record progress for correct answers
+        const progressData = await ApiService.recordProgress(child.id, {
+          game_mode: 'show-mark',
+          grapheme: currentTarget,
+          is_correct: true
+        });
 
-      if (isCorrect) {
         setScore(score + 1);
         setStreak(progressData.new_streak);
         setFeedback({ 
@@ -79,30 +80,42 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         if (soundEnabled) {
           soundService.playSuccessSound();
         }
-      } else {
-        setStreak(0);
-        setFeedback({ 
-          type: 'error', 
-          message: 'Téves válasz - gyakorolni kell!'
-        });
         
-        if (soundEnabled) {
-          soundService.playErrorSound();
-        }
+      } catch (err) {
+        console.error('Error recording progress:', err);
+        setError('Failed to save progress');
+      }
+    } else {
+      // Handle incorrect answer - reset streak locally
+      setStreak(0);
+      setFeedback({ 
+        type: 'error', 
+        message: 'Téves válasz - gyakorolni kell!'
+      });
+      
+      // Record the incorrect attempt for analytics (optional)
+      try {
+        await ApiService.recordProgress(child.id, {
+          game_mode: 'show-mark',
+          grapheme: currentTarget,
+          is_correct: false
+        });
+      } catch (err) {
+        console.error('Error recording incorrect attempt:', err);
       }
       
-      setWaitingForNext(true);
-      
-      // Auto-advance or wait for click
-      setTimeout(() => {
-        setRound(round + 1);
-        generateNewRound();
-      }, 2000);
-      
-    } catch (err) {
-      console.error('Error recording progress:', err);
-      setError('Failed to save progress');
+      if (soundEnabled) {
+        soundService.playErrorSound();
+      }
     }
+    
+    setWaitingForNext(true);
+    
+    // Auto-advance or wait for click
+    setTimeout(() => {
+      setRound(round + 1);
+      generateNewRound();
+    }, 2000);
   };
 
   const getDisplayLetter = (letter) => {
