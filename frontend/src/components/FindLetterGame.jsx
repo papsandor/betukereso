@@ -109,7 +109,7 @@ const FindLetterGame = ({ child, onBack, onProgress, soundEnabled }) => {
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
