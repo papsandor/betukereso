@@ -9,6 +9,7 @@ import soundService from '../services/SoundService';
 const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const canvasRef = useRef(null);
   const [currentTarget, setCurrentTarget] = useState('');
+  const [currentDisplayLetter, setCurrentDisplayLetter] = useState('');
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
   const [gameOver, setGameOver] = useState(false);
