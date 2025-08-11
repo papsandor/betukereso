@@ -62,27 +62,38 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    
+    // Set canvas size properly
+    const rect = canvas.getBoundingClientRect();
     canvas.width = 400;
     canvas.height = 300;
     
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw letter outline/guide
-    ctx.strokeStyle = '#E5E7EB';
-    ctx.lineWidth = 3;
-    ctx.font = '180px Arial';
+    // Draw letter outline/guide in light gray
+    ctx.strokeStyle = '#D1D5DB';
+    ctx.fillStyle = '#F3F4F6';
+    ctx.lineWidth = 4;
+    ctx.font = 'bold 160px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
     const displayLetter = getDisplayLetter(currentTarget);
+    
+    // Draw filled letter background first
+    ctx.fillText(displayLetter, canvas.width / 2, canvas.height / 2);
+    // Then draw the outline
     ctx.strokeText(displayLetter, canvas.width / 2, canvas.height / 2);
     
-    // Set up drawing context
+    // Set up drawing context for user drawing
     ctx.strokeStyle = '#3B82F6';
-    ctx.lineWidth = 8;
+    ctx.fillStyle = '#3B82F6';
+    ctx.lineWidth = 6;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
+    ctx.globalCompositeOperation = 'source-over';
   };
 
   const getDisplayLetter = (letter) => {
