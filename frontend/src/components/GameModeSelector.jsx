@@ -96,9 +96,8 @@ const GameModeSelector = ({
           </div>
           
           <Button
-            variant="outline"
             onClick={onSettingsOpen}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
           >
             <Settings className="h-4 w-4" />
             Beállítások
