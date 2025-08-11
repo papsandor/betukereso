@@ -4,6 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { ArrowLeft, Star, Volume2, Check, X, Award, Loader2 } from 'lucide-react';
 import ApiService, { getGraphemeCase } from '../services/ApiService';
+import soundService from '../services/SoundService';
 
 const ShowMarkGame = ({ child, onBack, soundEnabled }) => {
   const [currentTarget, setCurrentTarget] = useState('');
