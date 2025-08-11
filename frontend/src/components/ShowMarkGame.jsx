@@ -71,10 +71,13 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
         if (progressData.sticker_earned) {
           setShowSticker(progressData.sticker_earned);
+          if (onStickerEarned) {
+            onStickerEarned(progressData.sticker_earned);
+          }
         }
         
         if (soundEnabled) {
-          console.log('Playing success sound');
+          soundService.playSuccessSound();
         }
       } else {
         setStreak(0);
@@ -84,7 +87,7 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         });
         
         if (soundEnabled) {
-          console.log('Playing error sound');
+          soundService.playErrorSound();
         }
       }
       
