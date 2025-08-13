@@ -77,7 +77,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     const ctx = canvas.getContext('2d');
     
     // Set canvas size properly
-    const rect = canvas.getBoundingClientRect();
     canvas.width = 400;
     canvas.height = 300;
     
@@ -97,6 +96,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.fillText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
     ctx.strokeText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
     
+    // Calculate letter pixels for comparison
+    calculateLetterPixels(ctx);
+    
     // Set up drawing context for user drawing
     ctx.strokeStyle = '#3B82F6';
     ctx.fillStyle = '#3B82F6';
@@ -104,6 +106,29 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.globalCompositeOperation = 'source-over';
+  };
+
+  const calculateLetterPixels = (ctx) => {
+    const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+    const pixels = imageData.data;
+    const letterPixelSet = new Set();
+    
+    // Find all non-white pixels (letter pixels)
+    for (let i = 0; i < pixels.length; i += 4) {
+      const r = pixels[i];
+      const g = pixels[i + 1]; 
+      const b = pixels[i + 2];
+      
+      // If pixel is not white (letter outline or fill)
+      if (r < 250 || g < 250 || b < 250) {
+        const pixelIndex = Math.floor(i / 4);
+        const x = pixelIndex % ctx.canvas.width;
+        const y = Math.floor(pixelIndex / ctx.canvas.width);
+        letterPixelSet.add(`${x},${y}`);
+      }
+    }
+    setLetterPixels(letterPixelSet);
+    setDrawnPixels(new Set()); // Reset drawn pixels
   };
 
   const getDisplayLetter = (letter) => {
