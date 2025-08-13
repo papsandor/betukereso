@@ -224,14 +224,19 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           </p>
           
           {soundEnabled && (
-            <Button 
-              size="lg" 
-              className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
-              onClick={() => soundService.playLetterSound(currentTarget)}
-            >
-              <Volume2 className="h-5 w-5" />
-              Segítség: Hangot lejátszani
-            </Button>
+            <div className="space-y-2">
+              <Button 
+                size="lg" 
+                className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
+                onClick={() => soundService.playLetterSound(currentTarget)}
+              >
+                <Volume2 className="h-5 w-5" />
+                Betű hangja (segítség)
+              </Button>
+              <p className="text-sm text-blue-600 text-center">
+                A gyerek segítségére hangot játszik le
+              </p>
+            </div>
           )}
         </div>
       </div>
