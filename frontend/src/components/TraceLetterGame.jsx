@@ -101,12 +101,17 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     calculateLetterPixels(ctx);
     
     // Set up drawing context for user drawing
-    ctx.strokeStyle = '#3B82F6';
-    ctx.fillStyle = '#3B82F6';
-    ctx.lineWidth = 6;
+    if (isEraserMode) {
+      ctx.globalCompositeOperation = 'destination-out'; // Eraser mode
+      ctx.lineWidth = 15; // Wider eraser
+    } else {
+      ctx.globalCompositeOperation = 'source-over'; // Draw mode
+      ctx.strokeStyle = '#3B82F6';
+      ctx.fillStyle = '#3B82F6';
+      ctx.lineWidth = 6;
+    }
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.globalCompositeOperation = 'source-over';
   };
 
   const calculateLetterPixels = (ctx) => {
