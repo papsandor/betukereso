@@ -22,6 +22,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [drawnPixels, setDrawnPixels] = useState(new Set());
   const [letterPixels, setLetterPixels] = useState(new Set());
+  const [isEraserMode, setIsEraserMode] = useState(false);
 
   useEffect(() => {
     generateNewRound();
