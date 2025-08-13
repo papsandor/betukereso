@@ -169,6 +169,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     setTimeout(() => {
       setSelectedUppercase(null);
       setSelectedLowercase(null);
+      setIsProcessing(false);
       if (!isMatch) {
         setFeedback(null);
       }
