@@ -189,43 +189,6 @@ const StickerBook = ({ child, onBack }) => {
           ))}
         </div>
       )}
-
-      {/* Achievement Summary */}
-      {stickers.length > 0 && (
-        <Card className="mt-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">
-          <CardHeader>
-            <CardTitle className="text-center text-purple-800">
-              🏆 Teljesítmény Összesítő
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <div className="text-3xl font-bold text-purple-600">{stickers.length}</div>
-                <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600">
-                  {Math.max(...stickers.map(s => s.streak_level))}
-                </div>
-                <div className="text-sm text-gray-600">Leghosszabb sorozat</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-green-600">
-                  {stickers.filter(s => s.streak_level >= 10).length}
-                </div>
-                <div className="text-sm text-gray-600">Mester szintű matricák</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-orange-600">
-                  {Math.round((new Date() - new Date(Math.min(...stickers.map(s => new Date(s.earned_at))))) / (1000 * 60 * 60 * 24))}
-                </div>
-                <div className="text-sm text-gray-600">Napja tanul</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
