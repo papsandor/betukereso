@@ -40,9 +40,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       setFeedback(null);
       setAttempts(0);
       
-      // Get 6 graphemes for 6 pairs
+      // Get the number of pairs to match based on letters per session setting
+      const pairsToMatch = child.settings?.letters_per_session || 9;
+      
       const randomLetters = await ApiService.getRandomGraphemes(
-        6,
+        pairsToMatch, // Use letters_per_session as number of pairs
         child.settings?.include_foreign_letters || false,
         true
       );
