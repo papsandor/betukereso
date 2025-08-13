@@ -19,6 +19,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [error, setError] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [traceComplete, setTraceComplete] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [drawnPixels, setDrawnPixels] = useState(new Set());
   const [letterPixels, setLetterPixels] = useState(new Set());
 
