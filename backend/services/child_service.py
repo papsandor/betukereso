@@ -157,12 +157,24 @@ class ChildService:
         if include_foreign:
             pool.extend(FOREIGN_GRAPHEMES)
         
+        # Reduce frequency of specific graphemes by 50%
+        rare_graphemes = ['dz', 'dzs', 'w']
+        
         # Bias toward trouble graphemes
         if trouble_bias:
             available_trouble = [g for g in TROUBLE_GRAPHEMES if g in pool]
             if available_trouble:
                 # Add trouble graphemes multiple times to increase selection probability
                 pool.extend(available_trouble * 2)
+        
+        # Remove half of the rare graphemes to reduce their frequency
+        for rare_grapheme in rare_graphemes:
+            if rare_grapheme in pool:
+                # Remove some instances to reduce frequency by ~50%
+                removal_count = pool.count(rare_grapheme) // 2
+                for _ in range(removal_count):
+                    if rare_grapheme in pool:
+                        pool.remove(rare_grapheme)
         
         import random
         return random.sample(pool, min(count, len(pool)))
