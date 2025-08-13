@@ -290,16 +290,16 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         </Button>
       </div>
 
-      {/* Game Board */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
-        {/* Uppercase Letters */}
+      {/* Game Board - Two Columns Side by Side */}
+      <div className="grid grid-cols-2 gap-8 mb-6 max-w-4xl mx-auto">
+        {/* Uppercase Letters - Left Column */}
         <div>
           <h3 className="text-xl font-bold text-center mb-4 text-blue-800">Nagy betűk</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-3">
             {pairs.uppercase?.map((letter) => (
               <Button
                 key={letter.id}
-                className={`h-24 text-4xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
+                className={`w-full h-16 text-3xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
                   matchedPairs.has(letter.letter) 
                     ? 'bg-green-100 text-green-800 border-green-400 cursor-default' 
                     : selectedUppercase?.letter === letter.letter
@@ -307,25 +307,25 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
                     : 'bg-blue-50 hover:bg-blue-100 text-blue-800 border-blue-200 hover:border-blue-400'
                 }`}
                 onClick={() => handleLetterClick(letter)}
-                disabled={matchedPairs.has(letter.letter)}
+                disabled={matchedPairs.has(letter.letter) || isProcessing}
               >
                 {letter.display}
                 {matchedPairs.has(letter.letter) && (
-                  <CheckCircle className="h-6 w-6 ml-2 text-green-600" />
+                  <CheckCircle className="h-5 w-5 ml-2 text-green-600" />
                 )}
               </Button>
             ))}
           </div>
         </div>
 
-        {/* Lowercase Letters */}
+        {/* Lowercase Letters - Right Column */}
         <div>
           <h3 className="text-xl font-bold text-center mb-4 text-orange-800">Kis betűk</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-3">
             {pairs.lowercase?.map((letter) => (
               <Button
                 key={letter.id}
-                className={`h-24 text-4xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
+                className={`w-full h-16 text-3xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
                   matchedPairs.has(letter.letter) 
                     ? 'bg-green-100 text-green-800 border-green-400 cursor-default' 
                     : selectedLowercase?.letter === letter.letter
@@ -333,11 +333,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
                     : 'bg-orange-50 hover:bg-orange-100 text-orange-800 border-orange-200 hover:border-orange-400'
                 }`}
                 onClick={() => handleLetterClick(letter)}
-                disabled={matchedPairs.has(letter.letter)}
+                disabled={matchedPairs.has(letter.letter) || isProcessing}
               >
                 {letter.display}
                 {matchedPairs.has(letter.letter) && (
-                  <CheckCircle className="h-6 w-6 ml-2 text-green-600" />
+                  <CheckCircle className="h-5 w-5 ml-2 text-green-600" />
                 )}
               </Button>
             ))}
