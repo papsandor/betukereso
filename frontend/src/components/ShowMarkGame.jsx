@@ -113,11 +113,11 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     
     // Auto-advance after feedback
     setTimeout(() => {
-      if (round < maxRounds) {
+      if (round + 1 >= maxRounds) {
+        setGameOver(true);
+      } else {
         setRound(round + 1);
         generateNewRound();
-      } else {
-        setGameOver(true);
       }
     }, 2000);
   };
