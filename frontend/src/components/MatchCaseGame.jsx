@@ -137,11 +137,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         // Check if all pairs are matched
         if (matchedPairs.size + 1 === pairs.uppercase?.length) {
           setTimeout(() => {
-            if (round < maxRounds) {
+            if (round + 1 >= maxRounds) {
+              setGameOver(true);
+            } else {
               setRound(round + 1);
               generateNewRound();
-            } else {
-              setGameOver(true);
             }
           }, 2000);
         }
