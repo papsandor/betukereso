@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Settings, Volume2, VolumeX, Eye, Palette, BookOpen, Target, Loader2, Save, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Settings, Volume2, VolumeX, Eye, Palette, BookOpen, Target, Loader2, Save, RotateCcw, Award } from 'lucide-react';
 import ApiService from '../services/ApiService';
 
 const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
