@@ -211,8 +211,12 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         }
         
         setTimeout(() => {
-          setRound(round + 1);
-          generateNewRound();
+          if (round < maxRounds) {
+            setRound(round + 1);
+            generateNewRound();
+          } else {
+            setGameOver(true);
+          }
         }, 2000);
         
       } catch (err) {
