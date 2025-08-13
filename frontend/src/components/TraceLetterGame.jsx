@@ -458,6 +458,11 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Drawing Canvas */}
       <div className="text-center mb-6">
+        {isEraserMode && (
+          <div className="mb-4 p-2 bg-orange-100 text-orange-800 rounded-lg inline-block">
+            🗑️ <strong>Radír mód:</strong> Húzd az egeret/ujjad a törölni kívánt vonalakon!
+          </div>
+        )}
         <div className="inline-block bg-white rounded-lg shadow-lg p-4">
           <canvas
             ref={canvasRef}
