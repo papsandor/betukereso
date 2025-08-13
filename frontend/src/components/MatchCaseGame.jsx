@@ -173,11 +173,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       // After several incorrect attempts, move to next round
       if (attempts >= 3) {
         setTimeout(() => {
-          if (round < maxRounds) {
+          if (round + 1 >= maxRounds) {
+            setGameOver(true);
+          } else {
             setRound(round + 1);
             generateNewRound();
-          } else {
-            setGameOver(true);
           }
         }, 1500);
       }
