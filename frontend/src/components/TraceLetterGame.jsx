@@ -34,7 +34,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   }, [currentDisplayLetter]);
 
   const generateNewRound = async () => {
-    if (round > maxRounds) {
+    if (round >= maxRounds) { // Changed from > to >=
       setGameOver(true);
       return;
     }
