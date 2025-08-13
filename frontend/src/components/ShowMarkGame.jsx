@@ -111,10 +111,14 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     
     setWaitingForNext(true);
     
-    // Auto-advance or wait for click
+    // Auto-advance after feedback
     setTimeout(() => {
-      setRound(round + 1);
-      generateNewRound();
+      if (round < maxRounds) {
+        setRound(round + 1);
+        generateNewRound();
+      } else {
+        setGameOver(true);
+      }
     }, 2000);
   };
 
