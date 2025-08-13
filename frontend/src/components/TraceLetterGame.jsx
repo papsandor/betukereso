@@ -13,7 +13,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
   const [gameOver, setGameOver] = useState(false);
-  const [round, setRound] = useState(1);
+  const [round, setRound] = useState(0); // Start from 0 instead of 1
   const [maxRounds] = useState(child.settings?.letters_per_session || 9);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
