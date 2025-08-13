@@ -461,7 +461,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <div className="inline-block bg-white rounded-lg shadow-lg p-4">
           <canvas
             ref={canvasRef}
-            className="border-2 border-gray-300 rounded-lg cursor-crosshair select-none"
+            className={`border-2 border-gray-300 rounded-lg select-none ${
+              isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
+            }`}
             onMouseDown={startDrawing}
             onMouseMove={draw}
             onMouseUp={stopDrawing}
