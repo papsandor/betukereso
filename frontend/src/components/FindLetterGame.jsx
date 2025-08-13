@@ -106,8 +106,12 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         }
         
         setTimeout(() => {
-          setRound(round + 1);
-          generateNewRound();
+          if (round + 1 >= maxRounds) {
+            setGameOver(true);
+          } else {
+            setRound(round + 1);
+            generateNewRound();
+          }
         }, 1500);
         
       } catch (err) {
