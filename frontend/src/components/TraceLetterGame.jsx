@@ -226,6 +226,35 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         console.error('Error recording progress:', err);
         setError('Failed to save progress');
       }
+    } else {
+      // Handle incorrect trace - reset streak and move to next round
+      setStreak(0);
+      setShowSuccess(false);
+      
+      // Record the incorrect attempt for analytics
+      try {
+        await ApiService.recordProgress(child.id, {
+          game_mode: 'trace-letter',
+          grapheme: currentTarget,
+          is_correct: false
+        });
+      } catch (err) {
+        console.error('Error recording incorrect attempt:', err);
+      }
+      
+      if (soundEnabled) {
+        soundService.playErrorSound();
+      }
+      
+      // Move to next round after error sound and feedback
+      setTimeout(() => {
+        if (round < maxRounds) {
+          setRound(round + 1);
+          generateNewRound();
+        } else {
+          setGameOver(true);
+        }
+      }, 2000);
     }
   };
 
