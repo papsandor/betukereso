@@ -165,6 +165,9 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             {/* Letters Per Session */}
             <div className="space-y-2">
               <Label htmlFor="letters-per-session">Betűk száma munkamenetenként</Label>
+              <div className="text-sm text-gray-500 mb-2">
+                Hány betűt gyakoroljon egy játékban (pl. 9 = 9 különböző betű)
+              </div>
               <Select 
                 value={settings.letters_per_session?.toString()} 
                 onValueChange={(value) => handleSettingChange('letters_per_session', parseInt(value))}
@@ -184,6 +187,9 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             {/* Difficulty Level */}
             <div className="space-y-2">
               <Label htmlFor="difficulty">Nehézségi szint</Label>
+              <div className="text-sm text-gray-500 mb-2">
+                Hány betű közül kell választani (pl. könnyű = 6 gombból választ)
+              </div>
               <Select 
                 value={settings.difficulty} 
                 onValueChange={(value) => handleSettingChange('difficulty', value)}
@@ -192,9 +198,9 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Easy">Könnyű (6 betű választék)</SelectItem>
-                  <SelectItem value="Medium">Közepes (9 betű választék)</SelectItem>
-                  <SelectItem value="Hard">Nehéz (12 betű választék)</SelectItem>
+                  <SelectItem value="Easy">Könnyű (6 gombból választ)</SelectItem>
+                  <SelectItem value="Medium">Közepes (9 gombból választ)</SelectItem>
+                  <SelectItem value="Hard">Nehéz (12 gombból választ)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
