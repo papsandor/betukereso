@@ -79,8 +79,10 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
   };
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const handleLetterClick = (letter) => {
-    if (matchedPairs.has(letter.letter)) return;
+    if (matchedPairs.has(letter.letter) || isProcessing) return;
     
     if (letter.case === 'uppercase') {
       setSelectedUppercase(selectedUppercase?.letter === letter.letter ? null : letter);
@@ -90,8 +92,12 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   useEffect(() => {
-    if (selectedUppercase && selectedLowercase) {
-      checkMatch();
+    if (selectedUppercase && selectedLowercase && !isProcessing) {
+      setIsProcessing(true);
+      // Add small delay to prevent rapid clicking issues
+      setTimeout(() => {
+        checkMatch();
+      }, 200);
     }
   }, [selectedUppercase, selectedLowercase]);
 
