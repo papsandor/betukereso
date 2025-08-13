@@ -115,7 +115,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setError('Failed to save progress');
       }
     } else {
-      // Handle incorrect answer - don't send to API, just reset streak locally
+      // Handle incorrect answer - reset streak and move to next round
       setStreak(0);
       setFeedback({ type: 'error', message: 'Próbáld újra!' });
       
@@ -134,9 +134,11 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         soundService.playErrorSound();
       }
       
+      // Move to next round after error sound and feedback
       setTimeout(() => {
-        setFeedback(null);
-      }, 1000);
+        setRound(round + 1);
+        generateNewRound();
+      }, 1500);
     }
   };
 
