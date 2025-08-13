@@ -182,10 +182,13 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
   const checkTraceCompletion = () => {
     // Simple completion check - in real app, this would analyze the drawing
+    // For now, simulate success most of the time, but occasionally simulate failure for testing
+    const isSuccessful = Math.random() > 0.1; // 90% success rate for demo
+    
     setTimeout(() => {
       setTraceComplete(true);
-      setShowSuccess(true);
-      handleTraceComplete(true);
+      setShowSuccess(isSuccessful);
+      handleTraceComplete(isSuccessful);
     }, 500);
   };
 
