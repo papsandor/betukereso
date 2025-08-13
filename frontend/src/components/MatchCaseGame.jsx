@@ -169,6 +169,18 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       if (soundEnabled) {
         soundService.playErrorSound();
       }
+      
+      // After several incorrect attempts, move to next round
+      if (attempts >= 3) {
+        setTimeout(() => {
+          if (round < maxRounds) {
+            setRound(round + 1);
+            generateNewRound();
+          } else {
+            setGameOver(true);
+          }
+        }, 1500);
+      }
     }
     
     // Clear selections after feedback
