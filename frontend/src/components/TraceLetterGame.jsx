@@ -212,9 +212,38 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const checkTraceCompletion = () => {
-    // Simple completion check - in real app, this would analyze the drawing
-    // For now, simulate success most of the time, but occasionally simulate failure for testing
-    const isSuccessful = Math.random() > 0.1; // 90% success rate for demo
+    // Calculate how much of the drawn line overlaps with the letter
+    const drawnPixelsArray = Array.from(drawnPixels);
+    const letterPixelsArray = Array.from(letterPixels);
+    
+    if (drawnPixelsArray.length === 0 || letterPixelsArray.length === 0) {
+      handleTraceComplete(false);
+      return;
+    }
+    
+    // Count overlapping pixels
+    let overlapCount = 0;
+    drawnPixelsArray.forEach(drawnPixel => {
+      // Check if drawn pixel is within letter area (with some tolerance)
+      const [dx, dy] = drawnPixel.split(',').map(Number);
+      
+      for (const letterPixel of letterPixelsArray) {
+        const [lx, ly] = letterPixel.split(',').map(Number);
+        const distance = Math.sqrt((dx - lx) ** 2 + (dy - ly) ** 2);
+        
+        // If within tolerance distance (10 pixels), count as overlap
+        if (distance <= 10) {
+          overlapCount++;
+          break;
+        }
+      }
+    });
+    
+    // Calculate accuracy percentage
+    const accuracy = overlapCount / drawnPixelsArray.length;
+    const isSuccessful = accuracy >= 0.8; // 80% threshold
+    
+    console.log(`Trace accuracy: ${(accuracy * 100).toFixed(1)}% (${overlapCount}/${drawnPixelsArray.length} pixels)`);
     
     setTimeout(() => {
       setTraceComplete(true);
