@@ -191,7 +191,7 @@ const ShowMarkGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         </Button>
         
         <div className="flex items-center gap-4">
-          <Badge variant="secondary">{round}/{maxRounds} kör</Badge>
+          <Badge variant="secondary">{round + 1}/{maxRounds} kör</Badge>
           <Badge variant="outline" className="flex items-center gap-1">
             <Star className="h-3 w-3" />
             {score} helyes
