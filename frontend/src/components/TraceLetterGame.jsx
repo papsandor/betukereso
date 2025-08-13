@@ -308,11 +308,11 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       
       // Move to next round after error sound and feedback
       setTimeout(() => {
-        if (round < maxRounds) {
+        if (round + 1 >= maxRounds) {
+          setGameOver(true);
+        } else {
           setRound(round + 1);
           generateNewRound();
-        } else {
-          setGameOver(true);
         }
       }, 2000);
     }
