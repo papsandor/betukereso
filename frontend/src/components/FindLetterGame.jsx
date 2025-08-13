@@ -24,7 +24,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   }, []);
 
   const generateNewRound = async () => {
-    if (round > maxRounds) {
+    if (round >= maxRounds) { // Changed from > to >=
       setGameOver(true);
       return;
     }
