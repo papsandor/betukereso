@@ -475,18 +475,32 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <div className="flex justify-center gap-4 mt-4">
             <Button
               onClick={clearCanvas}
-              className="flex items-center gap-2 bg-orange-100 hover:bg-orange-200 text-orange-700 border-0"
+              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
             >
               <RotateCcw className="h-4 w-4" />
               Újra kezdés
             </Button>
             
-            {traceComplete && (
-              <div className="flex items-center gap-2 text-green-600">
-                <CheckCircle className="h-5 w-5" />
-                <span className="font-semibold">Szuper!</span>
-              </div>
-            )}
+            <Button
+              onClick={toggleEraserMode}
+              className={`flex items-center gap-2 border-0 ${
+                isEraserMode 
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
+                  : 'bg-orange-100 hover:bg-orange-200 text-orange-700'
+              }`}
+            >
+              <div className="h-4 w-4 rounded-full border-2 border-current" />
+              {isEraserMode ? 'Radír BE' : 'Radír'}
+            </Button>
+            
+            <Button
+              onClick={handleFinishDrawing}
+              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white border-0"
+              disabled={traceComplete}
+            >
+              <CheckCircle className="h-4 w-4" />
+              Kész vagyok!
+            </Button>
           </div>
         </div>
       </div>
