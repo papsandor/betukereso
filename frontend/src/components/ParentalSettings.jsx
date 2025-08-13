@@ -23,7 +23,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     streak_thresholds: [3, 5, 10],
     sound_enabled: true,
     high_contrast: false,
-    difficulty: 'Medium'
+    difficulty: 'Medium',
+    stickers_enabled: true
   };
 
   useEffect(() => {
