@@ -286,6 +286,24 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 onCheckedChange={(checked) => handleSettingChange('high_contrast', checked)}
               />
             </div>
+
+            {/* Matricák engedélyezése */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5 flex items-center gap-2">
+                <Award className="h-4 w-4" />
+                <div>
+                  <Label htmlFor="stickers-enabled">Matricák engedélyezése</Label>
+                  <div className="text-sm text-gray-500">
+                    Jutalom matricák megjelenítése sorozat teljesítményért
+                  </div>
+                </div>
+              </div>
+              <Switch
+                id="stickers-enabled"
+                checked={settings.stickers_enabled}
+                onCheckedChange={(checked) => handleSettingChange('stickers_enabled', checked)}
+              />
+            </div>
           </CardContent>
         </Card>
 
