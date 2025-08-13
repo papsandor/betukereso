@@ -200,7 +200,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     e.preventDefault();
     if (isDrawing) {
       setIsDrawing(false);
-      checkTraceCompletion();
+      // REMOVED: checkTraceCompletion() - now only triggered by "Kész" button
     }
   };
 
