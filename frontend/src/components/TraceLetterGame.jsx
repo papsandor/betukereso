@@ -152,6 +152,18 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     
+    // Set drawing mode
+    if (isEraserMode) {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = 15;
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = '#3B82F6';
+      ctx.lineWidth = 6;
+    }
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
     // Get coordinates
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
