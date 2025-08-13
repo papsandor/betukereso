@@ -189,9 +189,11 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.beginPath();
     ctx.moveTo(x, y);
     
-    // Track drawn pixels for accuracy calculation
-    const drawnPixelKey = `${Math.floor(x)},${Math.floor(y)}`;
-    setDrawnPixels(prev => new Set([...prev, drawnPixelKey]));
+    // Track drawn pixels only in draw mode (not eraser mode)
+    if (!isEraserMode) {
+      const drawnPixelKey = `${Math.floor(x)},${Math.floor(y)}`;
+      setDrawnPixels(prev => new Set([...prev, drawnPixelKey]));
+    }
   };
 
   const stopDrawing = (e) => {
