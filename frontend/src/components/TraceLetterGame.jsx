@@ -352,6 +352,15 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     
     setTraceComplete(false);
     setShowSuccess(false);
+    setIsEraserMode(false); // Reset to draw mode
+  };
+
+  const toggleEraserMode = () => {
+    setIsEraserMode(!isEraserMode);
+  };
+
+  const handleFinishDrawing = () => {
+    checkTraceCompletion();
   };
 
   if (loading) {
