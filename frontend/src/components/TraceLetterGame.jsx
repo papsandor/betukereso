@@ -7,7 +7,8 @@ import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
 const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
-  const canvasRef = useRef(null);
+  const guideCanvasRef = useRef(null); // Background guide (non-interactive)
+  const drawCanvasRef = useRef(null);  // Foreground drawing layer (interactive)
   const [currentTarget, setCurrentTarget] = useState('');
   const [currentDisplayLetter, setCurrentDisplayLetter] = useState('');
   const [score, setScore] = useState(0);
@@ -23,16 +24,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [drawnPixels, setDrawnPixels] = useState(new Set());
   const [letterPixels, setLetterPixels] = useState(new Set());
   const [isEraserMode, setIsEraserMode] = useState(false);
-  const [letterGuideImageData, setLetterGuideImageData] = useState(null);
-  const [letterGuideImageData, setLetterGuideImageData] = useState(null);
 
   useEffect(() => {
     generateNewRound();
   }, []);
 
   useEffect(() => {
-    if (canvasRef.current && currentDisplayLetter) {
-      setupCanvas();
+    if (currentDisplayLetter) {
+      setupCanvases();
     }
   }, [currentDisplayLetter]);
 
@@ -47,6 +46,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       setError(null);
       setTraceComplete(false);
       setShowSuccess(false);
+      setDrawnPixels(new Set());
       
       const randomLetters = await ApiService.getRandomGraphemes(
         1,
@@ -73,47 +73,43 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
   };
 
-  const setupCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas || !currentDisplayLetter) return;
+  const setupCanvases = () => {
+    const guideCanvas = guideCanvasRef.current;
+    const drawCanvas = drawCanvasRef.current;
+    if (!guideCanvas || !drawCanvas) return;
 
-    const ctx = canvas.getContext('2d');
-    
-    // Set canvas size properly
-    canvas.width = 400;
-    canvas.height = 300;
-    
-    // Clear canvas
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw letter outline/guide in light gray - using the SAME letter as displayed
-    ctx.strokeStyle = '#D1D5DB';
-    ctx.fillStyle = '#F3F4F6';
-    ctx.lineWidth = 4;
-    ctx.font = 'bold 160px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    // Use the stored display letter to ensure consistency
-    ctx.fillText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
-    ctx.strokeText(currentDisplayLetter, canvas.width / 2, canvas.height / 2);
-    
-    // Calculate letter pixels for comparison
-    calculateLetterPixels(ctx);
-    
-    // Set up drawing context for user drawing
-    if (isEraserMode) {
-      ctx.globalCompositeOperation = 'destination-out'; // Eraser mode
-      ctx.lineWidth = 15; // Wider eraser
-    } else {
-      ctx.globalCompositeOperation = 'source-over'; // Draw mode
-      ctx.strokeStyle = '#3B82F6';
-      ctx.fillStyle = '#3B82F6';
-      ctx.lineWidth = 6;
-    }
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    // Set canvas sizes
+    const width = 400;
+    const height = 300;
+    guideCanvas.width = width;
+    guideCanvas.height = height;
+    drawCanvas.width = width;
+    drawCanvas.height = height;
+
+    // Draw guide on background canvas
+    const gctx = guideCanvas.getContext('2d');
+    gctx.fillStyle = '#ffffff';
+    gctx.fillRect(0, 0, width, height);
+    gctx.strokeStyle = '#D1D5DB';
+    gctx.fillStyle = '#F3F4F6';
+    gctx.lineWidth = 4;
+    gctx.font = 'bold 160px Arial';
+    gctx.textAlign = 'center';
+    gctx.textBaseline = 'middle';
+    gctx.fillText(currentDisplayLetter, width / 2, height / 2);
+    gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
+
+    // Calculate letter pixels from the guide canvas only
+    calculateLetterPixels(gctx);
+
+    // Prepare drawing canvas (clear only the drawing layer)
+    const dctx = drawCanvas.getContext('2d');
+    dctx.clearRect(0, 0, width, height);
+    dctx.lineCap = 'round';
+    dctx.lineJoin = 'round';
+    dctx.lineWidth = 6;
+    dctx.strokeStyle = '#3B82F6';
+    dctx.globalCompositeOperation = 'source-over';
   };
 
   const calculateLetterPixels = (ctx) => {
@@ -139,25 +135,27 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     setDrawnPixels(new Set()); // Reset drawn pixels
   };
 
-  const getDisplayLetter = (letter) => {
-    // This function is now only used for sound - the display letter is stored in state
-    const caseType = child.settings?.letter_case === 'mixed' ? 
-      ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
-      child.settings?.letter_case || 'lowercase';
-    return getGraphemeCase(letter, caseType);
+  // Drawing helpers (work on the drawing canvas only)
+  const getCoords = (canvas, e) => {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = 'clientX' in e ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
+    const clientY = 'clientY' in e ? e.clientY : (e.touches ? e.touches[0].clientY : 0);
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    return { x, y };
   };
 
   const startDrawing = (e) => {
     e.preventDefault();
+    const canvas = drawCanvasRef.current;
+    if (!canvas) return;
     setIsDrawing(true);
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
-    
-    // Set drawing mode
+
+    // Set mode based on eraser toggle (affects ONLY drawing layer)
     if (isEraserMode) {
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineWidth = 15;
+      ctx.lineWidth = 15; // Wider eraser
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = '#3B82F6';
@@ -165,11 +163,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    
-    // Get coordinates
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
+
+    const { x, y } = getCoords(canvas, e);
     ctx.beginPath();
     ctx.moveTo(x, y);
   };
@@ -177,20 +172,16 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const draw = (e) => {
     e.preventDefault();
     if (!isDrawing) return;
-    
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
+    const canvas = drawCanvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
-    // Get coordinates
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
+
+    const { x, y } = getCoords(canvas, e);
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(x, y);
-    
+
     // Track drawn pixels only in draw mode (not eraser mode)
     if (!isEraserMode) {
       const drawnPixelKey = `${Math.floor(x)},${Math.floor(y)}`;
@@ -202,36 +193,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     e.preventDefault();
     if (isDrawing) {
       setIsDrawing(false);
-      // REMOVED: checkTraceCompletion() - now only triggered by "Kész" button
+      // Completion is now triggered by the "Kész" button only
     }
   };
 
-  // Add touch support for mobile devices
-  const startTouchDrawing = (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent("mousedown", {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
-    startDrawing(mouseEvent);
-  };
-
-  const touchDraw = (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent("mousemove", {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
-    draw(mouseEvent);
-  };
-
-  const stopTouchDrawing = (e) => {
-    e.preventDefault();
-    const mouseEvent = new MouseEvent("mouseup", {});
-    stopDrawing(mouseEvent);
-  };
+  // Touch event wrappers
+  const startTouchDrawing = (e) => startDrawing(e);
+  const touchDraw = (e) => draw(e);
+  const stopTouchDrawing = (e) => stopDrawing(e);
 
   const checkTraceCompletion = () => {
     // Calculate how much of the drawn line overlaps with the letter
@@ -243,25 +212,20 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       return;
     }
     
-    // Count overlapping pixels
+    // Count overlapping pixels with tolerance
     let overlapCount = 0;
     drawnPixelsArray.forEach(drawnPixel => {
-      // Check if drawn pixel is within letter area (with some tolerance)
       const [dx, dy] = drawnPixel.split(',').map(Number);
-      
       for (const letterPixel of letterPixelsArray) {
         const [lx, ly] = letterPixel.split(',').map(Number);
         const distance = Math.sqrt((dx - lx) ** 2 + (dy - ly) ** 2);
-        
-        // If within tolerance distance (10 pixels), count as overlap
-        if (distance <= 10) {
+        if (distance <= 10) { // tolerance
           overlapCount++;
           break;
         }
       }
     });
     
-    // Calculate accuracy percentage
     const accuracy = overlapCount / drawnPixelsArray.length;
     const isSuccessful = accuracy >= 0.8; // 80% threshold
     
@@ -341,20 +305,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const clearCanvas = () => {
-    const canvas = canvasRef.current;
+    const canvas = drawCanvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
-    
-    // Clear the entire canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Redraw the letter guide
-    setupCanvas();
-    
     setTraceComplete(false);
     setShowSuccess(false);
     setIsEraserMode(false); // Reset to draw mode
+    setDrawnPixels(new Set());
   };
 
   const toggleEraserMode = () => {
@@ -458,7 +416,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         )}
       </div>
 
-      {/* Drawing Canvas */}
+      {/* Two-layer Canvas: guide (bottom) + drawing (top) */}
       <div className="text-center mb-6">
         {isEraserMode && (
           <div className="mb-4 p-2 bg-orange-100 text-orange-800 rounded-lg inline-block">
@@ -466,20 +424,30 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           </div>
         )}
         <div className="inline-block bg-white rounded-lg shadow-lg p-4">
-          <canvas
-            ref={canvasRef}
-            className={`border-2 border-gray-300 rounded-lg select-none ${
-              isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
-            }`}
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startTouchDrawing}
-            onTouchMove={touchDraw}
-            onTouchEnd={stopTouchDrawing}
-            style={{ touchAction: 'none' }}
-          />
+          <div className="relative" style={{ width: 400, height: 300 }}>
+            <canvas
+              ref={guideCanvasRef}
+              className="absolute top-0 left-0 border-2 border-gray-300 rounded-lg select-none pointer-events-none"
+              width={400}
+              height={300}
+            />
+            <canvas
+              ref={drawCanvasRef}
+              className={`absolute top-0 left-0 border-2 border-gray-300 rounded-lg select-none ${
+                isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
+              }`}
+              width={400}
+              height={300}
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              onTouchStart={startTouchDrawing}
+              onTouchMove={touchDraw}
+              onTouchEnd={stopTouchDrawing}
+              style={{ touchAction: 'none' }}
+            />
+          </div>
           
           <div className="flex justify-center gap-4 mt-4">
             <Button
@@ -505,19 +473,22 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             <Button
               onClick={handleFinishDrawing}
               className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white border-0"
-              disabled={traceComplete}
             >
               <CheckCircle className="h-4 w-4" />
-              Kész vagyok!
+              Kész
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Success feedback */}
-      {showSuccess && (
-        <div className="text-center p-4 bg-green-100 text-green-800 rounded-lg mb-4">
-          <p className="text-xl font-semibold">Nagyszerű rajzolás! 🎨</p>
+      {/* Feedback */}
+      {traceComplete && (
+        <div className={`text-center p-4 rounded-lg mb-4 ${
+          showSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        }`}>
+          <p className="text-xl font-semibold">
+            {showSuccess ? 'Nagyszerű! Sikeres rajzolás!' : 'Próbáld újra! Több ponton kövesd a betűt.'}
+          </p>
         </div>
       )}
     </div>

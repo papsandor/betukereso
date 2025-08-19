@@ -7,6 +7,7 @@ from models import (
     HUNGARIAN_GRAPHEMES, FOREIGN_GRAPHEMES, PHONEME_MAP_HU, TROUBLE_GRAPHEMES
 )
 import asyncio
+import random
 
 class ChildService:
     def __init__(self, db: AsyncIOMotorDatabase):
@@ -153,28 +154,36 @@ class ChildService:
         ]
 
     def get_random_graphemes(self, count: int, include_foreign: bool = False, trouble_bias: bool = True) -> List[str]:
-        pool = HUNGARIAN_GRAPHEMES.copy()
+        """Return a list of UNIQUE graphemes for a game round.
+        - Keeps rare graphemes (dz, dzs, w) at ~50% availability per request
+        - Optionally biases by ensuring at least one trouble grapheme is included
+        - Never returns duplicates within the same response
+        """
+        # Base pool (unique values)
+        base_pool = list(HUNGARIAN_GRAPHEMES)
         if include_foreign:
-            pool.extend(FOREIGN_GRAPHEMES)
-        
-        # Reduce frequency of specific graphemes by 50%
-        rare_graphemes = ['dz', 'dzs', 'w']
-        
-        # Bias toward trouble graphemes
+            base_pool.extend(FOREIGN_GRAPHEMES)
+
+        # Reduce frequency of specific rare graphemes by ~50% availability
+        for rare in ["dz", "dzs", "w"]:
+            if rare in base_pool and random.random() < 0.5:
+                base_pool.remove(rare)
+
+        # If requested count exceeds available unique graphemes, cap it
+        max_count = min(count, len(base_pool))
+
+        # Trouble bias: ensure at least one trouble grapheme is present when possible
         if trouble_bias:
-            available_trouble = [g for g in TROUBLE_GRAPHEMES if g in pool]
-            if available_trouble:
-                # Add trouble graphemes multiple times to increase selection probability
-                pool.extend(available_trouble * 2)
-        
-        # Remove half of the rare graphemes to reduce their frequency
-        for rare_grapheme in rare_graphemes:
-            if rare_grapheme in pool:
-                # Remove some instances to reduce frequency by ~50%
-                removal_count = pool.count(rare_grapheme) // 2
-                for _ in range(removal_count):
-                    if rare_grapheme in pool:
-                        pool.remove(rare_grapheme)
-        
-        import random
-        return random.sample(pool, min(count, len(pool)))
+            available_trouble = [g for g in base_pool if g in TROUBLE_GRAPHEMES]
+            if available_trouble and max_count > 0:
+                chosen_trouble = random.choice(available_trouble)
+                # Sample remaining without the chosen trouble grapheme
+                remaining_pool = [g for g in base_pool if g != chosen_trouble]
+                remaining_count = max_count - 1
+                sampled_others = random.sample(remaining_pool, remaining_count) if remaining_count > 0 else []
+                result = [chosen_trouble] + sampled_others
+                random.shuffle(result)
+                return result
+
+        # Default: simple unique sampling
+        return random.sample(base_pool, max_count)
