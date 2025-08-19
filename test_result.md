@@ -762,6 +762,10 @@ frontend:
   - task: "NEW Enhanced UI with Soft Colors"
     implemented: true
     working: true
+
+    - agent: "main"
+      message: "Implementáltam két javítást: (1) Radír mód fix a Rajzold játékban két rétegű canvas-szal, hogy a betűsablon érintetlen maradjon; (2) Backend get_random_graphemes teljesen duplikációmentes, és a trouble_bias legalább egy problémás grafémát garantál, ha lehetséges. Kész a célzott újratesztelés."
+
     file: "frontend/src/components/ui/button.jsx"
     stuck_count: 0
     priority: "high"
