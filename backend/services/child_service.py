@@ -9,14 +9,20 @@ from models import (
 import asyncio
 import random
 
-# A 100-darabos matrica katalógus (név + emoji) – sorban kerül kiosztásra
+# 102 egyedi magyar nevű és kategóriájú matrica (név + emoji)
 STICKER_CATALOG: List[Dict[str, str]] = [
-    {"name": f"Matrica #{i+1}", "emoji": emoji}
-    for i, emoji in enumerate(
-        (
-            ["🌟", "🎈", "🚀", "🎨", "🎯", "🎵", "📚", "🧩", "⚽", "🏆"] * 10
-        )
-    )
+    {"name": n, "emoji": e} for (n, e) in [
+        ("Állat Hős - Róka", "🦊"),("Állat Hős - Medve", "🐻"),("Állat Hős - Bagoly", "🦉"),("Állat Hős - Delfin", "🐬"),("Állat Hős - Nyuszi", "🐰"),("Állat Hős - Teknős", "🐢"),("Állat Hős - Páva", "🦚"),("Állat Hős - Oroszlán", "🦁"),("Állat Hős - Panda", "🐼"),("Állat Hős - Mókus", "🐿️"),
+        ("Jármű Mester - Autó", "🚗"),("Jármű Mester - Vonat", "🚆"),("Jármű Mester - Repülő", "✈️"),("Jármű Mester - Hajó", "🛳️"),("Jármű Mester - Tűzoltó", "🚒"),("Jármű Mester - Mentő", "🚑"),("Jármű Mester - Busz", "🚌"),("Jármű Mester - Traktor", "🚜"),("Jármű Mester - Versenyautó", "🏎️"),("Jármű Mester - Helikopter", "🚁"),
+        ("Természet Felfedező - Fa", "🌳"),("Természet Felfedező - Virág", "🌸"),("Természet Felfedező - Hegy", "⛰️"),("Természet Felfedező - Nap", "☀️"),("Természet Felfedező - Hold", "🌙"),("Természet Felfedező - Csillag", "⭐"),("Természet Felfedező - Felhő", "☁️"),("Természet Felfedező - Szivárvány", "🌈"),("Természet Felfedező - Tenger", "🌊"),("Természet Felfedező - Tűz", "🔥"),
+        ("Sport Bajnok - Foci", "⚽"),("Sport Bajnok - Kosár", "🏀"),("Sport Bajnok - Tenisz", "🎾"),("Sport Bajnok - Úszás", "🏊"),("Sport Bajnok - Futás", "🏃"),("Sport Bajnok - Bicikli", "🚴"),("Sport Bajnok - Torna", "🤸"),("Sport Bajnok - Jéghoki", "🏒"),("Sport Bajnok - Sí", "⛷️"),("Sport Bajnok - Judo", "🥋"),
+        ("Űr Utazó - Rakéta", "🚀"),("Űr Utazó - Bolygó", "🪐"),("Űr Utazó - Csillag", "🌟"),("Űr Utazó - Űrhajós", "👩‍🚀"),("Űr Utazó - Távcső", "🔭"),("Űr Utazó - Meteorit", "☄️"),("Űr Utazó - Holdbázis", "🏚️"),("Űr Utazó - Galaxis", "🌌"),("Űr Utazó - Rover", "🤖"),("Űr Utazó - Antenna", "📡"),
+        ("Zenei Csillag - Hegedű", "🎻"),("Zenei Csillag - Zongora", "🎹"),("Zenei Csillag - Gitár", "🎸"),("Zenei Csillag - Dob", "🥁"),("Zenei Csillag - Fuvola", "🎶"),("Zenei Csillag - Mikrofon", "🎤"),("Zenei Csillag - Hangjegy", "🎵"),("Zenei Csillag - Szaxofon", "🎷"),("Zenei Csillag - Trombita", "🎺"),("Zenei Csillag - Dj Pult", "🎧"),
+        ("Iskolai Hős - Könyv", "📚"),("Iskolai Hős - Ceruza", "✏️"),("Iskolai Hős - Radír", "🧽"),("Iskolai Hős - Táska", "🎒"),("Iskolai Hős - Számológép", "🧮"),("Iskolai Hős - Ecset", "🖌️"),("Iskolai Hős - Vonalzó", "📏"),("Iskolai Hős - Földgömb", "🌍"),("Iskolai Hős - Óra", "⏰"),("Iskolai Hős - Diploma", "🎓"),
+        ("Étel Rajongó - Alma", "🍎"),("Étel Rajongó - Banán", "🍌"),("Étel Rajongó - Szőlő", "🍇"),("Étel Rajongó - Eper", "🍓"),("Étel Rajongó - Dinnye", "🍉"),("Étel Rajongó - Sajt", "🧀"),("Étel Rajongó - Pizza", "🍕"),("Étel Rajongó - Szendvics", "🥪"),("Étel Rajongó - Leves", "🍲"),("Étel Rajongó - Süti", "🍪"),
+        ("Formák Mágusa - Kör", "⚪"),("Formák Mágusa - Négyzet", "🟥"),("Formák Mágusa - Háromszög", "🔺"),("Formák Mágusa - Csillag", "⭐"),("Formák Mágusa - Szív", "❤️"),("Formák Mágusa - Gyémánt", "💎"),("Formák Mágusa - Nyíl", "➡️"),("Formák Mágusa - Spirál", "🌀"),("Formák Mágusa - Puzzle", "🧩"),("Formák Mágusa - Csepp", "💧"),
+        ("Állat Hős - Zsiráf", "🦒"),("Állat Hős - Pingvin", "🐧"),("Állat Hős - Bálna", "🐋"),("Állat Hős - Ló", "🐴"),("Állat Hős - Egér", "🐭"),("Állat Hős - Maci", "🐨")
+    ]
 ]
 
 class ChildService:
@@ -89,28 +95,35 @@ class ChildService:
 
         # Calculate new stars (0-3 based on accuracy)
         accuracy = child.progress[grapheme].correct / child.progress[grapheme].attempts
-        new_stars = min(3, int(accuracy * 4))  # 0-75% = 0-2 stars, 76-100% = 3 stars
+        new_stars = min(3, int(accuracy * 4))
         child.progress[grapheme].stars = new_stars
 
-        # Check for sticker rewards (only if enabled)
+        # Sticker awarding logic
         sticker_earned = None
-        if (
-            session_data.is_correct
-            and new_streak in child.settings.streak_thresholds
-            and getattr(child.settings, "stickers_enabled", True) is True
-        ):
-            # Válasszuk a következő matricát a katalógusból, körkörösen
-            index = child.total_stickers % len(STICKER_CATALOG)
-            catalog_item = STICKER_CATALOG[index]
-            sticker = Sticker(
-                child_id=child_id,
-                name=catalog_item["name"],
-                emoji=catalog_item["emoji"],
-                streak_level=new_streak
+        stickers_enabled = getattr(child.settings, "stickers_enabled", True) is True
+        interval = getattr(child.settings, "additional_sticker_interval", 0)
+        should_award_threshold = (
+            session_data.is_correct and (
+                new_streak in child.settings.streak_thresholds or
+                (interval and interval > 0 and new_streak >= 10 and (new_streak - 10) % interval == 0)
             )
-            await self.stickers_collection.insert_one(sticker.dict())
-            sticker_earned = sticker
-            child.total_stickers += 1
+        )
+        if stickers_enabled and should_award_threshold:
+            # Probability reduction after 20 stickers: each extra sticker reduces chance by 1%
+            reduction = max(0, child.total_stickers - 20)
+            probability = max(0.0, 1.0 - (reduction * 0.01))
+            if random.random() < probability:
+                # Pick a random sticker from the full 102 catalog (duplicates allowed)
+                catalog_item = random.choice(STICKER_CATALOG)
+                sticker = Sticker(
+                    child_id=child_id,
+                    name=catalog_item["name"],
+                    emoji=catalog_item["emoji"],
+                    streak_level=new_streak
+                )
+                await self.stickers_collection.insert_one(sticker.dict())
+                sticker_earned = sticker
+                child.total_stickers += 1
 
         # Update child in database
         child.streak = new_streak
@@ -137,13 +150,13 @@ class ChildService:
         # Validate setting key exists
         valid_keys = {
             "letters_per_session", "letter_case", "include_foreign_letters", 
-            "streak_thresholds", "sound_enabled", "high_contrast", "difficulty", "stickers_enabled"
+            "streak_thresholds", "sound_enabled", "high_contrast", "difficulty", "stickers_enabled", "additional_sticker_interval"
         }
         
         if key not in valid_keys:
             raise ValueError(f"Invalid setting key: {key}")
         
-        # Coerce value types coming from query params
+        # Coerce value types coming from query/body
         def to_bool(v):
             if isinstance(v, bool):
                 return v
@@ -153,12 +166,12 @@ class ChildService:
         
         if key in {"include_foreign_letters", "sound_enabled", "high_contrast", "stickers_enabled"}:
             value = to_bool(value)
-        elif key == "letters_per_session":
+        elif key in {"letters_per_session", "additional_sticker_interval"}:
             try:
                 value = int(value)
             except Exception:
                 pass
-        # streak_thresholds and letter_case/difficulty left as-is (frontend already sends correct types)
+        # streak_thresholds and letter_case/difficulty left as-is
         
         update_path = f"settings.{key}"
         result = await self.children_collection.update_one(
@@ -175,7 +188,7 @@ class ChildService:
             {
                 "grapheme": grapheme,
                 "phonetic_word": PHONEME_MAP_HU.get(grapheme, ""),
-                "audio_url": f"/api/audio/{grapheme}"  # Would be actual audio URLs
+                "audio_url": f"/api/audio/{grapheme}"
             }
             for grapheme in HUNGARIAN_GRAPHEMES
         ]
@@ -186,31 +199,21 @@ class ChildService:
         - Optionally biases by ensuring at least one trouble grapheme is included
         - Never returns duplicates within the same response
         """
-        # Base pool (unique values)
         base_pool = list(HUNGARIAN_GRAPHEMES)
         if include_foreign:
             base_pool.extend(FOREIGN_GRAPHEMES)
-
-        # Reduce frequency of specific rare graphemes by ~50% availability
         for rare in ["dz", "dzs", "w"]:
             if rare in base_pool and random.random() < 0.5:
                 base_pool.remove(rare)
-
-        # If requested count exceeds available unique graphemes, cap it
         max_count = min(count, len(base_pool))
-
-        # Trouble bias: ensure at least one trouble grapheme is present when possible
         if trouble_bias:
             available_trouble = [g for g in base_pool if g in TROUBLE_GRAPHEMES]
             if available_trouble and max_count > 0:
                 chosen_trouble = random.choice(available_trouble)
-                # Sample remaining without the chosen trouble grapheme
                 remaining_pool = [g for g in base_pool if g != chosen_trouble]
                 remaining_count = max_count - 1
                 sampled_others = random.sample(remaining_pool, remaining_count) if remaining_count > 0 else []
                 result = [chosen_trouble] + sampled_others
                 random.shuffle(result)
                 return result
-
-        # Default: simple unique sampling
         return random.sample(base_pool, max_count)

@@ -30,7 +30,8 @@ class ChildSettings(BaseModel):
     sound_enabled: bool = Field(default=True)
     high_contrast: bool = Field(default=False)
     difficulty: DifficultyLevel = Field(default=DifficultyLevel.MEDIUM)
-    stickers_enabled: bool = Field(default=True)  # NEW: control sticker rewards/visibility
+    stickers_enabled: bool = Field(default=True)
+    additional_sticker_interval: int = Field(default=5, ge=0, le=50)  # NEW: extra rewards after 10
 
 # Progress for individual graphemes
 class GraphemeProgress(BaseModel):

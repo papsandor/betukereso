@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Settings, Volume2, VolumeX, Eye, Palette, BookOpen, Target, Loader2, Save, RotateCcw, Award } from 'lucide-react';
+import { ArrowLeft, Settings, Volume2, VolumeX, Eye, Palette, BookOpen, Target, Loader2, Save, RotateCcw, Award, Info } from 'lucide-react';
 import ApiService from '../services/ApiService';
 
 const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
@@ -24,7 +24,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     sound_enabled: true,
     high_contrast: false,
     difficulty: 'Medium',
-    stickers_enabled: true
+    stickers_enabled: true,
+    additional_sticker_interval: 5,
   };
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
   };
 
   const handleThresholdChange = (index, value) => {
-    const newThresholds = [...settings.streak_thresholds];
+    const newThresholds = [...(settings.streak_thresholds || [3,5,10])];
     newThresholds[index] = parseInt(value) || 0;
     handleSettingChange('streak_thresholds', newThresholds);
   };
@@ -48,25 +49,19 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     try {
       setSaving(true);
       setError(null);
-      
       await ApiService.updateSetting(child.id, key, value);
-      
-      // Update parent component
       if (onSettingsUpdate) {
         onSettingsUpdate({ ...child, settings: { ...settings, [key]: value } });
       }
-      
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
-      
     } catch (err) {
-      setError(`Failed to save ${key} setting`);
+      setError(`Sikertelen mentés: ${key} beállítás mentése nem sikerült.`);
       console.error('Error saving setting:', err);
-      
-      // Revert the change
+      // Revert
       setSettings(prev => ({
         ...prev,
-        [key]: child.settings?.[key] || defaultSettings[key]
+        [key]: (child.settings?.[key] ?? defaultSettings[key])
       }));
     } finally {
       setSaving(false);
@@ -77,21 +72,17 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     try {
       setSaving(true);
       setError(null);
-      
       // Save all settings one by one
       for (const [key, value] of Object.entries(settings)) {
         await ApiService.updateSetting(child.id, key, value);
       }
-      
       if (onSettingsUpdate) {
         onSettingsUpdate({ ...child, settings });
       }
-      
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-      
     } catch (err) {
-      setError('Failed to save settings');
+      setError('Sikertelen mentés: a beállítások mentése közben hiba történt.');
       console.error('Error saving settings:', err);
     } finally {
       setSaving(false);
@@ -106,7 +97,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading settings...</p>
+        <p className="text-gray-600">Beállítások betöltése...</p>
       </div>
     );
   }
@@ -167,20 +158,20 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             <div className="space-y-2">
               <Label htmlFor="letters-per-session">Párok száma a Párosítsd játékban (egykörös)</Label>
               <div className="text-sm text-gray-500 mb-2">
-                Hány betűt gyakoroljon egy játékban (pl. 9 = 9 különböző betű)
+                Hány pár jelenjen meg egyszerre a párosító játékban
               </div>
               <Select 
-                value={settings.letters_per_session?.toString()} 
+                value={(settings.letters_per_session ?? 9).toString()} 
                 onValueChange={(value) => handleSettingChange('letters_per_session', parseInt(value))}
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="6">6 betű (rövid)</SelectItem>
-                  <SelectItem value="9">9 betű (közepes)</SelectItem>
-                  <SelectItem value="12">12 betű (hosszú)</SelectItem>
-                  <SelectItem value="15">15 betű (extra hosszú)</SelectItem>
+                  <SelectItem value="6">6 pár</SelectItem>
+                  <SelectItem value="9">9 pár</SelectItem>
+                  <SelectItem value="12">12 pár</SelectItem>
+                  <SelectItem value="15">15 pár</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -189,7 +180,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             <div className="space-y-2">
               <Label htmlFor="difficulty">Nehézségi szint</Label>
               <div className="text-sm text-gray-500 mb-2">
-                Hány betű közül kell választani (pl. könnyű = 6 gombból választ)
+                Hány betű közül kell választani a Keresd/Rajzold játékban
               </div>
               <Select 
                 value={settings.difficulty} 
@@ -199,9 +190,9 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Easy">Könnyű (6 gombból választ)</SelectItem>
-                  <SelectItem value="Medium">Közepes (9 gombból választ)</SelectItem>
-                  <SelectItem value="Hard">Nehéz (12 gombból választ)</SelectItem>
+                  <SelectItem value="Easy">Könnyű</SelectItem>
+                  <SelectItem value="Medium">Közepes</SelectItem>
+                  <SelectItem value="Hard">Nehéz</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -235,7 +226,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
               </div>
               <Switch
                 id="foreign-letters"
-                checked={settings.include_foreign_letters}
+                checked={!!settings.include_foreign_letters}
                 onCheckedChange={(checked) => handleSettingChange('include_foreign_letters', checked)}
               />
             </div>
@@ -264,7 +255,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
               </div>
               <Switch
                 id="sound-enabled"
-                checked={settings.sound_enabled}
+                checked={!!settings.sound_enabled}
                 onCheckedChange={(checked) => handleSettingChange('sound_enabled', checked)}
               />
             </div>
@@ -282,7 +273,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
               </div>
               <Switch
                 id="high-contrast"
-                checked={settings.high_contrast}
+                checked={!!settings.high_contrast}
                 onCheckedChange={(checked) => handleSettingChange('high_contrast', checked)}
               />
             </div>
@@ -294,13 +285,13 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 <div>
                   <Label htmlFor="stickers-enabled">Matricák engedélyezése</Label>
                   <div className="text-sm text-gray-500">
-                    Jutalom matricák megjelenítése sorozat teljesítményért
+                    Jutalom matricák megjelenítése és kiosztása
                   </div>
                 </div>
               </div>
               <Switch
                 id="stickers-enabled"
-                checked={settings.stickers_enabled}
+                checked={!!settings.stickers_enabled}
                 onCheckedChange={(checked) => handleSettingChange('stickers_enabled', checked)}
               />
             </div>
@@ -322,8 +313,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 Adja meg, hány helyes válasz után kapjon matricát a gyerek
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {settings.streak_thresholds?.map((threshold, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {(settings.streak_thresholds || [3,5,10]).map((threshold, index) => (
                   <div key={index} className="space-y-2">
                     <Label htmlFor={`threshold-${index}`}>
                       {index === 0 ? 'Első matrica' : index === 1 ? 'Második matrica' : 'Harmadik matrica'}
@@ -344,12 +335,27 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                     </div>
                   </div>
                 ))}
+
+                {/* További matricák */}
+                <div className="space-y-2">
+                  <Label htmlFor="additional-sticker-interval">További matricák</Label>
+                  <Input
+                    id="additional-sticker-interval"
+                    type="number"
+                    min="0"
+                    max="50"
+                    value={settings.additional_sticker_interval ?? 5}
+                    onChange={(e) => handleSettingChange('additional_sticker_interval', parseInt(e.target.value) || 0)}
+                    className="text-center"
+                  />
+                  <div className="text-xs text-gray-500 text-center">10 után ennyi helyesenként ad új matricát (0 = kikapcsolva)</div>
+                </div>
               </div>
-              
-              <div className="bg-blue-50 p-4 rounded-lg mt-4">
+
+              <div className="bg-blue-50 p-4 rounded-lg mt-4 flex gap-2">
+                <Info className="h-4 w-4 mt-0.5 text-blue-700" />
                 <p className="text-sm text-blue-800">
-                  💡 <strong>Tipp:</strong> Alacsonyabb értékek gyakoribb jutalmazást jelentenek, 
-                  ami motiválóbb lehet a kisebb gyerekek számára.
+                  💡 Tipp: A 10. sorozat után a rendszer a megadott gyakorisággal ad további matricákat. 20 matrica után a kiosztás esélye matricánként 1%-kal csökken.
                 </p>
               </div>
             </div>
@@ -366,7 +372,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <div className="font-semibold text-blue-600">{settings.letters_per_session}</div>
-              <div className="text-gray-600">Betű/munkamenet</div>
+              <div className="text-gray-600">Párok / kör</div>
             </div>
             <div>
               <div className="font-semibold text-green-600">{settings.difficulty}</div>
@@ -380,9 +386,9 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             </div>
             <div>
               <div className="font-semibold text-orange-600">
-                {settings.streak_thresholds?.join(', ')}
+                {(settings.streak_thresholds || []).join(', ')} | +{settings.additional_sticker_interval || 0}
               </div>
-              <div className="text-gray-600">Matrica határok</div>
+              <div className="text-gray-600">Matrica jutalmak</div>
             </div>
           </div>
         </CardContent>

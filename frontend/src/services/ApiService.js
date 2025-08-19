@@ -80,9 +80,7 @@ class ApiService {
   // Settings endpoints
   static async updateSetting(childId, key, value) {
     try {
-      const response = await axios.put(`${API}/children/${childId}/settings`, null, {
-        params: { key, value }
-      });
+      const response = await axios.put(`${API}/children/${childId}/settings`, { key, value });
       return response.data;
     } catch (error) {
       console.error('Error updating setting:', error);

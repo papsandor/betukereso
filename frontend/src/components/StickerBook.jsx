@@ -5,7 +5,7 @@ import { Badge } from './ui/badge';
 import { ArrowLeft, Award, Calendar, Sparkles, Loader2, Info } from 'lucide-react';
 import ApiService from '../services/ApiService';
 
-const TOTAL_SLOTS = 100; // Fix 100-as rács
+const TOTAL_SLOTS = 102; // 102-as rács
 
 const StickerBook = ({ child, onBack }) => {
   const [stickers, setStickers] = useState([]);
@@ -21,11 +21,10 @@ const StickerBook = ({ child, onBack }) => {
       setLoading(true);
       setError(null);
       const stickerData = await ApiService.getChildStickers(child.id);
-      // Rendezzük idő szerint növekvőre, hogy a legrégebbi legyen az első slotban
       const ordered = [...stickerData].sort((a, b) => new Date(a.earned_at) - new Date(b.earned_at));
       setStickers(ordered);
     } catch (err) {
-      setError('Failed to load sticker collection');
+      setError('A matrica gyűjtemény betöltése sikertelen');
       console.error('Error loading stickers:', err);
     } finally {
       setLoading(false);
@@ -35,7 +34,7 @@ const StickerBook = ({ child, onBack }) => {
   const renderGrid = () => {
     const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) => i);
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6 gap-4">
         {slots.map((idx) => {
           const sticker = stickers[idx];
           if (sticker) {
@@ -53,7 +52,6 @@ const StickerBook = ({ child, onBack }) => {
               </Card>
             );
           }
-          // Placeholder kérdőjel
           return (
             <Card key={`slot-${idx}`} className="border-2 border-dashed border-gray-300 bg-gray-50">
               <CardContent className="text-center p-6">
@@ -71,7 +69,7 @@ const StickerBook = ({ child, onBack }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading sticker collection...</p>
+        <p className="text-gray-600">Matrica gyűjtemény betöltése...</p>
       </div>
     );
   }
@@ -83,7 +81,7 @@ const StickerBook = ({ child, onBack }) => {
           {error}
         </div>
         <Button onClick={loadStickers} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
-          Try Again
+          Újra
         </Button>
       </div>
     );
@@ -112,10 +110,9 @@ const StickerBook = ({ child, onBack }) => {
           </Badge>
         </div>
         
-        <div></div> {/* Spacer for centering */}
+        <div></div>
       </div>
 
-      {/* Matrica engedélyezés státusz */}
       {!stickersEnabled && (
         <div className="max-w-3xl mx-auto bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 mb-6 flex items-start gap-3">
           <Info className="h-5 w-5 mt-0.5" />
@@ -126,10 +123,8 @@ const StickerBook = ({ child, onBack }) => {
         </div>
       )}
 
-      {/* Rács megjelenítése csak ha engedélyezve */}
       {stickersEnabled ? (
         <>
-          {/* Achievement Summary */}
           {stickers.length > 0 && (
             <Card className="mb-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">
               <CardHeader>
@@ -166,14 +161,13 @@ const StickerBook = ({ child, onBack }) => {
             </Card>
           )}
 
-          {/* 100-as rács: szerzett matricák + kérdőjelek */}
           {renderGrid()}
         </>
       ) : (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">ℹ️</div>
           <h2 className="text-2xl font-bold text-gray-600 mb-4">A matricák ki vannak kapcsolva</h2>
-          <p className="text-gray-500">Kapcsold be a Szülői Beállításokban, hogy megjelenjen a 100-as matricarács.</p>
+          <p className="text-gray-500">Kapcsold be a Szülői Beállításokban, hogy megjelenjen a 102-es matricarács.</p>
         </div>
       )}
     </div>

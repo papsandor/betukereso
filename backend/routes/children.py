@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from models import Child, ChildCreate, ChildUpdate, GameSessionCreate, ProgressUpdateResponse, Sticker
+from models import Child, ChildCreate, ChildUpdate, GameSessionCreate, ProgressUpdateResponse, Sticker, SettingsUpdate
 from services.child_service import ChildService
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
@@ -67,10 +67,10 @@ async def get_child_stickers(child_id: str, service: ChildService = Depends(get_
     return await service.get_child_stickers(child_id)
 
 @router.put("/{child_id}/settings")
-async def update_settings(child_id: str, key: str, value, service: ChildService = Depends(get_child_service)):
-    """Update a specific setting for a child"""
+async def update_settings(child_id: str, update: SettingsUpdate, service: ChildService = Depends(get_child_service)):
+    """Update a specific setting for a child (JSON body: {key, value})"""
     try:
-        child = await service.update_child_settings(child_id, key, value)
+        child = await service.update_child_settings(child_id, update.key, update.value)
         if not child:
             raise HTTPException(status_code=404, detail="Child not found")
         return {"success": True, "settings": child.settings}
