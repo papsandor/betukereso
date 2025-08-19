@@ -710,6 +710,19 @@ frontend:
           agent: "testing"
           comment: "✅ Complete Sticker Reward System working perfectly with popup overlay, confetti animation, beautiful sticker designs, and proper integration with game progress. Sticker earning triggers correctly at streak thresholds."
 
+  - task: "Trace Letter - Radír mód csak játékos rajzát törölje (két rétegű vászon)"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/TraceLetterGame.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Átállítottuk a rajzoló játékot két külön canvas rétegre: háttér (betű sablon) és előtér (játékos rajza). A Radír mód mostantól kizárólag az előtér réteget törli, a sablont nem. Kérjük UI ellenőrzését: törlés közben a betűsablon érintetlen marad, Clear gomb csak az előtér réteget tisztítja."
+
+
   - task: "NEW Sticker Collection Book"
     implemented: true
     working: true
