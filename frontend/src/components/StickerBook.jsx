@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Award, Calendar, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Award, Calendar, Sparkles, Loader2, Info } from 'lucide-react';
 import ApiService from '../services/ApiService';
+
+const TOTAL_SLOTS = 100; // Fix 100-as rács
 
 const StickerBook = ({ child, onBack }) => {
   const [stickers, setStickers] = useState([]);
@@ -19,7 +21,9 @@ const StickerBook = ({ child, onBack }) => {
       setLoading(true);
       setError(null);
       const stickerData = await ApiService.getChildStickers(child.id);
-      setStickers(stickerData);
+      // Rendezzük idő szerint növekvőre, hogy a legrégebbi legyen az első slotban
+      const ordered = [...stickerData].sort((a, b) => new Date(a.earned_at) - new Date(b.earned_at));
+      setStickers(ordered);
     } catch (err) {
       setError('Failed to load sticker collection');
       console.error('Error loading stickers:', err);
@@ -28,20 +32,39 @@ const StickerBook = ({ child, onBack }) => {
     }
   };
 
-  const getStickerDesign = (streakLevel) => {
-    const designs = {
-      3: { emoji: '🌟', color: 'bg-yellow-100 border-yellow-400 text-yellow-800', gradient: 'from-yellow-200 to-yellow-300' },
-      5: { emoji: '📚', color: 'bg-blue-100 border-blue-400 text-blue-800', gradient: 'from-blue-200 to-blue-300' },
-      10: { emoji: '🏆', color: 'bg-purple-100 border-purple-400 text-purple-800', gradient: 'from-purple-200 to-purple-300' },
-      15: { emoji: '👑', color: 'bg-indigo-100 border-indigo-400 text-indigo-800', gradient: 'from-indigo-200 to-indigo-300' },
-      20: { emoji: '🎯', color: 'bg-green-100 border-green-400 text-green-800', gradient: 'from-green-200 to-green-300' }
-    };
-    
-    return designs[streakLevel] || { 
-      emoji: '🎉', 
-      color: 'bg-pink-100 border-pink-400 text-pink-800',
-      gradient: 'from-pink-200 to-pink-300'
-    };
+  const renderGrid = () => {
+    const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) => i);
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4">
+        {slots.map((idx) => {
+          const sticker = stickers[idx];
+          if (sticker) {
+            return (
+              <Card key={`slot-${idx}`} className="bg-white border-2 border-green-300 shadow-sm hover:shadow-md transition-all">
+                <CardContent className="text-center p-4">
+                  <div className="text-5xl mb-2">{sticker.emoji || '🏅'}</div>
+                  <h3 className="text-base font-bold mb-1">{sticker.name}</h3>
+                  <Badge variant="outline" className="mb-2">{sticker.streak_level} sorozat</Badge>
+                  <div className="flex items-center justify-center gap-1 text-xs opacity-75">
+                    <Calendar className="h-3 w-3" />
+                    {new Date(sticker.earned_at).toLocaleDateString('hu-HU')}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          }
+          // Placeholder kérdőjel
+          return (
+            <Card key={`slot-${idx}`} className="border-2 border-dashed border-gray-300 bg-gray-50">
+              <CardContent className="text-center p-6">
+                <div className="text-5xl mb-2 opacity-40">❓</div>
+                <p className="text-sm text-gray-400">Még nincs megszerezve</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    );
   };
 
   if (loading) {
@@ -66,6 +89,8 @@ const StickerBook = ({ child, onBack }) => {
     );
   }
 
+  const stickersEnabled = child?.settings?.stickers_enabled !== false;
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       {/* Header */}
@@ -83,110 +108,72 @@ const StickerBook = ({ child, onBack }) => {
           </h1>
           <Badge variant="outline" className="mt-2 text-lg px-4 py-2">
             <Award className="h-4 w-4 mr-2" />
-            {stickers.length} matrica összesen
+            {stickers.length} / {TOTAL_SLOTS} megszerzett matrica
           </Badge>
         </div>
         
         <div></div> {/* Spacer for centering */}
       </div>
 
-      {/* Achievement Summary - MOVED TO TOP */}
-      {stickers.length > 0 && (
-        <Card className="mb-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">
-          <CardHeader>
-            <CardTitle className="text-center text-purple-800">
-              🏆 Teljesítmény Összesítő
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <div className="text-3xl font-bold text-purple-600">{stickers.length}</div>
-                <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-blue-600">
-                  {Math.max(...stickers.map(s => s.streak_level))}
-                </div>
-                <div className="text-sm text-gray-600">Leghosszabb sorozat</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-green-600">
-                  {stickers.filter(s => s.streak_level >= 10).length}
-                </div>
-                <div className="text-sm text-gray-600">Mester szintű matricák</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-orange-600">
-                  {Math.round((new Date() - new Date(Math.min(...stickers.map(s => new Date(s.earned_at))))) / (1000 * 60 * 60 * 24))}
-                </div>
-                <div className="text-sm text-gray-600">Napja tanul</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Matrica engedélyezés státusz */}
+      {!stickersEnabled && (
+        <div className="max-w-3xl mx-auto bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 mb-6 flex items-start gap-3">
+          <Info className="h-5 w-5 mt-0.5" />
+          <div>
+            <div className="font-semibold">A matricák jelenleg ki vannak kapcsolva.</div>
+            <div className="text-sm">Kapcsold be a Szülői Beállításokban, hogy jutalmakat kapjon a gyerek, és megjelenjenek a matricahelyek.</div>
+          </div>
+        </div>
       )}
 
-      {/* Sticker Collection */}
-      {stickers.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">📚</div>
-          <h2 className="text-2xl font-bold text-gray-600 mb-4">Még nincsenek matricák</h2>
-          <p className="text-gray-500">Játssz, és szerezd meg az első matricádat!</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {stickers.map((sticker, index) => {
-            const design = getStickerDesign(sticker.streak_level);
-            
-            return (
-              <Card 
-                key={sticker.id} 
-                className={`${design.color} border-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 cursor-pointer`}
-              >
-                <CardContent className="text-center p-6">
-                  {/* Sticker Icon */}
-                  <div className="text-6xl mb-3 animate-pulse">
-                    {design.emoji}
+      {/* Rács megjelenítése csak ha engedélyezve */}
+      {stickersEnabled ? (
+        <>
+          {/* Achievement Summary */}
+          {stickers.length > 0 && (
+            <Card className="mb-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">
+              <CardHeader>
+                <CardTitle className="text-center text-purple-800">
+                  🏆 Teljesítmény Összesítő
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-purple-600">{stickers.length}</div>
+                    <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
                   </div>
-                  
-                  {/* Sticker Name */}
-                  <h3 className="text-lg font-bold mb-2">
-                    {sticker.name}
-                  </h3>
-                  
-                  {/* Achievement Badge */}
-                  <Badge variant="outline" className="mb-3 font-semibold">
-                    {sticker.streak_level} sorozat
-                  </Badge>
-                  
-                  {/* Date Earned */}
-                  <div className="flex items-center justify-center gap-1 text-sm opacity-75">
-                    <Calendar className="h-3 w-3" />
-                    {new Date(sticker.earned_at).toLocaleDateString('hu-HU')}
+                  <div>
+                    <div className="text-3xl font-bold text-blue-600">
+                      {stickers.length > 0 ? Math.max(...stickers.map(s => s.streak_level)) : 0}
+                    </div>
+                    <div className="text-sm text-gray-600">Leghosszabb sorozat</div>
                   </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-          
-          {/* Placeholder cards for motivation */}
-          {stickers.length < 12 && [...Array(Math.min(4, 12 - stickers.length))].map((_, index) => (
-            <Card 
-              key={`placeholder-${index}`} 
-              className="border-dashed border-2 border-gray-300 opacity-50"
-            >
-              <CardContent className="text-center p-6">
-                <div className="text-6xl mb-3 opacity-30">❓</div>
-                <h3 className="text-lg font-bold mb-2 text-gray-400">
-                  Következő matrica
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Folytasd a tanulást!
-                </p>
+                  <div>
+                    <div className="text-3xl font-bold text-green-600">
+                      {stickers.filter(s => s.streak_level >= 10).length}
+                    </div>
+                    <div className="text-sm text-gray-600">Mester szintű matricák</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-orange-600">
+                      {stickers.length > 0 ? Math.round((new Date() - new Date(Math.min(...stickers.map(s => new Date(s.earned_at))))) / (1000 * 60 * 60 * 24)) : 0}
+                    </div>
+                    <div className="text-sm text-gray-600">Napja tanul</div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          ))}
+          )}
+
+          {/* 100-as rács: szerzett matricák + kérdőjelek */}
+          {renderGrid()}
+        </>
+      ) : (
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4">ℹ️</div>
+          <h2 className="text-2xl font-bold text-gray-600 mb-4">A matricák ki vannak kapcsolva</h2>
+          <p className="text-gray-500">Kapcsold be a Szülői Beállításokban, hogy megjelenjen a 100-as matricarács.</p>
         </div>
       )}
     </div>

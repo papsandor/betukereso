@@ -9,6 +9,16 @@ from models import (
 import asyncio
 import random
 
+# A 100-darabos matrica katalógus (név + emoji) – sorban kerül kiosztásra
+STICKER_CATALOG: List[Dict[str, str]] = [
+    {"name": f"Matrica #{i+1}", "emoji": emoji}
+    for i, emoji in enumerate(
+        (
+            ["🌟", "🎈", "🚀", "🎨", "🎯", "🎵", "📚", "🧩", "⚽", "🏆"] * 10
+        )
+    )
+]
+
 class ChildService:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
@@ -82,20 +92,20 @@ class ChildService:
         new_stars = min(3, int(accuracy * 4))  # 0-75% = 0-2 stars, 76-100% = 3 stars
         child.progress[grapheme].stars = new_stars
 
-        # Check for sticker rewards
+        # Check for sticker rewards (only if enabled)
         sticker_earned = None
-        if session_data.is_correct and new_streak in child.settings.streak_thresholds:
-            sticker_names = {
-                3: "Első Matrica! 🌟",
-                5: "Szuper Olvasó! 📚", 
-                10: "Betű Mester! 🏆"
-            }
-            sticker_emojis = {3: "🌟", 5: "📚", 10: "🏆"}
-            
+        if (
+            session_data.is_correct
+            and new_streak in child.settings.streak_thresholds
+            and getattr(child.settings, "stickers_enabled", True) is True
+        ):
+            # Válasszuk a következő matricát a katalógusból, körkörösen
+            index = child.total_stickers % len(STICKER_CATALOG)
+            catalog_item = STICKER_CATALOG[index]
             sticker = Sticker(
                 child_id=child_id,
-                name=sticker_names.get(new_streak, f"{new_streak} Sorozat!"),
-                emoji=sticker_emojis.get(new_streak, "🎯"),
+                name=catalog_item["name"],
+                emoji=catalog_item["emoji"],
                 streak_level=new_streak
             )
             await self.stickers_collection.insert_one(sticker.dict())
@@ -127,7 +137,7 @@ class ChildService:
         # Validate setting key exists
         valid_keys = {
             "letters_per_session", "letter_case", "include_foreign_letters", 
-            "streak_thresholds", "sound_enabled", "high_contrast", "difficulty"
+            "streak_thresholds", "sound_enabled", "high_contrast", "difficulty", "stickers_enabled"
         }
         
         if key not in valid_keys:
