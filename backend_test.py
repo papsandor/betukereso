@@ -363,30 +363,35 @@ class BetukeresoAPITester:
         
         # Test different setting keys with various values
         test_settings = [
-            {"key": "stickers_enabled", "value": True, "expected_type": bool},
-            {"key": "stickers_enabled", "value": False, "expected_type": bool},
-            {"key": "additional_sticker_interval", "value": 3, "expected_type": int},
-            {"key": "additional_sticker_interval", "value": 0, "expected_type": int},
-            {"key": "letters_per_session", "value": 6, "expected_type": int},
-            {"key": "letters_per_session", "value": 15, "expected_type": int},
-            {"key": "sound_enabled", "value": True, "expected_type": bool},
-            {"key": "high_contrast", "value": False, "expected_type": bool},
+            {"key": "stickers_enabled", "value": True, "expected_type": "bool"},
+            {"key": "stickers_enabled", "value": False, "expected_type": "bool"},
+            {"key": "additional_sticker_interval", "value": 3, "expected_type": "int"},
+            {"key": "additional_sticker_interval", "value": 0, "expected_type": "int"},
+            {"key": "letters_per_session", "value": 6, "expected_type": "int"},
+            {"key": "letters_per_session", "value": 15, "expected_type": "int"},
+            {"key": "sound_enabled", "value": True, "expected_type": "bool"},
+            {"key": "high_contrast", "value": False, "expected_type": "bool"},
         ]
         
         for setting in test_settings:
-            success, data, status = self.make_request("PUT", f"/children/{self.created_child_id}/settings", setting)
+            # Only send key and value in the request
+            request_data = {"key": setting["key"], "value": setting["value"]}
+            success, data, status = self.make_request("PUT", f"/children/{self.created_child_id}/settings", request_data)
             
             if success and isinstance(data, dict) and data.get("success") is True:
                 settings = data.get("settings", {})
                 actual_value = settings.get(setting["key"])
                 
                 # Check if the value was saved correctly and has the right type
-                if actual_value == setting["value"] and isinstance(actual_value, setting["expected_type"]):
+                expected_type_name = setting["expected_type"]
+                actual_type_name = type(actual_value).__name__
+                
+                if actual_value == setting["value"] and actual_type_name == expected_type_name:
                     self.log_test(f"Settings Save - {setting['key']}={setting['value']}", True, 
-                                f"Setting saved correctly with type {type(actual_value).__name__}")
+                                f"Setting saved correctly with type {actual_type_name}")
                 else:
                     self.log_test(f"Settings Save - {setting['key']}={setting['value']}", False, 
-                                f"Expected {setting['value']} ({setting['expected_type'].__name__}), got {actual_value} ({type(actual_value).__name__})")
+                                f"Expected {setting['value']} ({expected_type_name}), got {actual_value} ({actual_type_name})")
             else:
                 self.log_test(f"Settings Save - {setting['key']}={setting['value']}", False, 
                             f"Failed to save setting (Status: {status})", data)
