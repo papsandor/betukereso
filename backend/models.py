@@ -31,7 +31,7 @@ class ChildSettings(BaseModel):
     high_contrast: bool = Field(default=False)
     difficulty: DifficultyLevel = Field(default=DifficultyLevel.MEDIUM)
     stickers_enabled: bool = Field(default=True)
-    additional_sticker_interval: int = Field(default=5, ge=0, le=50)  # NEW: extra rewards after 10
+    additional_sticker_interval: int = Field(default=5, ge=0, le=50)
 
 # Progress for individual graphemes
 class GraphemeProgress(BaseModel):
@@ -79,6 +79,7 @@ class Sticker(BaseModel):
     name: str
     emoji: str
     streak_level: int
+    description: Optional[str] = None
     earned_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Progress Update Response

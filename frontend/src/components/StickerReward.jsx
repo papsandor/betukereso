@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Award, Star, X, Sparkles } from 'lucide-react';
+import { Award, Star, X, Sparkles, Info } from 'lucide-react';
 
 const StickerReward = ({ sticker, onClose, soundEnabled }) => {
   const [showConfetti, setShowConfetti] = useState(false);
@@ -10,38 +10,18 @@ const StickerReward = ({ sticker, onClose, soundEnabled }) => {
   useEffect(() => {
     if (sticker) {
       setShowConfetti(true);
-      // Auto close after 4 seconds
       const timer = setTimeout(() => {
         onClose();
       }, 4000);
-      
       return () => clearTimeout(timer);
     }
   }, [sticker, onClose]);
 
   if (!sticker) return null;
 
-  const getStickerDesign = (streakLevel) => {
-    const designs = {
-      3: { emoji: '🌟', color: 'bg-yellow-100 border-yellow-400 text-yellow-800', name: 'Arany Csillag' },
-      5: { emoji: '📚', color: 'bg-blue-100 border-blue-400 text-blue-800', name: 'Szuper Olvasó' },
-      10: { emoji: '🏆', color: 'bg-purple-100 border-purple-400 text-purple-800', name: 'Betű Mester' },
-      15: { emoji: '👑', color: 'bg-indigo-100 border-indigo-400 text-indigo-800', name: 'Király Olvasó' },
-      20: { emoji: '🎯', color: 'bg-green-100 border-green-400 text-green-800', name: 'Tökéletes Teljesítmény' }
-    };
-    
-    return designs[streakLevel] || { 
-      emoji: '🎉', 
-      color: 'bg-pink-100 border-pink-400 text-pink-800', 
-      name: `${streakLevel} Sorozat Champion!` 
-    };
-  };
-
-  const stickerDesign = getStickerDesign(sticker.streak_level);
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-in fade-in duration-300">
-      {/* Confetti Animation */}
+      {/* Confetti */}
       {showConfetti && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {[...Array(30)].map((_, i) => (
@@ -63,8 +43,8 @@ const StickerReward = ({ sticker, onClose, soundEnabled }) => {
         </div>
       )}
 
-      <Card className={`w-96 ${stickerDesign.color} border-4 shadow-2xl animate-in zoom-in duration-500`}>
-        <CardContent className="text-center p-8">
+      <Card className={`w-96 bg-yellow-100 border-yellow-400 text-yellow-900 border-4 shadow-2xl animate-in zoom-in duration-500`}>
+        <CardContent className="text-center p-8 relative">
           {/* Close button */}
           <Button
             onClick={onClose}
@@ -75,7 +55,7 @@ const StickerReward = ({ sticker, onClose, soundEnabled }) => {
 
           {/* Sticker Icon */}
           <div className="text-8xl mb-4 animate-bounce">
-            {stickerDesign.emoji}
+            {sticker.emoji || '🏅'}
           </div>
 
           {/* Title */}
@@ -84,12 +64,19 @@ const StickerReward = ({ sticker, onClose, soundEnabled }) => {
           </h2>
 
           {/* Sticker Name */}
-          <div className="mb-4">
+          <div className="mb-2">
             <Badge variant="outline" className="text-lg px-4 py-2 font-bold">
               <Award className="h-5 w-5 mr-2" />
-              {stickerDesign.name}
+              {sticker.name}
             </Badge>
           </div>
+
+          {/* Short description if available */}
+          {sticker.description && (
+            <div className="text-sm text-yellow-900/80 mb-3">
+              {sticker.description}
+            </div>
+          )}
 
           {/* Achievement Details */}
           <div className="space-y-2 mb-6">
@@ -99,9 +86,6 @@ const StickerReward = ({ sticker, onClose, soundEnabled }) => {
                 {sticker.streak_level} helyes válasz sorban!
               </span>
             </div>
-            <p className="text-sm opacity-80">
-              Fantasztikus munka! Így tovább!
-            </p>
           </div>
 
           {/* Sparkles decoration */}

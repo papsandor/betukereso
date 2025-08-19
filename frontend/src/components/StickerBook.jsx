@@ -43,6 +43,9 @@ const StickerBook = ({ child, onBack }) => {
                 <CardContent className="text-center p-4">
                   <div className="text-5xl mb-2">{sticker.emoji || '🏅'}</div>
                   <h3 className="text-base font-bold mb-1">{sticker.name}</h3>
+                  {sticker.description && (
+                    <p className="text-xs text-gray-600 mb-2">{sticker.description}</p>
+                  )}
                   <Badge variant="outline" className="mb-2">{sticker.streak_level} sorozat</Badge>
                   <div className="flex items-center justify-center gap-1 text-xs opacity-75">
                     <Calendar className="h-3 w-3" />

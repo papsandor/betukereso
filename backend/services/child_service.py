@@ -9,20 +9,120 @@ from models import (
 import asyncio
 import random
 
-# 102 egyedi magyar nevű és kategóriájú matrica (név + emoji)
+# 102 egyedi magyar nevű és rövid leírású matrica katalógus
 STICKER_CATALOG: List[Dict[str, str]] = [
-    {"name": n, "emoji": e} for (n, e) in [
-        ("Állat Hős - Róka", "🦊"),("Állat Hős - Medve", "🐻"),("Állat Hős - Bagoly", "🦉"),("Állat Hős - Delfin", "🐬"),("Állat Hős - Nyuszi", "🐰"),("Állat Hős - Teknős", "🐢"),("Állat Hős - Páva", "🦚"),("Állat Hős - Oroszlán", "🦁"),("Állat Hős - Panda", "🐼"),("Állat Hős - Mókus", "🐿️"),
-        ("Jármű Mester - Autó", "🚗"),("Jármű Mester - Vonat", "🚆"),("Jármű Mester - Repülő", "✈️"),("Jármű Mester - Hajó", "🛳️"),("Jármű Mester - Tűzoltó", "🚒"),("Jármű Mester - Mentő", "🚑"),("Jármű Mester - Busz", "🚌"),("Jármű Mester - Traktor", "🚜"),("Jármű Mester - Versenyautó", "🏎️"),("Jármű Mester - Helikopter", "🚁"),
-        ("Természet Felfedező - Fa", "🌳"),("Természet Felfedező - Virág", "🌸"),("Természet Felfedező - Hegy", "⛰️"),("Természet Felfedező - Nap", "☀️"),("Természet Felfedező - Hold", "🌙"),("Természet Felfedező - Csillag", "⭐"),("Természet Felfedező - Felhő", "☁️"),("Természet Felfedező - Szivárvány", "🌈"),("Természet Felfedező - Tenger", "🌊"),("Természet Felfedező - Tűz", "🔥"),
-        ("Sport Bajnok - Foci", "⚽"),("Sport Bajnok - Kosár", "🏀"),("Sport Bajnok - Tenisz", "🎾"),("Sport Bajnok - Úszás", "🏊"),("Sport Bajnok - Futás", "🏃"),("Sport Bajnok - Bicikli", "🚴"),("Sport Bajnok - Torna", "🤸"),("Sport Bajnok - Jéghoki", "🏒"),("Sport Bajnok - Sí", "⛷️"),("Sport Bajnok - Judo", "🥋"),
-        ("Űr Utazó - Rakéta", "🚀"),("Űr Utazó - Bolygó", "🪐"),("Űr Utazó - Csillag", "🌟"),("Űr Utazó - Űrhajós", "👩‍🚀"),("Űr Utazó - Távcső", "🔭"),("Űr Utazó - Meteorit", "☄️"),("Űr Utazó - Holdbázis", "🏚️"),("Űr Utazó - Galaxis", "🌌"),("Űr Utazó - Rover", "🤖"),("Űr Utazó - Antenna", "📡"),
-        ("Zenei Csillag - Hegedű", "🎻"),("Zenei Csillag - Zongora", "🎹"),("Zenei Csillag - Gitár", "🎸"),("Zenei Csillag - Dob", "🥁"),("Zenei Csillag - Fuvola", "🎶"),("Zenei Csillag - Mikrofon", "🎤"),("Zenei Csillag - Hangjegy", "🎵"),("Zenei Csillag - Szaxofon", "🎷"),("Zenei Csillag - Trombita", "🎺"),("Zenei Csillag - Dj Pult", "🎧"),
-        ("Iskolai Hős - Könyv", "📚"),("Iskolai Hős - Ceruza", "✏️"),("Iskolai Hős - Radír", "🧽"),("Iskolai Hős - Táska", "🎒"),("Iskolai Hős - Számológép", "🧮"),("Iskolai Hős - Ecset", "🖌️"),("Iskolai Hős - Vonalzó", "📏"),("Iskolai Hős - Földgömb", "🌍"),("Iskolai Hős - Óra", "⏰"),("Iskolai Hős - Diploma", "🎓"),
-        ("Étel Rajongó - Alma", "🍎"),("Étel Rajongó - Banán", "🍌"),("Étel Rajongó - Szőlő", "🍇"),("Étel Rajongó - Eper", "🍓"),("Étel Rajongó - Dinnye", "🍉"),("Étel Rajongó - Sajt", "🧀"),("Étel Rajongó - Pizza", "🍕"),("Étel Rajongó - Szendvics", "🥪"),("Étel Rajongó - Leves", "🍲"),("Étel Rajongó - Süti", "🍪"),
-        ("Formák Mágusa - Kör", "⚪"),("Formák Mágusa - Négyzet", "🟥"),("Formák Mágusa - Háromszög", "🔺"),("Formák Mágusa - Csillag", "⭐"),("Formák Mágusa - Szív", "❤️"),("Formák Mágusa - Gyémánt", "💎"),("Formák Mágusa - Nyíl", "➡️"),("Formák Mágusa - Spirál", "🌀"),("Formák Mágusa - Puzzle", "🧩"),("Formák Mágusa - Csepp", "💧"),
-        ("Állat Hős - Zsiráf", "🦒"),("Állat Hős - Pingvin", "🐧"),("Állat Hős - Bálna", "🐋"),("Állat Hős - Ló", "🐴"),("Állat Hős - Egér", "🐭"),("Állat Hős - Maci", "🐨")
-    ]
+    # Állat Hős (10)
+    {"name": "Állat Hős - Róka", "emoji": "🦊", "desc": "Ravasz és fürge tanuló!"},
+    {"name": "Állat Hős - Medve", "emoji": "🐻", "desc": "Erős kitartás, szuper haladás."},
+    {"name": "Állat Hős - Bagoly", "emoji": "🦉", "desc": "Bölcsen gyakorolsz minden nap."},
+    {"name": "Állat Hős - Delfin", "emoji": "🐬", "desc": "Gyors és okos, ügyes felismerés!"},
+    {"name": "Állat Hős - Nyuszi", "emoji": "🐰", "desc": "Ugrásszerű fejlődés!"},
+    {"name": "Állat Hős - Teknős", "emoji": "🐢", "desc": "Lassan, de biztosan haladsz."},
+    {"name": "Állat Hős - Páva", "emoji": "🦚", "desc": "Színes és ragyogó teljesítmény."},
+    {"name": "Állat Hős - Oroszlán", "emoji": "🦁", "desc": "Bátor és hangos siker!"},
+    {"name": "Állat Hős - Panda", "emoji": "🐼", "desc": "Kedves és kitartó próbálkozás."},
+    {"name": "Állat Hős - Mókus", "emoji": "🐿️", "desc": "Gyorsan gyűjtöd a tudást."},
+    # Jármű Mester (10)
+    {"name": "Jármű Mester - Autó", "emoji": "🚗", "desc": "Száguld a fejlődés!"},
+    {"name": "Jármű Mester - Vonat", "emoji": "🚆", "desc": "Folyamatos haladás, mint a vonat."},
+    {"name": "Jármű Mester - Repülő", "emoji": "✈️", "desc": "Magasba emelkedő eredmények."},
+    {"name": "Jármű Mester - Hajó", "emoji": "🛳️", "desc": "Stabil haladás a betűk tengerén."},
+    {"name": "Jármű Mester - Tűzoltó", "emoji": "🚒", "desc": "Tűzoltó gyorsaságával javítasz!"},
+    {"name": "Jármű Mester - Mentő", "emoji": "🚑", "desc": "Segítsz magadnak jobban olvasni."},
+    {"name": "Jármű Mester - Busz", "emoji": "🚌", "desc": "Sok állomáson át vezet az utad."},
+    {"name": "Jármű Mester - Traktor", "emoji": "🚜", "desc": "Erősen húzod a tanulást előre."},
+    {"name": "Jármű Mester - Versenyautó", "emoji": "🏎️", "desc": "Villámgyors felismerések!"},
+    {"name": "Jármű Mester - Helikopter", "emoji": "🚁", "desc": "Felülről is átlátod a betűket."},
+    # Természet Felfedező (10)
+    {"name": "Természet Felfedező - Fa", "emoji": "🌳", "desc": "Erős alap, egyre magasabb ágak."},
+    {"name": "Természet Felfedező - Virág", "emoji": "🌸", "desc": "Kinyílik a tudásod."},
+    {"name": "Természet Felfedező - Hegy", "emoji": "⛰️", "desc": "Csúcsra törő teljesítmény."},
+    {"name": "Természet Felfedező - Nap", "emoji": "☀️", "desc": "Ragyogó eredmények nap mint nap."},
+    {"name": "Természet Felfedező - Hold", "emoji": "🌙", "desc": "Csendes, de biztos haladás."},
+    {"name": "Természet Felfedező - Csillag", "emoji": "⭐", "desc": "Csillogó sikerek sorozata."},
+    {"name": "Természet Felfedező - Felhő", "emoji": "☁️", "desc": "Könnyed tanulás, mint a pelyhek."},
+    {"name": "Természet Felfedező - Szivárvány", "emoji": "🌈", "desc": "Színes és örömteli fejlődés."},
+    {"name": "Természet Felfedező - Tenger", "emoji": "🌊", "desc": "Mély és gazdag tudás hullámzik."},
+    {"name": "Természet Felfedező - Tűz", "emoji": "🔥", "desc": "Lángoló lelkesedés a betűkért."},
+    # Sport Bajnok (10)
+    {"name": "Sport Bajnok - Foci", "emoji": "⚽", "desc": "Gólt rúgsz minden jó válasszal!"},
+    {"name": "Sport Bajnok - Kosár", "emoji": "🏀", "desc": "Hárompontos teljesítmény!"},
+    {"name": "Sport Bajnok - Tenisz", "emoji": "🎾", "desc": "Ütős felismerések!"},
+    {"name": "Sport Bajnok - Úszás", "emoji": "🏊", "desc": "Úszol a sikerben!"},
+    {"name": "Sport Bajnok - Futás", "emoji": "🏃", "desc": "Gyors tempóban haladsz előre."},
+    {"name": "Sport Bajnok - Bicikli", "emoji": "🚴", "desc": "Kiegyensúlyozott fejlődés."},
+    {"name": "Sport Bajnok - Torna", "emoji": "🤸", "desc": "Hajlékony gondolkodás, remek forma."},
+    {"name": "Sport Bajnok - Jéghoki", "emoji": "🏒", "desc": "Jéghideg koncentráció, pontos találat."},
+    {"name": "Sport Bajnok - Sí", "emoji": "⛷️", "desc": "Lejtmenetben is stabil a tudás."},
+    {"name": "Sport Bajnok - Judo", "emoji": "🥋", "desc": "Fegyelem és erő a tanulásban."},
+    # Űr Utazó (10)
+    {"name": "Űr Utazó - Rakéta", "emoji": "🚀", "desc": "Kilősz a tudás világába!"},
+    {"name": "Űr Utazó - Bolygó", "emoji": "🪐", "desc": "Új betűvilágokat fedezel fel."},
+    {"name": "Űr Utazó - Csillag", "emoji": "🌟", "desc": "Ragyogó teljesítmény az égen."},
+    {"name": "Űr Utazó - Űrhajós", "emoji": "👩‍🚀", "desc": "Bátor felfedező vagy!"},
+    {"name": "Űr Utazó - Távcső", "emoji": "🔭", "desc": "Éles szemmel figyelsz a részletekre."},
+    {"name": "Űr Utazó - Meteorit", "emoji": "☄️", "desc": "Száguldó siker!"},
+    {"name": "Űr Utazó - Holdbázis", "emoji": "🏚️", "desc": "Biztos bázis a tudásnak."},
+    {"name": "Űr Utazó - Galaxis", "emoji": "🌌", "desc": "Táguló tudáshorizont."},
+    {"name": "Űr Utazó - Rover", "emoji": "🤖", "desc": "Kitartóan kutatsz és tanulsz."},
+    {"name": "Űr Utazó - Antenna", "emoji": "📡", "desc": "Jeleket fogsz – megérted a betűket."},
+    # Zenei Csillag (10)
+    {"name": "Zenei Csillag - Hegedű", "emoji": "🎻", "desc": "Harmonikus fejlődés."},
+    {"name": "Zenei Csillag - Zongora", "emoji": "🎹", "desc": "Pontosan játszol a betűkkel."},
+    {"name": "Zenei Csillag - Gitár", "emoji": "🎸", "desc": "Pengeted a tudás húrjait."},
+    {"name": "Zenei Csillag - Dob", "emoji": "🥁", "desc": "Jó ritmusban haladsz."},
+    {"name": "Zenei Csillag - Fuvola", "emoji": "🎶", "desc": "Könnyed és tiszta megoldások."},
+    {"name": "Zenei Csillag - Mikrofon", "emoji": "🎤", "desc": "Hangosan kimondod a helyeset."},
+    {"name": "Zenei Csillag - Hangjegy", "emoji": "🎵", "desc": "Minden válaszod zenél."},
+    {"name": "Zenei Csillag - Szaxofon", "emoji": "🎷", "desc": "Egyedi hangon szól a tudás."},
+    {"name": "Zenei Csillag - Trombita", "emoji": "🎺", "desc": "Fényes sikerfanfár!"},
+    {"name": "Zenei Csillag - Dj Pult", "emoji": "🎧", "desc": "Te kevered a tudást profin."},
+    # Iskolai Hős (10)
+    {"name": "Iskolai Hős - Könyv", "emoji": "📚", "desc": "A könyvek barátja vagy."},
+    {"name": "Iskolai Hős - Ceruza", "emoji": "✏️", "desc": "Pontosan írsz és rajzolsz."},
+    {"name": "Iskolai Hős - Radír", "emoji": "🧽", "desc": "Hibátlanítás mestere."},
+    {"name": "Iskolai Hős - Táska", "emoji": "🎒", "desc": "Mindig felkészült vagy."},
+    {"name": "Iskolai Hős - Számológép", "emoji": "🧮", "desc": "Okos számolás, okos észrevétel."},
+    {"name": "Iskolai Hős - Ecset", "emoji": "🖌️", "desc": "Szép és pontos vonalak."},
+    {"name": "Iskolai Hős - Vonalzó", "emoji": "📏", "desc": "Rendszerető és precíz."},
+    {"name": "Iskolai Hős - Földgömb", "emoji": "🌍", "desc": "Világlátó tudás."},
+    {"name": "Iskolai Hős - Óra", "emoji": "⏰", "desc": "Jó tempóban tanulsz."},
+    {"name": "Iskolai Hős - Diploma", "emoji": "🎓", "desc": "Igazi kis tudós!"},
+    # Étel Rajongó (10)
+    {"name": "Étel Rajongó - Alma", "emoji": "🍎", "desc": "Egészséges tudással tele."},
+    {"name": "Étel Rajongó - Banán", "emoji": "🍌", "desc": "Energiával teli tanulás."},
+    {"name": "Étel Rajongó - Szőlő", "emoji": "🍇", "desc": "Apró lépésekkel nagy eredmény."},
+    {"name": "Étel Rajongó - Eper", "emoji": "🍓", "desc": "Édes siker!"},
+    {"name": "Étel Rajongó - Dinnye", "emoji": "🍉", "desc": "Nagy falatokban haladsz."},
+    {"name": "Étel Rajongó - Sajt", "emoji": "🧀", "desc": "Okos mint egy kisegér."},
+    {"name": "Étel Rajongó - Pizza", "emoji": "🍕", "desc": "Minden szeletben tudás van."},
+    {"name": "Étel Rajongó - Szendvics", "emoji": "🥪", "desc": "Rétegenként épül a tudás."},
+    {"name": "Étel Rajongó - Leves", "emoji": "🍲", "desc": "Melengető, tápláló fejlődés."},
+    {"name": "Étel Rajongó - Süti", "emoji": "🍪", "desc": "Jutalomfalat a jó válaszokért."},
+    # Formák Mágusa (10)
+    {"name": "Formák Mágusa - Kör", "emoji": "⚪", "desc": "Kerek a tudásod!"},
+    {"name": "Formák Mágusa - Négyzet", "emoji": "🟥", "desc": "Stabil és szilárd alapok."},
+    {"name": "Formák Mágusa - Háromszög", "emoji": "🔺", "desc": "Háromszor is meggondolt válaszok."},
+    {"name": "Formák Mágusa - Csillag", "emoji": "⭐", "desc": "Csillagfényű felismerések."},
+    {"name": "Formák Mágusa - Szív", "emoji": "❤️", "desc": "Szívvel-lélekkel tanulsz."},
+    {"name": "Formák Mágusa - Gyémánt", "emoji": "💎", "desc": "Csiszolt tudás, fényes siker."},
+    {"name": "Formák Mágusa - Nyíl", "emoji": "➡️", "desc": "Mindig jó irányba haladsz."},
+    {"name": "Formák Mágusa - Spirál", "emoji": "🌀", "desc": "Felfelé ívelő tudás."},
+    {"name": "Formák Mágusa - Puzzle", "emoji": "🧩", "desc": "Összeáll a nagy kép."},
+    {"name": "Formák Mágusa - Csepp", "emoji": "💧", "desc": "Apránként töltődik a tudás."},
+    # Extra Állatok (12) – hogy meglegyen a 102
+    {"name": "Állat Hős - Zsiráf", "emoji": "🦒", "desc": "Magasra nyújtózó célok."},
+    {"name": "Állat Hős - Pingvin", "emoji": "🐧", "desc": "Elegáns és kitartó lépések."},
+    {"name": "Állat Hős - Bálna", "emoji": "🐋", "desc": "Óriási tudás hullámzik benned."},
+    {"name": "Állat Hős - Ló", "emoji": "🐴", "desc": "Fürge és erős haladás."},
+    {"name": "Állat Hős - Egér", "emoji": "🐭", "desc": "Apró, de bátor lépések."},
+    {"name": "Állat Hős - Koala", "emoji": "🐨", "desc": "Nyugodt, biztos fejlődés."},
+    {"name": "Állat Hős - Farkas", "emoji": "🐺", "desc": "Okos csapatjátékos a betűk között."},
+    {"name": "Állat Hős - Víziló", "emoji": "🦛", "desc": "Súlyos érvekkel nyersz."},
+    {"name": "Állat Hős - Pulyka", "emoji": "🦃", "desc": "Hangosan ünnepled a sikert."},
+    {"name": "Állat Hős - Polip", "emoji": "🐙", "desc": "Sokoldalúan kezeled a feladatokat."},
+    {"name": "Állat Hős - Kenguru", "emoji": "🦘", "desc": "Nagy ugrások a tudásban."},
+    {"name": "Állat Hős - Csiga", "emoji": "🐌", "desc": "Lassú, de kitartó haladás."},
 ]
 
 class ChildService:
@@ -113,12 +213,13 @@ class ChildService:
             reduction = max(0, child.total_stickers - 20)
             probability = max(0.0, 1.0 - (reduction * 0.01))
             if random.random() < probability:
-                # Pick a random sticker from the full 102 catalog (duplicates allowed)
+                # Random sticker from full 102 catalog (duplicates allowed)
                 catalog_item = random.choice(STICKER_CATALOG)
                 sticker = Sticker(
                     child_id=child_id,
                     name=catalog_item["name"],
                     emoji=catalog_item["emoji"],
+                    description=catalog_item.get("desc"),
                     streak_level=new_streak
                 )
                 await self.stickers_collection.insert_one(sticker.dict())
