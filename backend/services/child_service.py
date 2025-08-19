@@ -143,6 +143,23 @@ class ChildService:
         if key not in valid_keys:
             raise ValueError(f"Invalid setting key: {key}")
         
+        # Coerce value types coming from query params
+        def to_bool(v):
+            if isinstance(v, bool):
+                return v
+            if v is None:
+                return False
+            return str(v).lower() in {"true", "1", "yes", "on"}
+        
+        if key in {"include_foreign_letters", "sound_enabled", "high_contrast", "stickers_enabled"}:
+            value = to_bool(value)
+        elif key == "letters_per_session":
+            try:
+                value = int(value)
+            except Exception:
+                pass
+        # streak_thresholds and letter_case/difficulty left as-is (frontend already sends correct types)
+        
         update_path = f"settings.{key}"
         result = await self.children_collection.update_one(
             {"id": child_id},
