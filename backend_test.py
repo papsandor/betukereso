@@ -242,6 +242,87 @@ class BetukeresoAPITester:
         else:
             self.log_test("Delete Child", False, f"Failed to delete child (Status: {status})", data)
 
+    def test_random_graphemes_uniqueness_and_trouble_bias(self):
+        """Test random graphemes endpoint for uniqueness, trouble bias, and rare letter reduction"""
+        print("\n🎯 TESTING RANDOM GRAPHEMES - UNIQUENESS & TROUBLE BIAS")
+        print("=" * 60)
+        
+        # Test configurations
+        test_configs = [
+            {"count": 6, "include_foreign": False, "trouble_bias": True},
+            {"count": 9, "include_foreign": False, "trouble_bias": True},
+            {"count": 12, "include_foreign": False, "trouble_bias": True},
+            {"count": 15, "include_foreign": False, "trouble_bias": True},
+            {"count": 20, "include_foreign": False, "trouble_bias": True},
+            {"count": 6, "include_foreign": True, "trouble_bias": True},
+            {"count": 9, "include_foreign": True, "trouble_bias": True},
+            {"count": 12, "include_foreign": True, "trouble_bias": True},
+            {"count": 15, "include_foreign": True, "trouble_bias": True},
+            {"count": 20, "include_foreign": True, "trouble_bias": True},
+        ]
+        
+        trouble_graphemes = ["b", "d", "p", "q"]
+        rare_graphemes = ["dz", "dzs", "w"]
+        
+        for config in test_configs:
+            print(f"\n📊 Testing config: count={config['count']}, include_foreign={config['include_foreign']}, trouble_bias={config['trouble_bias']}")
+            
+            # Test uniqueness and trouble bias with multiple calls
+            unique_failures = 0
+            trouble_bias_failures = 0
+            rare_presence_count = {rare: 0 for rare in rare_graphemes}
+            total_calls = 10
+            
+            for call_num in range(total_calls):
+                success, data, status = self.make_request("GET", "/game/graphemes/random", params=config)
+                
+                if not success or not isinstance(data, dict) or "graphemes" not in data:
+                    self.log_test(f"Random Graphemes Config {config}", False, f"Failed API call {call_num+1}", data)
+                    continue
+                
+                graphemes = data["graphemes"]
+                
+                # Test 1: Uniqueness - no duplicates
+                if len(graphemes) != len(set(graphemes)):
+                    unique_failures += 1
+                    print(f"   ❌ Call {call_num+1}: Found duplicates in {graphemes}")
+                
+                # Test 2: Trouble bias - at least one trouble grapheme when trouble_bias=True
+                if config["trouble_bias"]:
+                    has_trouble = any(g in trouble_graphemes for g in graphemes)
+                    if not has_trouble:
+                        trouble_bias_failures += 1
+                        print(f"   ⚠️  Call {call_num+1}: No trouble graphemes found in {graphemes}")
+                
+                # Test 3: Track rare grapheme presence for statistical analysis
+                for rare in rare_graphemes:
+                    if rare in graphemes:
+                        rare_presence_count[rare] += 1
+            
+            # Report results for this configuration
+            config_name = f"count={config['count']}, foreign={config['include_foreign']}"
+            
+            # Uniqueness test result
+            if unique_failures == 0:
+                self.log_test(f"Uniqueness Test ({config_name})", True, f"All {total_calls} calls returned unique graphemes")
+            else:
+                self.log_test(f"Uniqueness Test ({config_name})", False, f"{unique_failures}/{total_calls} calls had duplicates")
+            
+            # Trouble bias test result
+            if config["trouble_bias"]:
+                if trouble_bias_failures <= 2:  # Allow up to 2 failures out of 10 (20% tolerance)
+                    self.log_test(f"Trouble Bias Test ({config_name})", True, f"Trouble graphemes present in {total_calls-trouble_bias_failures}/{total_calls} calls")
+                else:
+                    self.log_test(f"Trouble Bias Test ({config_name})", False, f"Trouble graphemes missing in {trouble_bias_failures}/{total_calls} calls")
+            
+            # Rare grapheme reduction test (should be ~50% presence)
+            for rare in rare_graphemes:
+                presence_rate = rare_presence_count[rare] / total_calls * 100
+                if 30 <= presence_rate <= 70:  # 30-70% range is acceptable for ~50% target
+                    self.log_test(f"Rare Grapheme '{rare}' Reduction ({config_name})", True, f"Present in {presence_rate:.1f}% of calls (target ~50%)")
+                else:
+                    self.log_test(f"Rare Grapheme '{rare}' Reduction ({config_name})", False, f"Present in {presence_rate:.1f}% of calls (expected ~50%)")
+
     def test_error_handling(self):
         """Test error handling for non-existent resources"""
         # Test getting non-existent child
@@ -253,14 +334,23 @@ class BetukeresoAPITester:
         else:
             self.log_test("Error Handling (404)", False, f"Expected 404, got {status}", data)
 
-        # Test invalid grapheme count
+        # Test invalid grapheme count - backward compatibility
         params = {"count": 25}  # Should be max 20
         success, data, status = self.make_request("GET", "/game/graphemes/random", params=params)
         
         if not success and status == 400:
-            self.log_test("Error Handling (400)", True, "Correctly validates grapheme count parameter")
+            self.log_test("Error Handling (400) - Count > 20", True, "Correctly validates grapheme count parameter")
         else:
-            self.log_test("Error Handling (400)", False, f"Expected 400 for invalid count, got {status}", data)
+            self.log_test("Error Handling (400) - Count > 20", False, f"Expected 400 for invalid count, got {status}", data)
+        
+        # Test invalid grapheme count - count < 1
+        params = {"count": 0}  # Should be min 1
+        success, data, status = self.make_request("GET", "/game/graphemes/random", params=params)
+        
+        if not success and status == 400:
+            self.log_test("Error Handling (400) - Count < 1", True, "Correctly validates minimum grapheme count")
+        else:
+            self.log_test("Error Handling (400) - Count < 1", False, f"Expected 400 for count < 1, got {status}", data)
 
     def run_all_tests(self):
         """Run all tests in sequence"""
