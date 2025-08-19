@@ -289,6 +289,19 @@ backend:
           comment: "🎯 FRONTEND SCORING BUG FIX VERIFICATION COMPLETED! Comprehensive testing of the Find Letter game confirms both critical bugs are completely resolved: ✅ INCORRECT ANSWER BUG FIXED - Wrong letter clicks do NOT increment score (verified: wrong answer kept score at 0). ✅ OFF-BY-ONE SCORING BUG FIXED - Score increments are 100% accurate (verified: 3 correct answers = 3 points exactly). ✅ STREAK RESET LOGIC WORKING - Wrong answers immediately reset streak to 0. ✅ STICKER SYSTEM INTEGRATED - Rewards earned at correct thresholds (observed sticker earned at 3 streak). ✅ HUNGARIAN GRAPHEMES WORKING - Multi-character graphemes like 'LY', 'SZ', 'Ny' display and function correctly. ✅ ALL 4 GAME MODES AVAILABLE - Keresd, Rajzold, Párosítsd, Mutasd & Jelöld all accessible. Frontend scoring logic is now completely reliable and bug-free across all game modes."
 
 frontend:
+
+  - task: "Game Endpoints - Random Graphemes Uniqueness & Trouble Bias"
+    implemented: true
+    working: "NA"
+    file: "backend/services/child_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Frissítve a get_random_graphemes logika: mostantól garantáltan DUPLIKÁCIÓMENTES egy válaszlistán belül, a 'trouble_bias' bekapcsolva legalább 1 problémás graféma bekerül (ha elérhető), és a ritka betűk (dz, dzs, w) ~50%-ban ritkítva vannak. Kérjük az endpoint alapos újratesztelését: hossz, duplikáció, trouble bias jelenlét."
+
   - task: "Child Management System - Loading State"
     implemented: true
     working: true
