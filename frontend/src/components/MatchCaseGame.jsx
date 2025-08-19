@@ -14,23 +14,19 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
   const [gameOver, setGameOver] = useState(false);
-  const [round, setRound] = useState(0); // Start from 0 instead of 1
-  const [maxRounds] = useState(child.settings?.letters_per_session || 9);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [attempts, setAttempts] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const pairsToMatch = child.settings?.letters_per_session || 9; // Egyetlen kör, ennyi pár
 
   useEffect(() => {
-    generateNewRound();
+    initGame();
   }, []);
 
-  const generateNewRound = async () => {
-    if (round >= maxRounds) { // Changed from > to >=
-      setGameOver(true);
-      return;
-    }
-
+  const initGame = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -39,53 +35,44 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       setMatchedPairs(new Set());
       setFeedback(null);
       setAttempts(0);
-      
-      // Get the number of pairs to match based on letters per session setting
-      const pairsToMatch = child.settings?.letters_per_session || 9;
-      
+      setScore(0);
+      setGameOver(false);
+
       const randomLetters = await ApiService.getRandomGraphemes(
-        pairsToMatch, // Use letters_per_session as number of pairs
+        pairsToMatch, // Egy körben ennyi pár jelenik meg
         child.settings?.include_foreign_letters || false,
         true
       );
-      
-      // Create pairs with shuffled positions
+
+      // Párkészítés nagy/kis betűkkel
       const uppercaseLetters = randomLetters.map(letter => ({
         id: `upper-${letter}`,
         letter,
         case: 'uppercase',
         display: getGraphemeCase(letter, 'uppercase')
       }));
-      
+
       const lowercaseLetters = randomLetters.map(letter => ({
         id: `lower-${letter}`,
         letter,
-        case: 'lowercase', 
+        case: 'lowercase',
         display: getGraphemeCase(letter, 'lowercase')
       }));
-      
-      // Shuffle arrays
+
       const shuffledUpper = [...uppercaseLetters].sort(() => Math.random() - 0.5);
       const shuffledLower = [...lowercaseLetters].sort(() => Math.random() - 0.5);
-      
-      setPairs({
-        uppercase: shuffledUpper,
-        lowercase: shuffledLower
-      });
-      
+
+      setPairs({ uppercase: shuffledUpper, lowercase: shuffledLower });
     } catch (err) {
       setError('Failed to load game data');
-      console.error('Error generating round:', err);
+      console.error('Error initializing matching game:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const [isProcessing, setIsProcessing] = useState(false);
-
   const handleLetterClick = (letter) => {
-    if (matchedPairs.has(letter.letter) || isProcessing) return;
-    
+    if (matchedPairs.has(letter.letter) || isProcessing || gameOver) return;
     if (letter.case === 'uppercase') {
       setSelectedUppercase(selectedUppercase?.letter === letter.letter ? null : letter);
     } else {
@@ -96,7 +83,6 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   useEffect(() => {
     if (selectedUppercase && selectedLowercase && !isProcessing) {
       setIsProcessing(true);
-      // Add small delay to prevent rapid clicking issues
       setTimeout(() => {
         checkMatch();
       }, 200);
@@ -105,11 +91,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
   const checkMatch = async () => {
     const isMatch = selectedUppercase.letter === selectedLowercase.letter;
-    setAttempts(attempts + 1);
+    const nextAttempts = attempts + 1;
+    setAttempts(nextAttempts);
 
     if (isMatch) {
       try {
-        // Only record progress for correct matches
         const progressData = await ApiService.recordProgress(child.id, {
           game_mode: 'match-case',
           grapheme: selectedUppercase.letter,
@@ -134,28 +120,19 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           soundService.playSuccessSound();
         }
 
-        // Check if all pairs are matched
-        if (matchedPairs.size + 1 === pairs.uppercase?.length) {
-          setTimeout(() => {
-            if (round + 1 >= maxRounds) {
-              setGameOver(true);
-            } else {
-              setRound(round + 1);
-              generateNewRound();
-            }
-          }, 2000);
+        // Ha minden pár megvan: játék vége (egyetlen kör)
+        if ((matchedPairs.size + 1) === (pairs.uppercase?.length || 0)) {
+          setTimeout(() => setGameOver(true), 800);
         }
-        
       } catch (err) {
         console.error('Error recording progress:', err);
         setError('Failed to save progress');
       }
     } else {
-      // Handle incorrect match - reset streak locally and give feedback
+      // Hibás párosítás – streak lokálisan nulláz, feedback
       setStreak(0);
       setFeedback({ type: 'error', message: 'Próbáld újra!' });
-      
-      // Record the incorrect attempt for analytics (optional)
+
       try {
         await ApiService.recordProgress(child.id, {
           game_mode: 'match-case',
@@ -165,38 +142,32 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       } catch (err) {
         console.error('Error recording incorrect attempt:', err);
       }
-      
+
       if (soundEnabled) {
         soundService.playErrorSound();
       }
-      
-      // After several incorrect attempts, move to next round
-      if (attempts >= 3) {
-        setTimeout(() => {
-          if (round + 1 >= maxRounds) {
-            setGameOver(true);
-          } else {
-            setRound(round + 1);
-            generateNewRound();
-          }
-        }, 1500);
+
+      // Nincs több kör! Ha sok a hiba, csak keverjük újra, hogy segítsünk
+      if (nextAttempts >= 3 && pairs.uppercase && pairs.lowercase) {
+        setPairs({
+          uppercase: [...pairs.uppercase].sort(() => Math.random() - 0.5),
+          lowercase: [...pairs.lowercase].sort(() => Math.random() - 0.5)
+        });
+        setAttempts(0); // próbálkozás számláló nullázása
       }
     }
-    
-    // Clear selections after feedback
+
+    // Kijelölések törlése kis késleltetéssel
     setTimeout(() => {
       setSelectedUppercase(null);
       setSelectedLowercase(null);
       setIsProcessing(false);
-      if (!isMatch) {
-        setFeedback(null);
-      }
-    }, 1500);
+      if (!isMatch) setFeedback(null);
+    }, 1200);
   };
 
   const shuffleLetters = () => {
-    if (!pairs.uppercase || !pairs.lowercase) return;
-    
+    if (!pairs.uppercase || !pairs.lowercase || gameOver) return;
     setPairs({
       uppercase: [...pairs.uppercase].sort(() => Math.random() - 0.5),
       lowercase: [...pairs.lowercase].sort(() => Math.random() - 0.5)
@@ -219,7 +190,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           {error}
         </div>
         <div className="flex gap-4 justify-center">
-          <Button onClick={generateNewRound} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+          <Button onClick={initGame} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
             Try Again
           </Button>
           <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
@@ -231,18 +202,19 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   }
 
   if (gameOver) {
+    const totalPairs = pairs.uppercase?.length || pairsToMatch;
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Card className="p-8">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎯</div>
-            <h2 className="text-3xl font-bold text-gray-800">Párosítás befejezve!</h2>
+            <h2 className="text-3xl font-bold text-gray-800">Párosítás kész!</h2>
             <div className="space-y-2">
-              <p className="text-xl">Pontszám: {score}/{maxRounds * 6}</p>
+              <p className="text-xl">Pontszám: {score}/{totalPairs}</p>
               <p className="text-lg text-gray-600">Szuper párosítás, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={() => window.location.reload()} className="bg-green-500 hover:bg-green-600 text-white border-0">
+              <Button onClick={initGame} className="bg-green-500 hover:bg-green-600 text-white border-0">
                 Újra párosítás
               </Button>
               <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
@@ -265,7 +237,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         </Button>
         
         <div className="flex items-center gap-4">
-          <Badge variant="secondary">{round + 1}/{maxRounds} kör</Badge>
+          {/* Körök kijelzése eltávolítva – csak pont és sorozat marad */}
           <Badge variant="outline" className="flex items-center gap-1">
             <Star className="h-3 w-3" />
             {score} pont
