@@ -818,7 +818,9 @@ class BetukeresoAPITester:
 
 if __name__ == "__main__":
     tester = BetukeresoAPITester()
-    passed, failed = tester.run_all_tests()
+    
+    # Run targeted tests as requested
+    passed, failed = tester.run_targeted_tests()
     
     # Exit with appropriate code
     exit(0 if failed == 0 else 1)
