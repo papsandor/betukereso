@@ -212,17 +212,17 @@ class ChildService:
 
             # Base: uniform random across full catalog until 20 egyedi matrica
             if unique_count <= 20 or len(uncollected) == 0 or len(collected) == 0:
+                # 20 egyedi matricáig: teljesen véletlenszerű választás a teljes katalógusból
                 chosen = random.choice(STICKER_CATALOG)
             else:
-                # After 20 unique: reduce probability of getting a NEW sticker by 1% per unique beyond 20
-                base_new_prob = len(uncollected) / float(len(STICKER_CATALOG))
-                reduction = (unique_count - 20) * 0.01
-                effective_new_prob = max(0.0, base_new_prob - reduction)
-
-                if random.random() < effective_new_prob:
+                # 20 egyedi után: az ÚJ matrica esélye minden új egyedi után 1%-kal csökken
+                # Példa: 21 egyedi → 99% esély ÚJ, 30 egyedi → 90% esély ÚJ, stb.
+                new_prob = max(0.0, 1.0 - (unique_count - 20) * 0.01)
+                if random.random() < new_prob and len(uncollected) > 0:
                     chosen = random.choice(uncollected)
                 else:
-                    chosen = random.choice(collected)
+                    # Ha nincs begyűjtött, essünk vissza az újakra (ritka eset)
+                    chosen = random.choice(collected if len(collected) > 0 else (uncollected if len(uncollected) > 0 else STICKER_CATALOG))
 
             sticker = Sticker(
                 child_id=child_id,
