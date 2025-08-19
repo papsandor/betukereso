@@ -165,7 +165,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
           <CardContent className="space-y-6">
             {/* Letters Per Session */}
             <div className="space-y-2">
-              <Label htmlFor="letters-per-session">Betűk száma munkamenetenként</Label>
+              <Label htmlFor="letters-per-session">Párok száma a Párosítsd játékban (egykörös)</Label>
               <div className="text-sm text-gray-500 mb-2">
                 Hány betűt gyakoroljon egy játékban (pl. 9 = 9 különböző betű)
               </div>
