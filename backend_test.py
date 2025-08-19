@@ -367,6 +367,7 @@ class BetukeresoAPITester:
         self.test_get_graphemes()
         self.test_get_random_graphemes()
         self.test_get_random_graphemes_with_params()
+        self.test_random_graphemes_uniqueness_and_trouble_bias()  # NEW comprehensive test
         self.test_get_grapheme_audio()
         self.test_record_progress()
         self.test_get_child_stickers()
