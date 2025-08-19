@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Set
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import (
@@ -110,7 +110,7 @@ STICKER_CATALOG: List[Dict[str, str]] = [
     {"name": "Formák Mágusa - Spirál", "emoji": "🌀", "desc": "Felfelé ívelő tudás."},
     {"name": "Formák Mágusa - Puzzle", "emoji": "🧩", "desc": "Összeáll a nagy kép."},
     {"name": "Formák Mágusa - Csepp", "emoji": "💧", "desc": "Apránként töltődik a tudás."},
-    # Extra Állatok (12) – hogy meglegyen a 102
+    # Extra Állatok (12)
     {"name": "Állat Hős - Zsiráf", "emoji": "🦒", "desc": "Magasra nyújtózó célok."},
     {"name": "Állat Hős - Pingvin", "emoji": "🐧", "desc": "Elegáns és kitartó lépések."},
     {"name": "Állat Hős - Bálna", "emoji": "🐋", "desc": "Óriási tudás hullámzik benned."},
@@ -135,7 +135,6 @@ class ChildService:
     async def create_child(self, child_data: ChildCreate) -> Child:
         child = Child(name=child_data.name)
         child_dict = child.dict()
-        
         await self.children_collection.insert_one(child_dict)
         return child
 
@@ -149,7 +148,6 @@ class ChildService:
         return Child(**child_data) if child_data else None
 
     async def delete_child(self, child_id: str) -> bool:
-        # Delete child and all associated data
         tasks = [
             self.children_collection.delete_one({"id": child_id}),
             self.sessions_collection.delete_many({"child_id": child_id}),
@@ -161,44 +159,36 @@ class ChildService:
     async def update_child(self, child_id: str, update_data: ChildUpdate) -> Optional[Child]:
         update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
         update_dict["updated_at"] = datetime.utcnow()
-        
         result = await self.children_collection.update_one(
             {"id": child_id}, 
             {"$set": update_dict}
         )
-        
         if result.modified_count > 0:
             return await self.get_child(child_id)
         return None
 
     async def record_game_session(self, child_id: str, session_data: GameSessionCreate) -> ProgressUpdateResponse:
-        # Create game session record
         session = GameSession(child_id=child_id, **session_data.dict())
         await self.sessions_collection.insert_one(session.dict())
 
-        # Get current child data
         child = await self.get_child(child_id)
         if not child:
             raise ValueError("Child not found")
 
-        # Update streak
         new_streak = child.streak + 1 if session_data.is_correct else 0
-        
-        # Update grapheme progress
+
         grapheme = session_data.grapheme
         if grapheme not in child.progress:
             child.progress[grapheme] = GraphemeProgress()
-        
         child.progress[grapheme].attempts += 1
         if session_data.is_correct:
             child.progress[grapheme].correct += 1
 
-        # Calculate new stars (0-3 based on accuracy)
         accuracy = child.progress[grapheme].correct / child.progress[grapheme].attempts
         new_stars = min(3, int(accuracy * 4))
         child.progress[grapheme].stars = new_stars
 
-        # Sticker awarding logic
+        # Sticker awarding logic (ALWAYS tries to award at thresholds; controls NEW vs DUPLICATE probability)
         sticker_earned = None
         stickers_enabled = getattr(child.settings, "stickers_enabled", True) is True
         interval = getattr(child.settings, "additional_sticker_interval", 0)
@@ -209,27 +199,45 @@ class ChildService:
             )
         )
         if stickers_enabled and should_award_threshold:
-            # Probability reduction after 20 stickers: each extra sticker reduces chance by 1%
-            reduction = max(0, child.total_stickers - 20)
-            probability = max(0.0, 1.0 - (reduction * 0.01))
-            if random.random() < probability:
-                # Random sticker from full 102 catalog (duplicates allowed)
-                catalog_item = random.choice(STICKER_CATALOG)
-                sticker = Sticker(
-                    child_id=child_id,
-                    name=catalog_item["name"],
-                    emoji=catalog_item["emoji"],
-                    description=catalog_item.get("desc"),
-                    streak_level=new_streak
-                )
-                await self.stickers_collection.insert_one(sticker.dict())
-                sticker_earned = sticker
-                child.total_stickers += 1
+            # Determine unique stickers the child has (by name)
+            unique_names: Set[str] = set()
+            async for s in self.stickers_collection.find({"child_id": child_id}, {"name": 1}):
+                if s.get("name"):
+                    unique_names.add(s["name"])
+            unique_count = len(unique_names)
 
-        # Update child in database
+            # Build uncollected and collected pools by name
+            uncollected = [item for item in STICKER_CATALOG if item["name"] not in unique_names]
+            collected = [item for item in STICKER_CATALOG if item["name"] in unique_names]
+
+            # Base: uniform random across full catalog until 20 egyedi matrica
+            if unique_count <= 20 or len(uncollected) == 0 or len(collected) == 0:
+                chosen = random.choice(STICKER_CATALOG)
+            else:
+                # After 20 unique: reduce probability of getting a NEW sticker by 1% per unique beyond 20
+                base_new_prob = len(uncollected) / float(len(STICKER_CATALOG))
+                reduction = (unique_count - 20) * 0.01
+                effective_new_prob = max(0.0, base_new_prob - reduction)
+
+                if random.random() < effective_new_prob:
+                    chosen = random.choice(uncollected)
+                else:
+                    chosen = random.choice(collected)
+
+            sticker = Sticker(
+                child_id=child_id,
+                name=chosen["name"],
+                emoji=chosen["emoji"],
+                description=chosen.get("desc"),
+                streak_level=new_streak
+            )
+            await self.stickers_collection.insert_one(sticker.dict())
+            sticker_earned = sticker
+            child.total_stickers += 1
+
         child.streak = new_streak
         child.updated_at = datetime.utcnow()
-        
+
         await self.children_collection.update_one(
             {"id": child_id},
             {"$set": child.dict()}
@@ -248,16 +256,13 @@ class ChildService:
         return [Sticker(**sticker) for sticker in stickers_data]
 
     async def update_child_settings(self, child_id: str, key: str, value) -> Optional[Child]:
-        # Validate setting key exists
         valid_keys = {
             "letters_per_session", "letter_case", "include_foreign_letters", 
             "streak_thresholds", "sound_enabled", "high_contrast", "difficulty", "stickers_enabled", "additional_sticker_interval"
         }
-        
         if key not in valid_keys:
             raise ValueError(f"Invalid setting key: {key}")
-        
-        # Coerce value types coming from query/body
+
         def to_bool(v):
             if isinstance(v, bool):
                 return v
@@ -272,14 +277,12 @@ class ChildService:
                 value = int(value)
             except Exception:
                 pass
-        # streak_thresholds and letter_case/difficulty left as-is
-        
+
         update_path = f"settings.{key}"
         result = await self.children_collection.update_one(
             {"id": child_id},
             {"$set": {update_path: value, "updated_at": datetime.utcnow()}}
         )
-        
         if result.modified_count > 0:
             return await self.get_child(child_id)
         return None
@@ -295,11 +298,6 @@ class ChildService:
         ]
 
     def get_random_graphemes(self, count: int, include_foreign: bool = False, trouble_bias: bool = True) -> List[str]:
-        """Return a list of UNIQUE graphemes for a game round.
-        - Keeps rare graphemes (dz, dzs, w) at ~50% availability per request
-        - Optionally biases by ensuring at least one trouble grapheme is included
-        - Never returns duplicates within the same response
-        """
         base_pool = list(HUNGARIAN_GRAPHEMES)
         if include_foreign:
             base_pool.extend(FOREIGN_GRAPHEMES)
