@@ -45,7 +45,6 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       const targetLetter = randomLetters[0];
       setCurrentTarget(targetLetter);
       
-      // Generate the display letter case ONCE and store it
       const caseType = child.settings?.letter_case === 'mixed' ? 
         ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
         child.settings?.letter_case || 'lowercase';
@@ -53,12 +52,10 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       const displayLetter = getGraphemeCase(targetLetter, caseType);
       setCurrentDisplayLetter(displayLetter);
       
-      // Generate grid letters with consistent casing for the target
       const gridLettersFormatted = randomLetters.map(letter => {
         if (letter === targetLetter) {
-          return displayLetter; // Use the same case as the target display
+          return displayLetter;
         } else {
-          // Other letters can use mixed casing for difficulty
           const randomCase = child.settings?.letter_case === 'mixed' ? 
             ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
             child.settings?.letter_case || 'lowercase';
@@ -77,14 +74,13 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   };
 
   const handleLetterClick = async (clickedLetter) => {
-    const isCorrect = clickedLetter === currentDisplayLetter; // Compare with the display letter
+    const isCorrect = clickedLetter === currentDisplayLetter;
     
     if (isCorrect) {
       try {
-        // Only record progress for CORRECT answers
         const progressData = await ApiService.recordProgress(child.id, {
           game_mode: 'find-letter',
-          grapheme: currentTarget, // Still use the base grapheme for progress tracking
+          grapheme: currentTarget,
           is_correct: true
         });
 
@@ -119,11 +115,9 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setError('Failed to save progress');
       }
     } else {
-      // Handle incorrect answer - reset streak and move to next round
       setStreak(0);
       setFeedback({ type: 'error', message: 'Próbáld újra!' });
       
-      // Record the incorrect attempt for analytics (optional)
       try {
         await ApiService.recordProgress(child.id, {
           game_mode: 'find-letter',
@@ -138,7 +132,6 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         soundService.playErrorSound();
       }
       
-      // Move to next round after error sound and feedback
       setTimeout(() => {
         if (round + 1 >= maxRounds) {
           setGameOver(true);
@@ -150,18 +143,11 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
   };
 
-  const getDisplayLetter = (letter) => {
-    const caseType = child.settings?.letter_case === 'mixed' ? 
-      ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
-      child.settings?.letter_case || 'mixed';
-    return getGraphemeCase(letter, caseType);
-  };
-
   if (loading) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading game...</p>
+        <p className="text-foreground/60">Loading game...</p>
       </div>
     );
   }
@@ -169,14 +155,14 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   if (error) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-4">
           {error}
         </div>
         <div className="flex gap-4 justify-center">
-          <Button onClick={generateNewRound} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+          <Button onClick={generateNewRound} className="bg-primary text-primary-foreground hover:bg-primary/90 border-0">
             Try Again
           </Button>
-          <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+          <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
             Back to Menu
           </Button>
         </div>
@@ -190,16 +176,16 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <Card className="p-8">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold text-gray-800">Játék vége!</h2>
+            <h2 className="text-3xl font-bold text-foreground">Játék vége!</h2>
             <div className="space-y-2">
               <p className="text-xl">Pontszám: {score}/{maxRounds}</p>
-              <p className="text-lg text-gray-600">Nagyszerű munka, {child.name}!</p>
+              <p className="text-lg text-foreground/60">Nagyszerű munka, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={generateNewRound} className="bg-green-500 hover:bg-green-600 text-white border-0">
+              <Button onClick={generateNewRound} className="bg-success text-success-foreground hover:bg-success/90 border-0">
                 Újra játék
               </Button>
-              <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+              <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
                 Vissza a főmenübe
               </Button>
             </div>
@@ -213,7 +199,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
@@ -232,16 +218,16 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Game Instruction */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Keresd meg:</h2>
-        <div className="bg-blue-100 rounded-2xl p-8 mb-6 inline-block">
-          <div className="text-8xl font-bold text-blue-800">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Keresd meg:</h2>
+        <div className="bg-primary/10 rounded-2xl p-8 mb-6 inline-block">
+          <div className="text-8xl font-bold text-primary">
             {currentDisplayLetter}
           </div>
         </div>
         {soundEnabled && (
           <Button 
             size="sm" 
-            className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
+            className="flex items-center gap-2 mx-auto bg-primary/10 hover:bg-primary/20 text-primary border-0"
             onClick={() => soundService.playLetterSound(currentTarget)}
           >
             <Volume2 className="h-4 w-4" />
@@ -259,12 +245,12 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         {gridLetters.map((letter, index) => (
           <Button
             key={index}
-            className={`h-24 text-4xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
+            className={`h-24 text-4xl font-bold transition-all duration-200 hover-float border-2 ${
               feedback?.type === 'error' && letter !== currentDisplayLetter ? 
-                'opacity-50 bg-gray-50 border-gray-200 text-gray-500' : 
+                'opacity-50 bg-muted border-border text-foreground/50' : 
                 letter === currentDisplayLetter && feedback?.type === 'success' ? 
-                  'bg-green-100 text-green-800 border-green-400' : 
-                  'bg-white hover:bg-blue-50 border-blue-200 hover:border-blue-400 text-gray-800'
+                  'bg-success/10 text-success border-success/50' : 
+                  'bg-card hover:bg-accent border-border hover:border-primary text-foreground'
             }`}
             onClick={() => handleLetterClick(letter)}
             disabled={feedback !== null}
@@ -277,7 +263,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       {/* Feedback */}
       {feedback && (
         <div className={`text-center p-4 rounded-lg mb-4 ${
-          feedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          feedback.type === 'success' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
         }`}>
           <p className="text-xl font-semibold">{feedback.message}</p>
         </div>

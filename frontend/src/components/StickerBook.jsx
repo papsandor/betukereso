@@ -39,15 +39,15 @@ const StickerBook = ({ child, onBack }) => {
           const sticker = stickers[idx];
           if (sticker) {
             return (
-              <Card key={`slot-${idx}`} className="bg-white border-2 border-green-300 shadow-sm hover:shadow-md transition-all">
+              <Card key={`slot-${idx}`} className="bg-card border-2 border-success/40 shadow-sm card-float">
                 <CardContent className="text-center p-4">
                   <div className="text-5xl mb-2">{sticker.emoji || '🏅'}</div>
-                  <h3 className="text-base font-bold mb-1">{sticker.name}</h3>
+                  <h3 className="text-base font-bold mb-1 text-foreground">{sticker.name}</h3>
                   {sticker.description && (
-                    <p className="text-xs text-gray-600 mb-2">{sticker.description}</p>
+                    <p className="text-xs text-foreground/60 mb-2">{sticker.description}</p>
                   )}
                   <Badge variant="outline" className="mb-2">{sticker.streak_level} sorozat</Badge>
-                  <div className="flex items-center justify-center gap-1 text-xs opacity-75">
+                  <div className="flex items-center justify-center gap-1 text-xs opacity-75 text-foreground/60">
                     <Calendar className="h-3 w-3" />
                     {new Date(sticker.earned_at).toLocaleDateString('hu-HU')}
                   </div>
@@ -56,10 +56,10 @@ const StickerBook = ({ child, onBack }) => {
             );
           }
           return (
-            <Card key={`slot-${idx}`} className="border-2 border-dashed border-gray-300 bg-gray-50">
+            <Card key={`slot-${idx}`} className="border-2 border-dashed border-border bg-muted">
               <CardContent className="text-center p-6">
                 <div className="text-5xl mb-2 opacity-40">❓</div>
-                <p className="text-sm text-gray-400">Még nincs megszerezve</p>
+                <p className="text-sm text-foreground/50">Még nincs megszerezve</p>
               </CardContent>
             </Card>
           );
@@ -72,7 +72,7 @@ const StickerBook = ({ child, onBack }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Matrica gyűjtemény betöltése...</p>
+        <p className="text-foreground/60">Matrica gyűjtemény betöltése...</p>
       </div>
     );
   }
@@ -80,10 +80,10 @@ const StickerBook = ({ child, onBack }) => {
   if (error) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-4">
           {error}
         </div>
-        <Button onClick={loadStickers} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+        <Button onClick={loadStickers} className="bg-primary text-primary-foreground hover:bg-primary/90 border-0">
           Újra
         </Button>
       </div>
@@ -96,16 +96,16 @@ const StickerBook = ({ child, onBack }) => {
     <div className="w-full max-w-6xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
         
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-yellow-500" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2 font-brand-heading">
+            <Sparkles className="h-8 w-8 text-warning" />
             {child.name} Matrica Gyűjteménye
-            <Sparkles className="h-8 w-8 text-yellow-500" />
+            <Sparkles className="h-8 w-8 text-warning" />
           </h1>
           <Badge variant="outline" className="mt-2 text-lg px-4 py-2">
             <Award className="h-4 w-4 mr-2" />
@@ -117,7 +117,7 @@ const StickerBook = ({ child, onBack }) => {
       </div>
 
       {!stickersEnabled && (
-        <div className="max-w-3xl mx-auto bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 mb-6 flex items-start gap-3">
+        <div className="max-w-3xl mx-auto bg-secondary/20 text-secondary-foreground p-4 rounded-lg border border-secondary/30 mb-6 flex items-start gap-3">
           <Info className="h-5 w-5 mt-0.5" />
           <div>
             <div className="font-semibold">A matricák jelenleg ki vannak kapcsolva.</div>
@@ -129,35 +129,35 @@ const StickerBook = ({ child, onBack }) => {
       {stickersEnabled ? (
         <>
           {stickers.length > 0 && (
-            <Card className="mb-8 bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200">
+            <Card className="mb-8 bg-gradient-to-r from-secondary/30 to-primary/10 border-secondary/30">
               <CardHeader>
-                <CardTitle className="text-center text-purple-800">
+                <CardTitle className="text-center text-foreground font-brand-heading">
                   🏆 Teljesítmény Összesítő
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div>
-                    <div className="text-3xl font-bold text-purple-600">{stickers.length}</div>
-                    <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
+                    <div className="text-3xl font-bold text-primary">{stickers.length}</div>
+                    <div className="text-sm text-foreground/60">Összegyűjtött matricák</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-blue-600">
+                    <div className="text-3xl font-bold text-primary">
                       {stickers.length > 0 ? Math.max(...stickers.map(s => s.streak_level)) : 0}
                     </div>
-                    <div className="text-sm text-gray-600">Leghosszabb sorozat</div>
+                    <div className="text-sm text-foreground/60">Leghosszabb sorozat</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-green-600">
+                    <div className="text-3xl font-bold text-success">
                       {stickers.filter(s => s.streak_level >= 10).length}
                     </div>
-                    <div className="text-sm text-gray-600">Mester szintű matricák</div>
+                    <div className="text-sm text-foreground/60">Mester szintű matricák</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-orange-600">
+                    <div className="text-3xl font-bold text-warning">
                       {stickers.length > 0 ? Math.round((new Date() - new Date(Math.min(...stickers.map(s => new Date(s.earned_at))))) / (1000 * 60 * 60 * 24)) : 0}
                     </div>
-                    <div className="text-sm text-gray-600">Napja tanul</div>
+                    <div className="text-sm text-foreground/60">Napja tanul</div>
                   </div>
                 </div>
               </CardContent>
@@ -169,8 +169,8 @@ const StickerBook = ({ child, onBack }) => {
       ) : (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">ℹ️</div>
-          <h2 className="text-2xl font-bold text-gray-600 mb-4">A matricák ki vannak kapcsolva</h2>
-          <p className="text-gray-500">Kapcsold be a Szülői Beállításokban, hogy megjelenjen a 102-es matricarács.</p>
+          <h2 className="text-2xl font-bold text-foreground/80 mb-4">A matricák ki vannak kapcsolva</h2>
+          <p className="text-foreground/60">Kapcsold be a Szülői Beállításokban, hogy megjelenjen a 102-es matricarács.</p>
         </div>
       )}
     </div>

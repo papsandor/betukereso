@@ -58,7 +58,6 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     } catch (err) {
       setError(`Sikertelen mentés: ${key} beállítás mentése nem sikerült.`);
       console.error('Error saving setting:', err);
-      // Revert
       setSettings(prev => ({
         ...prev,
         [key]: (child.settings?.[key] ?? defaultSettings[key])
@@ -72,7 +71,6 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     try {
       setSaving(true);
       setError(null);
-      // Save all settings one by one
       for (const [key, value] of Object.entries(settings)) {
         await ApiService.updateSetting(child.id, key, value);
       }
@@ -97,7 +95,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Beállítások betöltése...</p>
+        <p className="text-foreground/60">Beállítások betöltése...</p>
       </div>
     );
   }
@@ -106,25 +104,25 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
         
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            <Settings className="h-8 w-8 text-blue-600" />
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-2 font-brand-heading">
+            <Settings className="h-8 w-8 text-primary" />
             Szülői Beállítások
           </h1>
-          <p className="text-gray-600 mt-2">{child.name} tanulási preferenciái</p>
+          <p className="text-foreground/60 mt-2">{child.name} tanulási preferenciái</p>
         </div>
         
         <div className="flex gap-2">
-          <Button onClick={resetToDefaults} variant="outline" className="bg-orange-100 hover:bg-orange-200 text-orange-700 border-orange-300">
+          <Button onClick={resetToDefaults} variant="outline" className="bg-warning/20 hover:bg-warning/30 text-warning border-warning/40">
             <RotateCcw className="h-4 w-4 mr-2" />
             Alaphelyzet
           </Button>
-          <Button onClick={saveAllSettings} disabled={saving} className="bg-green-500 hover:bg-green-600 text-white border-0">
+          <Button onClick={saveAllSettings} disabled={saving} className="bg-success hover:bg-success/90 text-success-foreground border-0">
             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
             Mentés
           </Button>
@@ -133,13 +131,13 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="bg-green-100 text-green-800 p-4 rounded-lg mb-6 text-center">
+        <div className="bg-success/10 text-success p-4 rounded-lg mb-6 text-center">
           ✅ Beállítások sikeresen elmentve!
         </div>
       )}
       
       {error && (
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-6 text-center">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-6 text-center">
           ❌ {error}
         </div>
       )}
@@ -148,8 +146,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
         {/* Game Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-600" />
+            <CardTitle className="flex items-center gap-2 font-brand-heading">
+              <BookOpen className="h-5 w-5 text-primary" />
               Játék Beállítások
             </CardTitle>
           </CardHeader>
@@ -157,7 +155,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             {/* Letters Per Session */}
             <div className="space-y-2">
               <Label htmlFor="letters-per-session">Párok száma a Párosítsd játékban (egykörös)</Label>
-              <div className="text-sm text-gray-500 mb-2">
+              <div className="text-sm text-foreground/60 mb-2">
                 Hány pár jelenjen meg egyszerre a párosító játékban
               </div>
               <Select 
@@ -179,7 +177,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             {/* Difficulty Level */}
             <div className="space-y-2">
               <Label htmlFor="difficulty">Nehézségi szint</Label>
-              <div className="text-sm text-gray-500 mb-2">
+              <div className="text-sm text-foreground/60 mb-2">
                 Hány betű közül kell választani a Keresd/Rajzold játékban
               </div>
               <Select 
@@ -220,7 +218,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="foreign-letters">Idegen betűk (q, w, x, y)</Label>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-foreground/60">
                   Tartalmazza az angol ábécé betűit is
                 </div>
               </div>
@@ -236,8 +234,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
         {/* Audio & Visual Settings */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Palette className="h-5 w-5 text-purple-600" />
+            <CardTitle className="flex items-center gap-2 font-brand-heading">
+              <Palette className="h-5 w-5 text-secondary-foreground" />
               Audio és Vizuális
             </CardTitle>
           </CardHeader>
@@ -248,7 +246,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 {settings.sound_enabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 <div>
                   <Label htmlFor="sound-enabled">Hangok engedélyezése</Label>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-foreground/60">
                     Hang effektek és betű kiejtés
                   </div>
                 </div>
@@ -266,7 +264,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 <Eye className="h-4 w-4" />
                 <div>
                   <Label htmlFor="high-contrast">Nagy kontraszt mód</Label>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-foreground/60">
                     Jobb láthatóság érdekében
                   </div>
                 </div>
@@ -284,7 +282,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                 <Award className="h-4 w-4" />
                 <div>
                   <Label htmlFor="stickers-enabled">Matricák engedélyezése</Label>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-foreground/60">
                     Jutalom matricák megjelenítése és kiosztása
                   </div>
                 </div>
@@ -301,15 +299,15 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
         {/* Achievement Settings */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-green-600" />
+            <CardTitle className="flex items-center gap-2 font-brand-heading">
+              <Target className="h-5 w-5 text-success" />
               Teljesítmény és Jutalmak
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <Label>Matrica jutalom határértékek</Label>
-              <div className="text-sm text-gray-500 mb-4">
+              <div className="text-sm text-foreground/60 mb-4">
                 Adja meg, hány helyes válasz után kapjon matricát a gyerek
               </div>
               
@@ -348,14 +346,14 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                     onChange={(e) => handleSettingChange('additional_sticker_interval', parseInt(e.target.value) || 0)}
                     className="text-center"
                   />
-                  <div className="text-xs text-gray-500 text-center">10 után ennyi helyesenként ad új matricát (0 = kikapcsolva)</div>
+                  <div className="text-xs text-foreground/60 text-center">10 után ennyi helyesenként ad új matricát (0 = kikapcsolva)</div>
                 </div>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg mt-4 flex gap-2">
-                <Info className="h-4 w-4 mt-0.5 text-blue-700" />
-                <p className="text-sm text-blue-800">
-                  💡 Tipp: A 10. sorozat után a rendszer a megadott gyakorisággal ad további matricákat. 20 matrica után a kiosztás esélye matricánként 1%-kal csökken.
+              <div className="bg-secondary/20 p-4 rounded-lg mt-4 flex gap-2">
+                <Info className="h-4 w-4 mt-0.5 text-secondary-foreground" />
+                <p className="text-sm text-secondary-foreground">
+                  💡 Tipp: A 10. sorozat után a rendszer a megadott gyakorisággal ad további matricákat. 20 egyedi matrica után az ÚJ matrica esélye minden további egyedi után 1%-kal csökken.
                 </p>
               </div>
             </div>
@@ -364,31 +362,31 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
       </div>
 
       {/* Current Settings Summary */}
-      <Card className="mt-6 bg-gray-50">
+      <Card className="mt-6 bg-muted">
         <CardHeader>
-          <CardTitle className="text-lg">Aktuális beállítások áttekintése</CardTitle>
+          <CardTitle className="text-lg font-brand-heading">Aktuális beállítások áttekintése</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <div className="font-semibold text-blue-600">{settings.letters_per_session}</div>
-              <div className="text-gray-600">Párok / kör</div>
+              <div className="font-semibold text-primary">{settings.letters_per_session}</div>
+              <div className="text-foreground/60">Párok / kör</div>
             </div>
             <div>
-              <div className="font-semibold text-green-600">{settings.difficulty}</div>
-              <div className="text-gray-600">Nehézség</div>
+              <div className="font-semibold text-success">{settings.difficulty}</div>
+              <div className="text-foreground/60">Nehézség</div>
             </div>
             <div>
-              <div className="font-semibold text-purple-600">
+              <div className="font-semibold text-foreground">
                 {settings.sound_enabled ? 'Bekapcsolva' : 'Kikapcsolva'}
               </div>
-              <div className="text-gray-600">Hangok</div>
+              <div className="text-foreground/60">Hangok</div>
             </div>
             <div>
-              <div className="font-semibold text-orange-600">
+              <div className="font-semibold text-warning">
                 {(settings.streak_thresholds || []).join(', ')} | +{settings.additional_sticker_interval || 0}
               </div>
-              <div className="text-gray-600">Matrica jutalmak</div>
+              <div className="text-foreground/60">Matrica jutalmak</div>
             </div>
           </div>
         </CardContent>

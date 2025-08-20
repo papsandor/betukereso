@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Star, Volume2, Shuffle, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Star, Shuffle, CheckCircle, Loader2 } from 'lucide-react';
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
@@ -20,7 +20,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [attempts, setAttempts] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const pairsToMatch = child.settings?.letters_per_session || 9; // Egyetlen kör, ennyi pár
+  const pairsToMatch = child.settings?.letters_per_session || 9;
 
   useEffect(() => {
     initGame();
@@ -39,12 +39,11 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       setGameOver(false);
 
       const randomLetters = await ApiService.getRandomGraphemes(
-        pairsToMatch, // Egy körben ennyi pár jelenik meg
+        pairsToMatch,
         child.settings?.include_foreign_letters || false,
         true
       );
 
-      // Párkészítés nagy/kis betűkkel
       const uppercaseLetters = randomLetters.map(letter => ({
         id: `upper-${letter}`,
         letter,
@@ -120,7 +119,6 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           soundService.playSuccessSound();
         }
 
-        // Ha minden pár megvan: játék vége (egyetlen kör)
         if ((matchedPairs.size + 1) === (pairs.uppercase?.length || 0)) {
           setTimeout(() => setGameOver(true), 800);
         }
@@ -129,7 +127,6 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setError('Failed to save progress');
       }
     } else {
-      // Hibás párosítás – streak lokálisan nulláz, feedback
       setStreak(0);
       setFeedback({ type: 'error', message: 'Próbáld újra!' });
 
@@ -147,17 +144,15 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         soundService.playErrorSound();
       }
 
-      // Nincs több kör! Ha sok a hiba, csak keverjük újra, hogy segítsünk
       if (nextAttempts >= 3 && pairs.uppercase && pairs.lowercase) {
         setPairs({
           uppercase: [...pairs.uppercase].sort(() => Math.random() - 0.5),
           lowercase: [...pairs.lowercase].sort(() => Math.random() - 0.5)
         });
-        setAttempts(0); // próbálkozás számláló nullázása
+        setAttempts(0);
       }
     }
 
-    // Kijelölések törlése kis késleltetéssel
     setTimeout(() => {
       setSelectedUppercase(null);
       setSelectedLowercase(null);
@@ -178,7 +173,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading matching game...</p>
+        <p className="text-foreground/60">Loading matching game...</p>
       </div>
     );
   }
@@ -186,14 +181,14 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   if (error) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-4">
           {error}
         </div>
         <div className="flex gap-4 justify-center">
-          <Button onClick={initGame} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+          <Button onClick={initGame} className="bg-primary hover:bg-primary/90 text-primary-foreground border-0">
             Try Again
           </Button>
-          <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+          <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
             Back to Menu
           </Button>
         </div>
@@ -208,16 +203,16 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <Card className="p-8">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎯</div>
-            <h2 className="text-3xl font-bold text-gray-800">Párosítás kész!</h2>
+            <h2 className="text-3xl font-bold text-foreground">Párosítás kész!</h2>
             <div className="space-y-2">
               <p className="text-xl">Pontszám: {score}/{totalPairs}</p>
-              <p className="text-lg text-gray-600">Szuper párosítás, {child.name}!</p>
+              <p className="text-lg text-foreground/60">Szuper párosítás, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={initGame} className="bg-green-500 hover:bg-green-600 text-white border-0">
+              <Button onClick={initGame} className="bg-success hover:bg-success/90 text-success-foreground border-0">
                 Újra párosítás
               </Button>
-              <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+              <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
                 Vissza a főmenübe
               </Button>
             </div>
@@ -231,13 +226,12 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     <div className="w-full max-w-6xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
         
         <div className="flex items-center gap-4">
-          {/* Körök kijelzése eltávolítva – csak pont és sorozat marad */}
           <Badge variant="outline" className="flex items-center gap-1">
             <Star className="h-3 w-3" />
             {score} pont
@@ -250,12 +244,12 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Game Instruction */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Párosítsd a nagy és kis betűket!</h2>
-        <p className="text-gray-600 mb-4">Kattints egy nagy betűre, majd a hozzá tartozó kis betűre.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-4">Párosítsd a nagy és kis betűket!</h2>
+        <p className="text-foreground/60 mb-4">Kattints egy nagy betűre, majd a hozzá tartozó kis betűre.</p>
         
         <Button
           onClick={shuffleLetters}
-          className="flex items-center gap-2 mx-auto bg-purple-100 hover:bg-purple-200 text-purple-700 border-0"
+          className="flex items-center gap-2 mx-auto bg-secondary text-secondary-foreground hover:bg-secondary/80 border-0 hover-float"
         >
           <Shuffle className="h-4 w-4" />
           Betűk keverése
@@ -266,24 +260,24 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       <div className="grid grid-cols-2 gap-8 mb-6 max-w-4xl mx-auto">
         {/* Uppercase Letters - Left Column */}
         <div>
-          <h3 className="text-xl font-bold text-center mb-4 text-blue-800">Nagy betűk</h3>
+          <h3 className="text-xl font-bold text-center mb-4 text-primary font-brand-heading">Nagy betűk</h3>
           <div className="space-y-3">
             {pairs.uppercase?.map((letter) => (
               <Button
                 key={letter.id}
-                className={`w-full h-16 text-3xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
+                className={`w-full h-16 text-3xl font-bold transition-all duration-200 border-2 hover-float ${
                   matchedPairs.has(letter.letter) 
-                    ? 'bg-green-100 text-green-800 border-green-400 cursor-default' 
+                    ? 'bg-success/10 text-success border-success/50 cursor-default' 
                     : selectedUppercase?.letter === letter.letter
-                    ? 'bg-blue-200 text-blue-800 border-blue-400'
-                    : 'bg-blue-50 hover:bg-blue-100 text-blue-800 border-blue-200 hover:border-blue-400'
+                    ? 'bg-primary/20 text-foreground border-primary'
+                    : 'bg-card hover:bg-accent text-foreground border-border hover:border-primary'
                 }`}
                 onClick={() => handleLetterClick(letter)}
                 disabled={matchedPairs.has(letter.letter) || isProcessing}
               >
                 {letter.display}
                 {matchedPairs.has(letter.letter) && (
-                  <CheckCircle className="h-5 w-5 ml-2 text-green-600" />
+                  <CheckCircle className="h-5 w-5 ml-2 text-success" />
                 )}
               </Button>
             ))}
@@ -292,24 +286,24 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
         {/* Lowercase Letters - Right Column */}
         <div>
-          <h3 className="text-xl font-bold text-center mb-4 text-orange-800">Kis betűk</h3>
+          <h3 className="text-xl font-bold text-center mb-4 text-secondary-foreground font-brand-heading">Kis betűk</h3>
           <div className="space-y-3">
             {pairs.lowercase?.map((letter) => (
               <Button
                 key={letter.id}
-                className={`w-full h-16 text-3xl font-bold transition-all duration-200 hover:scale-105 border-2 ${
+                className={`w-full h-16 text-3xl font-bold transition-all duration-200 border-2 hover-float ${
                   matchedPairs.has(letter.letter) 
-                    ? 'bg-green-100 text-green-800 border-green-400 cursor-default' 
+                    ? 'bg-success/10 text-success border-success/50 cursor-default' 
                     : selectedLowercase?.letter === letter.letter
-                    ? 'bg-orange-200 text-orange-800 border-orange-400'
-                    : 'bg-orange-50 hover:bg-orange-100 text-orange-800 border-orange-200 hover:border-orange-400'
+                    ? 'bg-secondary/30 text-secondary-foreground border-secondary'
+                    : 'bg-card hover:bg-accent text-foreground border-border hover:border-secondary'
                 }`}
                 onClick={() => handleLetterClick(letter)}
                 disabled={matchedPairs.has(letter.letter) || isProcessing}
               >
                 {letter.display}
                 {matchedPairs.has(letter.letter) && (
-                  <CheckCircle className="h-5 w-5 ml-2 text-green-600" />
+                  <CheckCircle className="h-5 w-5 ml-2 text-success" />
                 )}
               </Button>
             ))}
@@ -319,7 +313,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Progress indicator */}
       <div className="text-center mb-4">
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-foreground/60">
           Párosítva: {matchedPairs.size} / {pairs.uppercase?.length || 0}
         </p>
       </div>
@@ -327,7 +321,7 @@ const MatchCaseGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       {/* Feedback */}
       {feedback && (
         <div className={`text-center p-4 rounded-lg mb-4 ${
-          feedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          feedback.type === 'success' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
         }`}>
           <p className="text-xl font-semibold">{feedback.message}</p>
         </div>

@@ -7,14 +7,14 @@ import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
 const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
-  const guideCanvasRef = useRef(null); // Background guide (non-interactive)
-  const drawCanvasRef = useRef(null);  // Foreground drawing layer (interactive)
+  const guideCanvasRef = useRef(null);
+  const drawCanvasRef = useRef(null);
   const [currentTarget, setCurrentTarget] = useState('');
   const [currentDisplayLetter, setCurrentDisplayLetter] = useState('');
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(child.streak || 0);
   const [gameOver, setGameOver] = useState(false);
-  const [round, setRound] = useState(0); // Start from 0 instead of 1
+  const [round, setRound] = useState(0);
   const [maxRounds] = useState(child.settings?.letters_per_session || 9);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   }, [currentDisplayLetter]);
 
   const generateNewRound = async () => {
-    if (round >= maxRounds) { // Changed from > to >=
+    if (round >= maxRounds) {
       setGameOver(true);
       return;
     }
@@ -57,7 +57,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       const targetLetter = randomLetters[0];
       setCurrentTarget(targetLetter);
       
-      // Generate the display letter case ONCE and store it
       const caseType = child.settings?.letter_case === 'mixed' ? 
         ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
         child.settings?.letter_case || 'lowercase';
@@ -78,7 +77,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     const drawCanvas = drawCanvasRef.current;
     if (!guideCanvas || !drawCanvas) return;
 
-    // Set canvas sizes
     const width = 400;
     const height = 300;
     guideCanvas.width = width;
@@ -86,7 +84,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     drawCanvas.width = width;
     drawCanvas.height = height;
 
-    // Draw guide on background canvas
     const gctx = guideCanvas.getContext('2d');
     gctx.fillStyle = '#ffffff';
     gctx.fillRect(0, 0, width, height);
@@ -99,10 +96,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     gctx.fillText(currentDisplayLetter, width / 2, height / 2);
     gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
 
-    // Calculate letter pixels from the guide canvas only
     calculateLetterPixels(gctx);
 
-    // Prepare drawing canvas (clear only the drawing layer)
     const dctx = drawCanvas.getContext('2d');
     dctx.clearRect(0, 0, width, height);
     dctx.lineCap = 'round';
@@ -117,13 +112,11 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     const pixels = imageData.data;
     const letterPixelSet = new Set();
     
-    // Find all non-white pixels (letter pixels)
     for (let i = 0; i < pixels.length; i += 4) {
       const r = pixels[i];
       const g = pixels[i + 1]; 
       const b = pixels[i + 2];
       
-      // If pixel is not white (letter outline or fill)
       if (r < 250 || g < 250 || b < 250) {
         const pixelIndex = Math.floor(i / 4);
         const x = pixelIndex % ctx.canvas.width;
@@ -132,10 +125,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       }
     }
     setLetterPixels(letterPixelSet);
-    setDrawnPixels(new Set()); // Reset drawn pixels
+    setDrawnPixels(new Set());
   };
 
-  // Drawing helpers (work on the drawing canvas only)
   const getCoords = (canvas, e) => {
     const rect = canvas.getBoundingClientRect();
     const clientX = 'clientX' in e ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
@@ -152,10 +144,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     setIsDrawing(true);
     const ctx = canvas.getContext('2d');
 
-    // Set mode based on eraser toggle (affects ONLY drawing layer)
     if (isEraserMode) {
       ctx.globalCompositeOperation = 'destination-out';
-      ctx.lineWidth = 15; // Wider eraser
+      ctx.lineWidth = 15;
     } else {
       ctx.globalCompositeOperation = 'source-over';
       ctx.strokeStyle = '#3B82F6';
@@ -182,7 +173,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.beginPath();
     ctx.moveTo(x, y);
 
-    // Track drawn pixels only in draw mode (not eraser mode)
     if (!isEraserMode) {
       const drawnPixelKey = `${Math.floor(x)},${Math.floor(y)}`;
       setDrawnPixels(prev => new Set([...prev, drawnPixelKey]));
@@ -193,17 +183,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     e.preventDefault();
     if (isDrawing) {
       setIsDrawing(false);
-      // Completion is now triggered by the "Kész" button only
     }
   };
 
-  // Touch event wrappers
   const startTouchDrawing = (e) => startDrawing(e);
   const touchDraw = (e) => draw(e);
   const stopTouchDrawing = (e) => stopDrawing(e);
 
   const checkTraceCompletion = () => {
-    // Calculate how much of the drawn line overlaps with the letter
     const drawnPixelsArray = Array.from(drawnPixels);
     const letterPixelsArray = Array.from(letterPixels);
     
@@ -212,14 +199,13 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       return;
     }
     
-    // Count overlapping pixels with tolerance
     let overlapCount = 0;
     drawnPixelsArray.forEach(drawnPixel => {
       const [dx, dy] = drawnPixel.split(',').map(Number);
       for (const letterPixel of letterPixelsArray) {
         const [lx, ly] = letterPixel.split(',').map(Number);
         const distance = Math.sqrt((dx - lx) ** 2 + (dy - ly) ** 2);
-        if (distance <= 10) { // tolerance
+        if (distance <= 10) {
           overlapCount++;
           break;
         }
@@ -227,9 +213,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     });
     
     const accuracy = overlapCount / drawnPixelsArray.length;
-    const isSuccessful = accuracy >= 0.8; // 80% threshold
-    
-    console.log(`Trace accuracy: ${(accuracy * 100).toFixed(1)}% (${overlapCount}/${drawnPixelsArray.length} pixels)`);
+    const isSuccessful = accuracy >= 0.8;
     
     setTimeout(() => {
       setTraceComplete(true);
@@ -241,7 +225,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const handleTraceComplete = async (isCorrect) => {
     if (isCorrect) {
       try {
-        // Only record progress for successful traces
         const progressData = await ApiService.recordProgress(child.id, {
           game_mode: 'trace-letter',
           grapheme: currentTarget,
@@ -273,11 +256,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         setError('Failed to save progress');
       }
     } else {
-      // Handle incorrect trace - reset streak and move to next round
       setStreak(0);
       setShowSuccess(false);
       
-      // Record the incorrect attempt for analytics
       try {
         await ApiService.recordProgress(child.id, {
           game_mode: 'trace-letter',
@@ -292,7 +273,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         soundService.playErrorSound();
       }
       
-      // Move to next round after error sound and feedback
       setTimeout(() => {
         if (round + 1 >= maxRounds) {
           setGameOver(true);
@@ -311,7 +291,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setTraceComplete(false);
     setShowSuccess(false);
-    setIsEraserMode(false); // Reset to draw mode
+    setIsEraserMode(false);
     setDrawnPixels(new Set());
   };
 
@@ -327,7 +307,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading tracing game...</p>
+        <p className="text-foreground/60">Loading tracing game...</p>
       </div>
     );
   }
@@ -335,14 +315,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   if (error) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+        <div className="bg-destructive/10 text-destructive p-4 rounded-lg mb-4">
           {error}
         </div>
         <div className="flex gap-4 justify-center">
-          <Button onClick={generateNewRound} className="bg-blue-500 hover:bg-blue-600 text-white border-0">
+          <Button onClick={generateNewRound} className="bg-primary hover:bg-primary/90 text-primary-foreground border-0">
             Try Again
           </Button>
-          <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+          <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
             Back to Menu
           </Button>
         </div>
@@ -356,16 +336,16 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         <Card className="p-8">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎨</div>
-            <h2 className="text-3xl font-bold text-gray-800">Rajzolás befejezve!</h2>
+            <h2 className="text-3xl font-bold text-foreground">Rajzolás befejezve!</h2>
             <div className="space-y-2">
               <p className="text-xl">Pontszám: {score}/{maxRounds}</p>
-              <p className="text-lg text-gray-600">Szuper rajzolás, {child.name}!</p>
+              <p className="text-lg text-foreground/60">Szuper rajzolás, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={() => window.location.reload()} className="bg-green-500 hover:bg-green-600 text-white border-0">
+              <Button onClick={() => window.location.reload()} className="bg-success hover:bg-success/90 text-success-foreground border-0">
                 Újra rajzolás
               </Button>
-              <Button onClick={onBack} className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+              <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
                 Vissza a főmenübe
               </Button>
             </div>
@@ -379,7 +359,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
@@ -398,16 +378,16 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Game Instruction */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Rajzold le:</h2>
-        <div className="bg-green-100 rounded-2xl p-8 mb-6 inline-block">
-          <div className="text-8xl font-bold text-green-800">
+        <h2 className="text-2xl font-bold text-foreground mb-4">Rajzold le:</h2>
+        <div className="bg-secondary/20 rounded-2xl p-8 mb-6 inline-block">
+          <div className="text-8xl font-bold text-secondary-foreground">
             {currentDisplayLetter}
           </div>
         </div>
         {soundEnabled && (
           <Button 
             size="sm" 
-            className="flex items-center gap-2 mx-auto bg-blue-100 hover:bg-blue-200 text-blue-700 border-0"
+            className="flex items-center gap-2 mx-auto bg-primary/10 hover:bg-primary/20 text-primary border-0"
             onClick={() => soundService.playLetterSound(currentTarget)}
           >
             <Volume2 className="h-4 w-4" />
@@ -419,21 +399,21 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       {/* Two-layer Canvas: guide (bottom) + drawing (top) */}
       <div className="text-center mb-6">
         {isEraserMode && (
-          <div className="mb-4 p-2 bg-orange-100 text-orange-800 rounded-lg inline-block">
+          <div className="mb-4 p-2 bg-warning/20 text-warning rounded-lg inline-block">
             🗑️ <strong>Radír mód:</strong> Húzd az egeret/ujjad a törölni kívánt vonalakon!
           </div>
         )}
-        <div className="inline-block bg-white rounded-lg shadow-lg p-4">
+        <div className="inline-block bg-card rounded-lg shadow-lg p-4 card-float">
           <div className="relative" style={{ width: 400, height: 300 }}>
             <canvas
               ref={guideCanvasRef}
-              className="absolute top-0 left-0 border-2 border-gray-300 rounded-lg select-none pointer-events-none"
+              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none"
               width={400}
               height={300}
             />
             <canvas
               ref={drawCanvasRef}
-              className={`absolute top-0 left-0 border-2 border-gray-300 rounded-lg select-none ${
+              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none ${
                 isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
               }`}
               width={400}
@@ -452,7 +432,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <div className="flex justify-center gap-4 mt-4">
             <Button
               onClick={clearCanvas}
-              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
+              className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0"
             >
               <RotateCcw className="h-4 w-4" />
               Újra kezdés
@@ -462,8 +442,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
               onClick={toggleEraserMode}
               className={`flex items-center gap-2 border-0 ${
                 isEraserMode 
-                  ? 'bg-orange-500 hover:bg-orange-600 text-white' 
-                  : 'bg-orange-100 hover:bg-orange-200 text-orange-700'
+                  ? 'bg-warning text-warning-foreground hover:bg-warning/90' 
+                  : 'bg-warning/20 hover:bg-warning/30 text-warning'
               }`}
             >
               <div className="h-4 w-4 rounded-full border-2 border-current" />
@@ -472,7 +452,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             
             <Button
               onClick={handleFinishDrawing}
-              className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white border-0"
+              className="flex items-center gap-2 bg-success hover:bg-success/90 text-success-foreground border-0"
             >
               <CheckCircle className="h-4 w-4" />
               Kész
@@ -484,7 +464,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       {/* Feedback */}
       {traceComplete && (
         <div className={`text-center p-4 rounded-lg mb-4 ${
-          showSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          showSuccess ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
         }`}>
           <p className="text-xl font-semibold">
             {showSuccess ? 'Nagyszerű! Sikeres rajzolás!' : 'Próbáld újra! Több ponton kövesd a betűt.'}
