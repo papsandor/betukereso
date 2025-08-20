@@ -7,12 +7,17 @@ module.exports = {
   ],
   theme: {
         extend: {
+                fontFamily: {
+                        display: ['"Baloo 2"', 'cursive'],
+                        body: ['Quicksand', 'sans-serif'],
+                },
                 borderRadius: {
                         lg: 'var(--radius)',
                         md: 'calc(var(--radius) - 2px)',
                         sm: 'calc(var(--radius) - 4px)'
                 },
                 colors: {
+                        // Design token mapping remains for existing components
                         background: 'hsl(var(--background))',
                         foreground: 'hsl(var(--foreground))',
                         card: {
@@ -51,6 +56,15 @@ module.exports = {
                                 DEFAULT: 'hsl(var(--warning))',
                                 foreground: 'hsl(var(--warning-foreground))'
                         },
+                        // New brand palette aliases
+                        pastelBlue: '#7DAACF',
+                        pastelPink: '#F7B6C2',
+                        ivory: '#FCF8F5',
+                        coralRed: '#FF9AA2',
+                        mintGreen: '#B5EAD7',
+                        cloudGray: '#E7ECF0',
+                        darkText: '#333333',
+                        lightText: '#666666',
                         border: 'hsl(var(--border))',
                         input: 'hsl(var(--input))',
                         ring: 'hsl(var(--ring))',
@@ -64,20 +78,12 @@ module.exports = {
                 },
                 keyframes: {
                         'accordion-down': {
-                                from: {
-                                        height: '0'
-                                },
-                                to: {
-                                        height: 'var(--radix-accordion-content-height)'
-                                }
+                                from: { height: '0' },
+                                to: { height: 'var(--radix-accordion-content-height)' }
                         },
                         'accordion-up': {
-                                from: {
-                                        height: 'var(--radix-accordion-content-height)'
-                                },
-                                to: {
-                                        height: '0'
-                                }
+                                from: { height: 'var(--radix-accordion-content-height)' },
+                                to: { height: '0' }
                         }
                 },
                 animation: {
