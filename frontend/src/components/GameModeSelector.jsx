@@ -31,7 +31,8 @@ const GameModeSelector = ({
       title: 'Keresd',
       description: 'Találd meg a helyes betűt!',
       icon: Search,
-      color: 'bg-blue-500 hover:bg-blue-600',
+      color: 'bg-primary hover:bg-primary/90',
+      iconFg: 'text-primary-foreground',
       difficulty: 'Könnyű'
     },
     {
@@ -39,7 +40,8 @@ const GameModeSelector = ({
       title: 'Rajzold',
       description: 'Rajzold le a betűt!',
       icon: PenTool,
-      color: 'bg-green-500 hover:bg-green-600',
+      color: 'bg-success hover:bg-success/90',
+      iconFg: 'text-success-foreground',
       difficulty: 'Közepes'
     },
     {
@@ -47,7 +49,8 @@ const GameModeSelector = ({
       title: 'Párosítsd', 
       description: 'Párosítsd a kis és nagy betűket!',
       icon: ArrowLeftRight,
-      color: 'bg-orange-500 hover:bg-orange-600',
+      color: 'bg-secondary hover:bg-secondary/80',
+      iconFg: 'text-secondary-foreground',
       difficulty: 'Nehéz'
     },
     {
@@ -55,7 +58,8 @@ const GameModeSelector = ({
       title: 'Mutasd & Jelöld',
       description: 'Tanár mód - mutasd és jelöld!',
       icon: Eye,
-      color: 'bg-purple-500 hover:bg-purple-600',
+      color: 'bg-muted hover:bg-accent',
+      iconFg: 'text-foreground',
       difficulty: 'Tanár'
     }
   ];
@@ -67,14 +71,14 @@ const GameModeSelector = ({
         <div className="flex items-center gap-4">
           <Button
             onClick={onChildChange}
-            className="flex items-center gap-2 bg-purple-100 hover:bg-purple-200 text-purple-700 border-0"
+            className="flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 border-0"
           >
             <User className="h-4 w-4" />
             Gyerek váltása
           </Button>
           
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-gray-800">{child.name}</h2>
+            <h2 className="text-2xl font-bold text-foreground font-brand-heading">{child.name}</h2>
             <Badge variant="secondary" className="flex items-center gap-1">
               <Star className="h-3 w-3" />
               {child.streak} sorozat
@@ -89,7 +93,7 @@ const GameModeSelector = ({
         <div className="flex items-center gap-4">
           <Button
             onClick={onStickerBookOpen}
-            className="flex items-center gap-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 border-0"
+            className="flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 border-0"
           >
             <Award className="h-4 w-4" />
             Matrica Gyűjtemény
@@ -106,7 +110,7 @@ const GameModeSelector = ({
           
           <Button
             onClick={onSettingsOpen}
-            className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border-0"
+            className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0"
           >
             <Settings className="h-4 w-4" />
             Beállítások
@@ -126,9 +130,9 @@ const GameModeSelector = ({
             >
               <CardHeader className="text-center pb-3">
                 <div className={`mx-auto w-16 h-16 rounded-full ${mode.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                  <IconComponent className="h-8 w-8 text-white" />
+                  <IconComponent className={`h-8 w-8 ${mode.iconFg}`} />
                 </div>
-                <CardTitle className="text-xl font-bold">{mode.title}</CardTitle>
+                <CardTitle className="text-xl font-bold font-brand-heading">{mode.title}</CardTitle>
               </CardHeader>
               <CardContent className="text-center space-y-2">
                 <p className="text-gray-600 text-sm">{mode.description}</p>
@@ -142,26 +146,26 @@ const GameModeSelector = ({
       </div>
 
       {/* Progress Summary */}
-      <Card className="bg-gray-50">
+      <Card className="bg-muted">
         <CardHeader>
-          <CardTitle className="text-lg">Haladás</CardTitle>
+          <CardTitle className="text-lg font-brand-heading">Haladás</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-blue-600">{Object.keys(child.progress || {}).length}</div>
+              <div className="text-2xl font-bold text-primary">{Object.keys(child.progress || {}).length}</div>
               <div className="text-sm text-gray-600">Tanult betűk</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-green-600">{child.streak}</div>
+              <div className="text-2xl font-bold text-success">{child.streak}</div>
               <div className="text-sm text-gray-600">Jelenlegi sorozat</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-orange-600">{child.total_stickers}</div>
+              <div className="text-2xl font-bold text-secondary-foreground">{child.total_stickers}</div>
               <div className="text-sm text-gray-600">Összegyűjtött matricák</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-2xl font-bold text-foreground">
                 {Object.values(child.progress).reduce((sum, p) => sum + p.stars, 0)}
               </div>
               <div className="text-sm text-gray-600">Összes csillag</div>
