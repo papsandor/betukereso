@@ -2,59 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts: Headings = Rubik, Body = Nunito, Mono = JetBrains Mono (optional) */
+/* Fonts: Headings = Baloo 2, Body = Quicksand, Mono = JetBrains Mono (optional) */
 @layer base {
   :root {
-    /* Neutrals */
-    --background: 0 0% 100%; /* #FFFFFF */
-    --foreground: 215 26% 17%; /* ~#1F2937 slate-800 */
-
-    /* Surfaces */
+    /* Keep existing CSS variable tokens for compatibility */
+    --background: 0 0% 100%;
+    --foreground: 215 26% 17%;
     --card: 0 0% 100%;
     --card-foreground: 215 26% 17%;
     --popover: 0 0% 100%;
     --popover-foreground: 215 26% 17%;
 
-    /* Brand */
-    --primary: 211 32% 42%; /* #48698C Acélkék */
-    --primary-foreground: 0 0% 100%; /* white text on primary */
+    --primary: 211 32% 42%; /* legacy primary (steel blue) */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 345 77% 76%; /* #F195AC Pasztell rózsaszín */
-    --secondary-foreground: 345 58% 30%; /* #7A2036 sötét felirat rózsaszínre */
+    --secondary: 345 77% 76%; /* legacy pastel pink */
+    --secondary-foreground: 345 58% 30%;
 
-    /* Muted layer */
-    --muted: 210 48% 95%; /* #EFF4F9 kártya, felületi réteg */
+    --muted: 210 48% 95%;
     --muted-foreground: 215 15% 35%;
-
-    /* Accent (fallback to muted) */
     --accent: 210 48% 95%;
     --accent-foreground: 215 26% 17%;
 
-    /* States */
-    --destructive: 0 61% 56%; /* #D44C4C */
+    --destructive: 0 61% 56%;
     --destructive-foreground: 0 0% 100%;
-    --success: 155 59% 46%; /* #30B980 */
+    --success: 155 59% 46%;
     --success-foreground: 0 0% 100%;
-    --warning: 44 100% 48%; /* #F5B300 */
+    --warning: 44 100% 48%;
     --warning-foreground: 215 26% 17%;
 
-    /* UI tokens */
     --border: 210 40% 90%;
     --input: 210 40% 90%;
-    --ring: 211 32% 42%; /* primary as ring */
+    --ring: 211 32% 42%;
 
-    /* Charts (kept as placeholders) */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --radius: 0.75rem; /* slightly more rounded */
+    --radius: 0.75rem;
   }
 
   .dark {
-    /* Optional dark mode mapping based on the new palette */
     --background: 215 26% 12%;
     --foreground: 0 0% 98%;
     --card: 215 26% 14%;
@@ -78,22 +68,11 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  html {
-    font-family: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  h1, h2, h3, h4, .font-brand-heading {
-    font-family: 'Rubik', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 700;
-  }
-  code, pre, .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
+  * { @apply border-border; }
+  html { font-family: 'Quicksand', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; }
+  body { @apply bg-ivory text-darkText; }
+  h1, h2, h3, h4, .font-brand-heading, .font-display { font-family: 'Baloo 2', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; font-weight: 700; }
+  code, pre, .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 }
 
 @layer utilities {

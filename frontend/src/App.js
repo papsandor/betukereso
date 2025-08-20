@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import ChildSelector from './components/ChildSelector';
-import GameModeSelector from './components/GameModeSelector';
+import MainMenu from './components/MainMenu';
 import FindLetterGame from './components/FindLetterGame';
 import TraceLetterGame from './components/TraceLetterGame';
 import MatchCaseGame from './components/MatchCaseGame';
@@ -21,7 +21,6 @@ function App() {
   const [pendingSticker, setPendingSticker] = useState(null);
 
   useEffect(() => {
-    // Set sound service enabled state
     soundService.setEnabled(soundEnabled);
   }, [soundEnabled]);
 
@@ -31,12 +30,6 @@ function App() {
       setShowChildSelector(false);
       soundService.playTransitionSound();
     }
-  };
-
-  // Game progress handler - now handled by API
-  const handleProgress = (grapheme, isCorrect) => {
-    // This is now handled within the game components via API calls
-    console.log(`Child ${currentChild?.name} ${isCorrect ? 'correctly' : 'incorrectly'} identified: ${grapheme}`);
   };
 
   const handleModeSelect = (modeId) => {
@@ -57,34 +50,18 @@ function App() {
     setShowStickerBook(false);
   };
 
-  const handleSettingsOpen = () => {
-    setShowSettings(true);
-  };
+  const handleSettingsOpen = () => setShowSettings(true);
+  const handleSettingsClose = () => setShowSettings(false);
+  const handleStickerBookOpen = () => setShowStickerBook(true);
+  const handleStickerBookClose = () => setShowStickerBook(false);
 
-  const handleSettingsClose = () => {
-    setShowSettings(false);
-  };
-
-  const handleStickerBookOpen = () => {
-    setShowStickerBook(true);
-  };
-
-  const handleStickerBookClose = () => {
-    setShowStickerBook(false);
-  };
-
-  const handleSettingsUpdate = (updatedChild) => {
-    setCurrentChild(updatedChild);
-  };
+  const handleSettingsUpdate = (updatedChild) => setCurrentChild(updatedChild);
 
   const handleStickerEarned = (sticker) => {
     setPendingSticker(sticker);
     soundService.playStickerSound();
   };
-
-  const closeStickerReward = () => {
-    setPendingSticker(null);
-  };
+  const closeStickerReward = () => setPendingSticker(null);
 
   const renderCurrentScreen = () => {
     if (showChildSelector || !currentChild) {
@@ -160,22 +137,18 @@ function App() {
     }
 
     return (
-      <GameModeSelector
+      <MainMenu
         child={currentChild}
-        onModeSelect={handleModeSelect}
-        onSettingsOpen={handleSettingsOpen}
-        onStickerBookOpen={handleStickerBookOpen}
-        onChildChange={handleBackToChildren}
-        soundEnabled={soundEnabled}
-        onSoundToggle={setSoundEnabled}
+        onStartMode={handleModeSelect}
+        onOpenSettings={handleSettingsOpen}
+        onOpenStickerBook={handleStickerBookOpen}
       />
     );
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-ivory">
       {renderCurrentScreen()}
-      {/* Sticker Reward Overlay */}
       {pendingSticker && (
         <StickerReward
           sticker={pendingSticker}
