@@ -95,3 +95,8 @@
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
 }
+
+@layer utilities {
+  .hover-float { @apply transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-lg; }
+  .card-float { @apply transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-lg; }
+}
