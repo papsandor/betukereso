@@ -83,7 +83,8 @@ class SoundService {
   // Register external snippet url for a LOWERCASE grapheme
   registerLetterSnippet(graphemeLower, url) {
     if (!graphemeLower || !url) return;
-    this.letterAudioMapLower.set(String(graphemeLower).toLowerCase(), url);
+    const key = this._normalize(String(graphemeLower)).toLowerCase();
+    this.letterAudioMapLower.set(key, url);
   }
 
   // Register external snippet url for an UPPERCASE grapheme (stored as fully UPPER key)
