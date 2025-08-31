@@ -114,12 +114,15 @@ class SoundService {
   // Internal: get cached audio element for a url
   _getAudioTag(url) {
     if (!this.audioTagCache.has(url)) {
-      const audio = new Audio(url);
+      const audio = new Audio();
+      audio.crossOrigin = 'anonymous';
       audio.preload = 'auto';
+      audio.src = url;
+      audio.setAttribute('playsinline', '');
       this.audioTagCache.set(url, audio);
     }
     const el = this.audioTagCache.get(url);
-    try { el.currentTime = 0; } catch {}
+    try { el.pause(); el.currentTime = 0; } catch {}
     return el;
   }
 
