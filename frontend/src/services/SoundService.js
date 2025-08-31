@@ -4,6 +4,9 @@ class SoundService {
     this.audioContext = null;
     this.sounds = new Map();
     this.isEnabled = true;
+    // External letter snippet cache and mapping
+    this.letterAudioMap = new Map(); // grapheme(lowercase) -> url
+    this.audioTagCache = new Map(); // url -> HTMLAudioElement
     this.initAudioContext();
   }
 
