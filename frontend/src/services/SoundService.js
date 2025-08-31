@@ -12,7 +12,7 @@ class SoundService {
     this.audioTagCache = new Map(); // url -> HTMLAudioElement
     this.initAudioContext();
 
-    this._normalize = (s) => (s == null ? '' : String(s).normalize('NFC'));
+    this._normalize = (s) => (s == null ? '' : String(s).trim().normalize('NFC'));
   }
 
   setEnabled(enabled) {
