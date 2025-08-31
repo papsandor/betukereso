@@ -1,23 +1,22 @@
-// Mapping for uploaded Teacher Mode snippets. Extendable as you upload more.
-// Use lowercase keys for graphemes.
+// Mapping for uploaded Teacher Mode snippets. Extend as you upload more.
+// We keep separate maps for lowercase and uppercase graphemes.
 
-export const LETTER_SNIPPETS = {
+export const LOWERCASE_SNIPPETS = {
   'a': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/2xgjbtvs_Lowercase%20a.m4a',
   'b': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/ke1i392q_Lowercase%20b.m4a',
   'c': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/ix0zn02s_Lowercase%20c.m4a',
   'cs': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/fw2a0m0s_Lowercase%20cs.m4a',
   'd': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/tw73jco1_Lowercase%20d.m4a',
-  'g': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/nmwdvjev_Lowercase%20g.m4a',
-  'gy': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/1wxsusox_Lowercase%20gy.m4a',
-  'h': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/0qnhzlbr_Lowercase%20h.m4a',
-  'i': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/hkvoqmbz_Lowercase%20i.m4a',
-  'í': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/f620pl5g_Lowercase%20i%CC%81.m4a',
-
   'dz': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/rn4rgh55_Lowercase%20dz.m4a',
   'dzs': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/y46rl1uh_Lowercase%20dzs.m4a',
   'e': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/jeazml3q_Lowercase%20e.m4a',
   'é': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/za3ec8ad_Lowercase%20e%CC%81.m4a',
   'f': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/9t8tkpdi_Lowercase%20f.m4a',
+  'g': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/nmwdvjev_Lowercase%20g.m4a',
+  'gy': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/1wxsusox_Lowercase%20gy.m4a',
+  'h': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/0qnhzlbr_Lowercase%20h.m4a',
+  'i': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/hkvoqmbz_Lowercase%20i.m4a',
+  'í': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/f620pl5g_Lowercase%20i%CC%81.m4a',
   'j': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/arqchhld_Lowercase%20j.m4a',
   'k': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/8e48de20_Lowercase%20k.m4a',
   'l': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/9r9rbiqd_Lowercase%20l.m4a',
@@ -46,7 +45,16 @@ export const LETTER_SNIPPETS = {
   'y': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/ro691oi0_Lowercase%20y.m4a',
   'z': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/tfve9ezr_Lowercase%20z.m4a',
   'zs': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/97wd3zbu_Lowercase%20zs.m4a',
-  'á': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/a0oh5tyk_Uppercase%20A%CC%81.m4a',
 };
 
-export default LETTER_SNIPPETS;
+export const UPPERCASE_SNIPPETS = {
+  'A': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/99ehm7eg_Uppercase%20A.m4a',
+  'Á': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/a0oh5tyk_Uppercase%20A%CC%81.m4a',
+  'B': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/2jd3ok1h_Uppercase%20B.m4a',
+  'C': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/dj6egds8_Uppercase%20C.m4a',
+  'CS': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/kef92c3q_Uppercase%20Cs.m4a',
+  'D': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/shmghbye_Uppercase%20D.m4a',
+  'DZ': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/t5636i0t_Uppercase%20DZ.m4a',
+};
+
+export default { LOWERCASE_SNIPPETS, UPPERCASE_SNIPPETS };

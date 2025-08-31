@@ -1,143 +1,93 @@
-// Free sound service for Betűkereső app using Web Audio API
+// Free sound service for Betűkereső app
+// Provides basic success/error tones and letter pronunciation helpers
+
 class SoundService {
   constructor() {
     this.audioContext = null;
     this.sounds = new Map();
     this.isEnabled = true;
-    // External letter snippet cache and mapping
-    this.letterAudioMap = new Map(); // grapheme(lowercase) -> url
+    // External letter snippet caches and mappings
+    this.letterAudioMapLower = new Map(); // lower-case grapheme -> url
+    this.letterAudioMapUpper = new Map(); // UPPER-CASE grapheme -> url
     this.audioTagCache = new Map(); // url -> HTMLAudioElement
     this.initAudioContext();
   }
 
-  async initAudioContext() {
+  setEnabled(enabled) {
+    this.isEnabled = enabled;
+  }
+
+  initAudioContext() {
     try {
-      if (!this.audioContext) {
+      if (typeof window !== 'undefined' && window.AudioContext) {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
-    } catch (error) {
-      console.warn('Web Audio API not supported:', error);
+    } catch (e) {
+      console.warn('AudioContext init failed:', e);
+      this.audioContext = null;
     }
   }
 
-  // Generate success sound using oscillators
-  async playSuccessSound() {
+  // Basic beep helpers
+  playSuccessSound() {
     if (!this.isEnabled || !this.audioContext) return;
-
-    try {
-      await this.audioContext.resume();
-      
-      // Create a cheerful success melody
-      const notes = [
-        { frequency: 523.25, duration: 0.15 }, // C5
-        { frequency: 659.25, duration: 0.15 }, // E5
-        { frequency: 783.99, duration: 0.3 }   // G5
-      ];
-      
-      let time = this.audioContext.currentTime;
-      
-      notes.forEach((note, index) => {
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(note.frequency, time);
-        
-        // Envelope for smooth sound
-        gainNode.gain.setValueAtTime(0, time);
-        gainNode.gain.linearRampToValueAtTime(0.3, time + 0.02);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, time + note.duration);
-        
-        oscillator.start(time);
-        oscillator.stop(time + note.duration);
-        
-        time += note.duration * 0.8; // Slight overlap
-      });
-      
-    } catch (error) {
-      console.warn('Error playing success sound:', error);
-    }
+    const duration = 0.15;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(880, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.start(now);
+    osc.stop(now + duration);
   }
 
-  // Generate error sound
-  async playErrorSound() {
+  playErrorSound() {
     if (!this.isEnabled || !this.audioContext) return;
-
-    try {
-      await this.audioContext.resume();
-      
-      // Create a gentle "try again" sound
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(330, this.audioContext.currentTime); // E4
-      oscillator.frequency.exponentialRampToValueAtTime(220, this.audioContext.currentTime + 0.5); // A3
-      
-      gainNode.gain.setValueAtTime(0.2, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.5);
-      
-      oscillator.start(this.audioContext.currentTime);
-      oscillator.stop(this.audioContext.currentTime + 0.5);
-      
-    } catch (error) {
-      console.warn('Error playing error sound:', error);
-    }
+    const duration = 0.2;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(200, now);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.start(now);
+    osc.stop(now + duration);
   }
 
-  // Generate sticker reward sound
-  async playStickerSound() {
+  playStickerSound() {
     if (!this.isEnabled || !this.audioContext) return;
-
-    try {
-      await this.audioContext.resume();
-      
-      // Create an exciting reward fanfare
-      const notes = [
-        { frequency: 523.25, duration: 0.2 }, // C5
-        { frequency: 659.25, duration: 0.2 }, // E5
-        { frequency: 783.99, duration: 0.2 }, // G5
-        { frequency: 1046.5, duration: 0.4 }  // C6
-      ];
-      
-      let time = this.audioContext.currentTime;
-      
-      notes.forEach((note) => {
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-        
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(note.frequency, time);
-        
-        gainNode.gain.setValueAtTime(0, time);
-        gainNode.gain.linearRampToValueAtTime(0.4, time + 0.05);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, time + note.duration);
-        
-        oscillator.start(time);
-        oscillator.stop(time + note.duration);
-        
-        time += note.duration * 0.6;
-      });
-      
-    } catch (error) {
-      console.warn('Error playing sticker sound:', error);
-    }
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(780, now);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.3, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.start(now);
+    osc.stop(now + 0.4);
   }
 
-  // Generate letter pronunciation sound (simplified phonetic)
-  // Register external snippet url for a grapheme (lowercase key)
-  registerLetterSnippet(grapheme, url) {
-    if (!grapheme || !url) return;
-    this.letterAudioMap.set(grapheme.toLowerCase(), url);
+  // Register external snippet url for a LOWERCASE grapheme
+  registerLetterSnippet(graphemeLower, url) {
+    if (!graphemeLower || !url) return;
+    this.letterAudioMapLower.set(String(graphemeLower).toLowerCase(), url);
+  }
+
+  // Register external snippet url for an UPPERCASE grapheme (stored as fully UPPER key)
+  registerUpperLetterSnippet(graphemeUpper, url) {
+    if (!graphemeUpper || !url) return;
+    this.letterAudioMapUpper.set(String(graphemeUpper).toUpperCase(), url);
   }
 
   // Internal: get cached audio element for a url
@@ -148,16 +98,33 @@ class SoundService {
       this.audioTagCache.set(url, audio);
     }
     const el = this.audioTagCache.get(url);
-    // rewind for replay
     try { el.currentTime = 0; } catch {}
     return el;
   }
 
-  async playLetterSound(grapheme) {
+  // Determine if the provided grapheme string should use uppercase mapping
+  _shouldUseUppercase(input) {
+    if (!input) return false;
+    const str = String(input);
+    // If any uppercase letters present (incl. accented), or fully upper, treat as upper
+    const hasUpper = /[A-ZÁÉÍÓÖŐÚÜŰ]/.test(str);
+    const notAllLower = str !== str.toLowerCase();
+    return hasUpper || notAllLower;
+  }
+
+  async playLetterSound(graphemeOrDisplay) {
     if (!this.isEnabled) return;
 
-    // Prefer uploaded snippet
-    const url = this.letterAudioMap.get((grapheme || '').toLowerCase());
+    const raw = String(graphemeOrDisplay || '');
+    const useUpper = this._shouldUseUppercase(raw);
+    const lowerKey = raw.toLowerCase();
+    const upperKey = raw.toUpperCase();
+
+    // Prefer uploaded snippet (upper or lower depending on display)
+    const url = useUpper 
+      ? this.letterAudioMapUpper.get(upperKey)
+      : this.letterAudioMapLower.get(lowerKey);
+
     if (url) {
       try {
         const audioEl = this._getAudioTag(url);
@@ -178,7 +145,8 @@ class SoundService {
         'u': [300, 600], 'ú': [350, 650], 'ö': [450, 1100], 'ő': [500, 1150],
         'ü': [300, 1600], 'ű': [350, 1650]
       };
-      const frequencies = phoneticMap[(grapheme || '').toLowerCase()] || [440, 880];
+      const base = lowerKey;
+      const frequencies = phoneticMap[base] || [440, 880];
       const duration = 0.6;
       frequencies.forEach((freq, index) => {
         const oscillator = this.audioContext.createOscillator();
@@ -204,45 +172,9 @@ class SoundService {
       console.warn('Error playing letter sound:', error);
     }
   }
-
-  // Play game mode transition sound
-  async playTransitionSound() {
-    if (!this.isEnabled || !this.audioContext) return;
-
-    try {
-      await this.audioContext.resume();
-      
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(660, this.audioContext.currentTime + 0.3);
-      
-      gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
-      
-      oscillator.start(this.audioContext.currentTime);
-      oscillator.stop(this.audioContext.currentTime + 0.3);
-      
-    } catch (error) {
-      console.warn('Error playing transition sound:', error);
-    }
-  }
-
-  setEnabled(enabled) {
-    this.isEnabled = enabled;
-  }
-
-  isAudioEnabled() {
-    return this.isEnabled && this.audioContext && this.audioContext.state !== 'closed';
-  }
 }
 
-// Create singleton instance
-const soundService = new SoundService();
+let soundService = null;
+if (!soundService) soundService = new SoundService();
 
 export default soundService;
