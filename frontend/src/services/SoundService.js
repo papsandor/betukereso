@@ -80,6 +80,24 @@ class SoundService {
     osc.stop(now + 0.4);
   }
 
+  // Smooth, short transition cue between screens
+  playTransitionSound() {
+    if (!this.isEnabled || !this.audioContext) return;
+    const now = this.audioContext.currentTime;
+    const osc = this.audioContext.createOscillator();
+    const gain = this.audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, now);
+    osc.frequency.exponentialRampToValueAtTime(640, now + 0.12);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+    osc.connect(gain);
+    gain.connect(this.audioContext.destination);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  }
+
   // Register external snippet url for a LOWERCASE grapheme
   registerLetterSnippet(graphemeLower, url) {
     if (!graphemeLower || !url) return;
