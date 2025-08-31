@@ -120,8 +120,8 @@ class SoundService {
 
     const raw = String(graphemeOrDisplay || '');
     const useUpper = this._shouldUseUppercase(raw);
-    const lowerKey = raw.toLowerCase();
-    const upperKey = raw.toUpperCase();
+    const lowerKey = this._normalize(raw).toLowerCase();
+    const upperKey = this._normalize(raw).toUpperCase();
 
     // Prefer uploaded snippet (upper or lower depending on display)
     const url = useUpper 
