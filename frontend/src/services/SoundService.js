@@ -142,9 +142,16 @@ class SoundService {
     const upperKey = this._normalize(raw).toUpperCase();
 
     // Prefer uploaded snippet (upper or lower depending on display)
-    const url = useUpper 
+    let url = useUpper 
       ? this.letterAudioMapUpper.get(upperKey)
       : this.letterAudioMapLower.get(lowerKey);
+
+    // Fallbacks for multi-char graphemes (Titlecase vs Uppercase)
+    if (!url && useUpper) {
+      // Try Titlecase key (e.g., 'Cs', 'Gy', 'Ny', 'Sz', 'Ty', 'Zs') if app passes Titlecase
+      const titleKey = this._normalize(raw).replace(/^[a-záéíóöőúüű]/i, (m) => m.toUpperCase());
+      url = this.letterAudioMapUpper.get(titleKey.toUpperCase());
+    }
 
     if (url) {
       try {
