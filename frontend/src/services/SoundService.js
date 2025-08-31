@@ -134,50 +134,72 @@ class SoundService {
   }
 
   // Generate letter pronunciation sound (simplified phonetic)
-  async playLetterSound(grapheme) {
-    if (!this.isEnabled || !this.audioContext) return;
+  // Register external snippet url for a grapheme (lowercase key)
+  registerLetterSnippet(grapheme, url) {
+    if (!grapheme || !url) return;
+    this.letterAudioMap.set(grapheme.toLowerCase(), url);
+  }
 
+  // Internal: get cached audio element for a url
+  _getAudioTag(url) {
+    if (!this.audioTagCache.has(url)) {
+      const audio = new Audio(url);
+      audio.preload = 'auto';
+      this.audioTagCache.set(url, audio);
+    }
+    const el = this.audioTagCache.get(url);
+    // rewind for replay
+    try { el.currentTime = 0; } catch {}
+    return el;
+  }
+
+  async playLetterSound(grapheme) {
+    if (!this.isEnabled) return;
+
+    // Prefer uploaded snippet
+    const url = this.letterAudioMap.get((grapheme || '').toLowerCase());
+    if (url) {
+      try {
+        const audioEl = this._getAudioTag(url);
+        await audioEl.play();
+        return;
+      } catch (e) {
+        console.warn('Fallback to synthetic voice, failed to play snippet:', e);
+      }
+    }
+
+    // Fallback to synthetic tone if no snippet
+    if (!this.audioContext) return;
     try {
       await this.audioContext.resume();
-      
-      // Basic phonetic mapping to frequencies
       const phoneticMap = {
         'a': [800, 1200], 'á': [850, 1250], 'e': [500, 2300], 'é': [550, 2350],
         'i': [300, 2500], 'í': [350, 2550], 'o': [500, 900], 'ó': [550, 950],
         'u': [300, 600], 'ú': [350, 650], 'ö': [450, 1100], 'ő': [500, 1150],
         'ü': [300, 1600], 'ű': [350, 1650]
       };
-      
-      const frequencies = phoneticMap[grapheme.toLowerCase()] || [440, 880];
+      const frequencies = phoneticMap[(grapheme || '').toLowerCase()] || [440, 880];
       const duration = 0.6;
-      
-      // Create formant synthesis for vowel-like sounds
       frequencies.forEach((freq, index) => {
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
         const filter = this.audioContext.createBiquadFilter();
-        
         oscillator.connect(filter);
         filter.connect(gainNode);
         gainNode.connect(this.audioContext.destination);
-        
         oscillator.type = 'sawtooth';
         oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
-        
         filter.type = 'bandpass';
         filter.frequency.setValueAtTime(freq, this.audioContext.currentTime);
         filter.Q.setValueAtTime(10, this.audioContext.currentTime);
-        
         const volume = index === 0 ? 0.15 : 0.1;
         gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
         gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 0.1);
         gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + duration - 0.1);
         gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
-        
         oscillator.start(this.audioContext.currentTime);
         oscillator.stop(this.audioContext.currentTime + duration);
       });
-      
     } catch (error) {
       console.warn('Error playing letter sound:', error);
     }
