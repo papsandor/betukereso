@@ -11,6 +11,7 @@ export const LOWERCASE_SNIPPETS = {
   'dzs': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/y46rl1uh_Lowercase%20dzs.m4a',
   'e': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/jeazml3q_Lowercase%20e.m4a',
   'é': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/za3ec8ad_Lowercase%20e%CC%81.m4a',
+  'á': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/mvx9xwn1_Lowercase%20a%CC%81.m4a',
   'f': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/9t8tkpdi_Lowercase%20f.m4a',
   'g': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/nmwdvjev_Lowercase%20g.m4a',
   'gy': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/1wxsusox_Lowercase%20gy.m4a',
