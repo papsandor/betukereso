@@ -28,6 +28,11 @@ export const LETTER_SNIPPETS = {
   'o': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/fnoql90x_Lowercase%20o.m4a',
   'ó': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/p4go76o7_Lowercase%20o%CC%81.m4a',
   'ö': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/74o1bedn_Lowercase%20o%CC%88.m4a',
+  'ő': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/7ou878n9_Lowercase%20o%CC%8B.m4a',
+  'p': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/th8l22av_Lowercase%20p.m4a',
+  'q': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/6cgocmui_Lowercase%20q.m4a',
+  'r': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/k3w8t1uj_Lowercase%20r.m4a',
+  's': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/usgj58eu_Lowercase%20s.m4a',
 };
 
 export default LETTER_SNIPPETS;
