@@ -108,7 +108,8 @@ class SoundService {
   // Register external snippet url for an UPPERCASE grapheme (stored as fully UPPER key)
   registerUpperLetterSnippet(graphemeUpper, url) {
     if (!graphemeUpper || !url) return;
-    this.letterAudioMapUpper.set(String(graphemeUpper).toUpperCase(), url);
+    const key = this._normalize(String(graphemeUpper)).toUpperCase();
+    this.letterAudioMapUpper.set(key, url);
   }
 
   // Internal: get cached audio element for a url
