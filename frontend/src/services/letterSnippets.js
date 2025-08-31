@@ -60,6 +60,11 @@ export const UPPERCASE_SNIPPETS = {
   'É': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/l87a3lq6_Uppercase%20E%CC%81.m4a',
   'F': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/d0hvkjox_Uppercase%20F.m4a',
   'G': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/ecfo8vj9_Uppercase%20G.m4a',
+  'GY': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/h26ej2ek_Uppercase%20Gy.m4a',
+  'H': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/ausfjngb_Uppercase%20H.m4a',
+  'I': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/b6714ls2_Uppercase%20I.m4a',
+  'Í': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/m2v6zknf_Uppercase%20I%CC%81.m4a',
+  'J': 'https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/fxfs1hkp_Uppercase%20J.m4a',
 };
 
 export default { LOWERCASE_SNIPPETS, UPPERCASE_SNIPPETS };
