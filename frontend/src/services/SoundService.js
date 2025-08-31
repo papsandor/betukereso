@@ -114,10 +114,8 @@ class SoundService {
   // Internal: get cached audio element for a url
   _getAudioTag(url) {
     if (!this.audioTagCache.has(url)) {
-      const audio = new Audio();
-      audio.crossOrigin = 'anonymous';
+      const audio = new Audio(url);
       audio.preload = 'auto';
-      audio.src = url;
       audio.setAttribute('playsinline', '');
       this.audioTagCache.set(url, audio);
     }
