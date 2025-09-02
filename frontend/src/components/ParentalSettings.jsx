@@ -15,6 +15,8 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [additionalIntervalRaw, setAdditionalIntervalRaw] = useState('');
 
   const defaultSettings = {
     letters_per_session: 9,
@@ -29,19 +31,26 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
   };
 
   useEffect(() => {
-    setSettings(child.settings || defaultSettings);
+    const init = child.settings || defaultSettings;
+    setSettings(init);
+    setAdditionalIntervalRaw(String(init.additional_sticker_interval ?? 5));
+    setDirty(false);
   }, [child]);
+
+  const markDirty = () => setDirty(true);
 
   const handleSettingChange = (key, value) => {
     setSettings(prev => ({
       ...prev,
       [key]: value
     }));
+    markDirty();
   };
 
   const handleThresholdChange = (index, value) => {
     const newThresholds = [...(settings.streak_thresholds || [3,5,10])];
-    newThresholds[index] = parseInt(value) || 0;
+    const num = parseInt(value, 10);
+    newThresholds[index] = isNaN(num) ? 0 : num;
     handleSettingChange('streak_thresholds', newThresholds);
   };
 
@@ -54,14 +63,11 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
         onSettingsUpdate({ ...child, settings: { ...settings, [key]: value } });
       }
       setSuccess(true);
+      setDirty(false);
       setTimeout(() => setSuccess(false), 2000);
     } catch (err) {
       setError(`Sikertelen mentés: ${key} beállítás mentése nem sikerült.`);
       console.error('Error saving setting:', err);
-      setSettings(prev => ({
-        ...prev,
-        [key]: (child.settings?.[key] ?? defaultSettings[key])
-      }));
     } finally {
       setSaving(false);
     }
@@ -71,13 +77,15 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
     try {
       setSaving(true);
       setError(null);
-      for (const [key, value] of Object.entries(settings)) {
+      const payload = { ...settings, additional_sticker_interval: parseInt(additionalIntervalRaw || '0', 10) };
+      for (const [key, value] of Object.entries(payload)) {
         await ApiService.updateSetting(child.id, key, value);
       }
       if (onSettingsUpdate) {
-        onSettingsUpdate({ ...child, settings });
+        onSettingsUpdate({ ...child, settings: payload });
       }
       setSuccess(true);
+      setDirty(false);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError('Sikertelen mentés: a beállítások mentése közben hiba történt.');
@@ -88,7 +96,10 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
   };
 
   const resetToDefaults = () => {
-    setSettings(defaultSettings);
+    const init = defaultSettings;
+    setSettings(init);
+    setAdditionalIntervalRaw(String(init.additional_sticker_interval));
+    markDirty();
   };
 
   if (loading) {
@@ -103,7 +114,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
           <ArrowLeft className="h-4 w-4" />
           Vissza
@@ -114,7 +125,6 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             <Settings className="h-8 w-8 text-primary" />
             Szülői Beállítások
           </h1>
-          <p className="text-foreground/60 mt-2">{child.name} tanulási preferenciái</p>
         </div>
         
         <div className="flex gap-2">
@@ -122,12 +132,18 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             <RotateCcw className="h-4 w-4 mr-2" />
             Alaphelyzet
           </Button>
-          <Button onClick={saveAllSettings} disabled={saving} className="bg-success hover:bg-success/90 text-success-foreground border-0">
+          <Button onClick={saveAllSettings} disabled={saving} className={`relative bg-success hover:bg-success/90 text-success-foreground border-0 ${dirty ? 'animate-pulse ring-4 ring-warning/40 ring-offset-2 ring-offset-background' : ''}`}>
             {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
             Mentés
           </Button>
         </div>
       </div>
+
+      {dirty && (
+        <div className="mb-4 text-destructive font-semibold text-center">
+          El ne felejtsd elmenteni a változtatásokat!
+        </div>
+      )}
 
       {/* Success/Error Messages */}
       {success && (
@@ -339,11 +355,15 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
                   <Label htmlFor="additional-sticker-interval">További matricák</Label>
                   <Input
                     id="additional-sticker-interval"
-                    type="number"
-                    min="0"
-                    max="50"
-                    value={settings.additional_sticker_interval ?? 5}
-                    onChange={(e) => handleSettingChange('additional_sticker_interval', parseInt(e.target.value) || 0)}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={additionalIntervalRaw}
+                    onChange={(e) => {
+                      const raw = (e.target.value || '').replace(/\D/g, '');
+                      setAdditionalIntervalRaw(raw);
+                      handleSettingChange('additional_sticker_interval', raw === '' ? 0 : parseInt(raw, 10));
+                    }}
                     className="text-center"
                   />
                   <div className="text-xs text-foreground/60 text-center">10 után ennyi helyesenként ad új matricát (0 = kikapcsolva)</div>
@@ -384,7 +404,7 @@ const ParentalSettings = ({ child, onBack, onSettingsUpdate }) => {
             </div>
             <div>
               <div className="font-semibold text-warning">
-                {(settings.streak_thresholds || []).join(', ')} | +{settings.additional_sticker_interval || 0}
+                {(settings.streak_thresholds || []).join(', ')} | +{additionalIntervalRaw || 0}
               </div>
               <div className="text-foreground/60">Matrica jutalmak</div>
             </div>

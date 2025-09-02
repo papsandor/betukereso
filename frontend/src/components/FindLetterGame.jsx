@@ -228,7 +228,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <Button 
             size="sm" 
             className="flex items-center gap-2 mx-auto bg-primary/10 hover:bg-primary/20 text-primary border-0"
-            onClick={() => soundService.playLetterSound(currentTarget)}
+            onClick={() => soundService.playLetterSound(currentDisplayLetter)}
           >
             <Volume2 className="h-4 w-4" />
             Hangot lejátszani

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Settings, HelpCircle, Search, PenTool, ArrowLeftRight, Eye, Award } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 
 const APP_ICON = "https://customer-assets.emergentagent.com/job_magyar-abc/artifacts/qdv3plil_image.png";
 
 const MainMenu = ({ onOpenSettings, onOpenStickerBook, onStartMode, child }) => {
+  const [helpOpen, setHelpOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-ivory flex flex-col items-center justify-start p-6 space-y-6 font-body text-darkText">
       <div className="flex flex-col items-center mt-4">
@@ -36,10 +39,30 @@ const MainMenu = ({ onOpenSettings, onOpenStickerBook, onStartMode, child }) => 
         <button onClick={onOpenSettings} className="bg-cloudGray p-3 rounded-full hover:bg-slate-300 transition" aria-label="Beállítások">
           <Settings className="w-5 h-5 text-darkText" />
         </button>
-        <button className="bg-cloudGray p-3 rounded-full hover:bg-slate-300 transition" aria-label="Súgó">
+        <button onClick={() => setHelpOpen(true)} className="bg-cloudGray p-3 rounded-full hover:bg-slate-300 transition" aria-label="Súgó">
           <HelpCircle className="w-5 h-5 text-darkText" />
         </button>
       </div>
+
+      {/* Help Dialog */}
+      <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Információk</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-darkText">
+            <p className="text-center font-display text-xl">Nagyhercegnőmnek, Annának! ❤️</p>
+            <p className="text-center">Betűkereső v.1.0</p>
+            <p className="text-center">Készítette: dr. Pap Sándor</p>
+            <p className="text-sm text-center text-lightText">
+              Az alkalmazás, annak teljes tartalma, valamint minden kapcsolódó szellemi alkotás a tulajdonos kizárólagos jogát képezi. A tulajdonos minden, az alkalmazással és annak tartalmával kapcsolatos jogot fenntart.
+            </p>
+            <div className="text-center">
+              <button onClick={() => setHelpOpen(false)} className="bg-pastelBlue text-white px-4 py-2 rounded-2xl shadow hover:bg-[#6b9ec8] transition">Bezár</button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
