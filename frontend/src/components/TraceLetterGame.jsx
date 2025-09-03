@@ -426,13 +426,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <div className="relative" style={{ width: 400, height: 300 }}>
             <canvas
               ref={guideCanvasRef}
-              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none canvas-opaque"
+              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none"
               width={400}
               height={300}
+              style={{ backgroundColor: 'white', zIndex: 1 }}
             />
             <canvas
               ref={drawCanvasRef}
-              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none canvas-opaque ${
+              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none ${
                 isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
               }`}
               width={400}
@@ -444,7 +445,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
               onTouchStart={startTouchDrawing}
               onTouchMove={touchDraw}
               onTouchEnd={stopTouchDrawing}
-              style={{ touchAction: 'none' }}
+              style={{ touchAction: 'none', backgroundColor: 'transparent', zIndex: 2 }}
             />
           </div>
           
