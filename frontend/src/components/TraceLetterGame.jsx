@@ -334,7 +334,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   if (gameOver) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <Card className="p-8">
+        <Card className="p-8 bg-card-semi backdrop-blur-sm">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎨</div>
             <h2 className="text-3xl font-bold text-foreground">Rajzolás befejezve!</h2>
@@ -346,7 +346,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
               <Button onClick={() => window.location.reload()} className="bg-success hover:bg-success/90 text-success-foreground border-0">
                 Újra rajzolás
               </Button>
-              <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
+              <Button onClick={onBack} className="bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm">
                 Vissza a főmenübe
               </Button>
             </div>
