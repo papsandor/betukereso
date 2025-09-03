@@ -371,7 +371,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             <Star className="h-3 w-3" />
             {score} pont
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="bg-semi-transparent backdrop-blur-sm">
             {streak} sorozat
           </Badge>
         </div>
@@ -379,16 +379,19 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Game Instruction */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Rajzold le:</h2>
-        <div className="bg-secondary/20 rounded-2xl p-8 mb-6 inline-block">
-          <div className="text-8xl font-bold text-secondary-foreground">
+        <div className="bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Rajzold le:</h2>
+        </div>
+        {/* Target letter - OPAQUE (exception) */}
+        <div className="bg-opaque rounded-2xl p-8 mb-6 inline-block shadow-lg border-4 border-secondary">
+          <div className="text-8xl font-bold text-secondary-foreground text-opaque">
             {currentDisplayLetter}
           </div>
         </div>
         {soundEnabled && (
           <Button 
             size="sm" 
-            className="flex items-center gap-2 mx-auto bg-primary/10 hover:bg-primary/20 text-primary border-0"
+            className="flex items-center gap-2 mx-auto bg-secondary/70 hover:bg-secondary/80 text-white border-0 backdrop-blur-sm"
             onClick={() => soundService.playLetterSound(currentDisplayLetter)}
           >
             <Volume2 className="h-4 w-4" />
