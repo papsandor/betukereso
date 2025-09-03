@@ -129,7 +129,7 @@ const StickerBook = ({ child, onBack }) => {
       {stickersEnabled ? (
         <>
           {stickers.length > 0 && (
-            <Card className="mb-8 bg-gradient-to-r from-secondary/30 to-primary/10 border-secondary/30">
+            <Card className="mb-8 bg-card-semi backdrop-blur-sm border-secondary/30">
               <CardHeader>
                 <CardTitle className="text-center text-foreground font-brand-heading">
                   🏆 Teljesítmény Összesítő
