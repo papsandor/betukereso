@@ -76,7 +76,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const setupCanvases = () => {
     const guideCanvas = guideCanvasRef.current;
     const drawCanvas = drawCanvasRef.current;
-    if (!guideCanvas || !drawCanvas) return;
+    if (!guideCanvas || !drawCanvas || !currentDisplayLetter) return;
 
     const width = 400;
     const height = 300;
@@ -85,20 +85,31 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     drawCanvas.width = width;
     drawCanvas.height = height;
 
+    // Setup guide canvas (letter outline)
     const gctx = guideCanvas.getContext('2d');
+    gctx.clearRect(0, 0, width, height);
+    
+    // White background for the guide canvas
     gctx.fillStyle = '#ffffff';
     gctx.fillRect(0, 0, width, height);
-    gctx.strokeStyle = '#D1D5DB';
-    gctx.fillStyle = '#F3F4F6';
-    gctx.lineWidth = 4;
+    
+    // Draw letter outline
     gctx.font = 'bold 160px Arial';
     gctx.textAlign = 'center';
     gctx.textBaseline = 'middle';
+    
+    // Gray fill for letter
+    gctx.fillStyle = '#E5E7EB';
     gctx.fillText(currentDisplayLetter, width / 2, height / 2);
+    
+    // Dark outline for letter
+    gctx.strokeStyle = '#9CA3AF';
+    gctx.lineWidth = 3;
     gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
 
     calculateLetterPixels(gctx);
 
+    // Setup drawing canvas (user's drawing)
     const dctx = drawCanvas.getContext('2d');
     dctx.clearRect(0, 0, width, height);
     dctx.lineCap = 'round';
