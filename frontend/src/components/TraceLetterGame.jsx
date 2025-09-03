@@ -359,15 +359,15 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
+      <div className="flex justify-between items-center mb-6 bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
         
         <div className="flex items-center gap-4">
-          <Badge variant="secondary">{round + 1}/{maxRounds} kör</Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
+          <Badge variant="secondary" className="bg-semi-transparent backdrop-blur-sm">{round + 1}/{maxRounds} kör</Badge>
+          <Badge variant="outline" className="flex items-center gap-1 bg-semi-transparent backdrop-blur-sm">
             <Star className="h-3 w-3" />
             {score} pont
           </Badge>
