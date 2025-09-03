@@ -252,8 +252,8 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
               feedback?.type === 'error' && letter !== currentDisplayLetter ? 
                 'opacity-50 bg-semi-transparent border-border text-foreground/50' : 
                 letter === currentDisplayLetter && feedback?.type === 'success' ? 
-                  'bg-success/10 text-success border-success/50' : 
-                  'bg-card hover:bg-accent border-border hover:border-primary text-foreground'
+                  'bg-success/20 text-success border-success/50 backdrop-blur-sm' : 
+                  'bg-semi-transparent hover:bg-accent/80 border-border hover:border-primary text-foreground backdrop-blur-sm'
             }`}
             onClick={() => handleLetterClick(letter)}
             disabled={feedback !== null}
