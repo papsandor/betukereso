@@ -21,6 +21,9 @@ function App() {
   const [showStickerBook, setShowStickerBook] = useState(false);
   const [pendingSticker, setPendingSticker] = useState(null);
 
+  // Use background system (change background on screen transitions)
+  const { currentBackground, changeBackground } = useBackground(true);
+
   useEffect(() => {
     soundService.setEnabled(soundEnabled);
   }, [soundEnabled]);
