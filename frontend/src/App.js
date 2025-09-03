@@ -33,17 +33,20 @@ function App() {
     if (child) {
       setShowChildSelector(false);
       soundService.playTransitionSound();
+      changeBackground(); // Change background on navigation
     }
   };
 
   const handleModeSelect = (modeId) => {
     setCurrentGameMode(modeId);
     soundService.playTransitionSound();
+    changeBackground(); // Change background on navigation
   };
 
   const handleBackToModes = () => {
     setCurrentGameMode(null);
     soundService.playTransitionSound();
+    changeBackground(); // Change background on navigation
   };
 
   const handleBackToChildren = () => {
@@ -52,12 +55,28 @@ function App() {
     setShowChildSelector(true);
     setShowSettings(false);
     setShowStickerBook(false);
+    changeBackground(); // Change background on navigation
   };
 
-  const handleSettingsOpen = () => setShowSettings(true);
-  const handleSettingsClose = () => setShowSettings(false);
-  const handleStickerBookOpen = () => setShowStickerBook(true);
-  const handleStickerBookClose = () => setShowStickerBook(false);
+  const handleSettingsOpen = () => {
+    setShowSettings(true);
+    // No background change for settings
+  };
+  
+  const handleSettingsClose = () => {
+    setShowSettings(false);
+    changeBackground(); // Change background when returning from settings
+  };
+  
+  const handleStickerBookOpen = () => {
+    setShowStickerBook(true);
+    // No background change for sticker book
+  };
+  
+  const handleStickerBookClose = () => {
+    setShowStickerBook(false);
+    changeBackground(); // Change background when returning from sticker book
+  };
 
   const handleSettingsUpdate = (updatedChild) => setCurrentChild(updatedChild);
 
