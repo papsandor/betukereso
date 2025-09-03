@@ -95,8 +95,8 @@ const StickerBook = ({ child, onBack }) => {
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
+      <div className="flex justify-between items-center mb-8 bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
@@ -107,7 +107,7 @@ const StickerBook = ({ child, onBack }) => {
             {child.name} Matrica Gyűjteménye
             <Sparkles className="h-8 w-8 text-warning" />
           </h1>
-          <Badge variant="outline" className="mt-2 text-lg px-4 py-2">
+          <Badge variant="outline" className="mt-2 text-lg px-4 py-2 bg-semi-transparent backdrop-blur-sm">
             <Award className="h-4 w-4 mr-2" />
             {stickers.length} / {TOTAL_SLOTS} megszerzett matrica
           </Badge>
@@ -117,7 +117,7 @@ const StickerBook = ({ child, onBack }) => {
       </div>
 
       {!stickersEnabled && (
-        <div className="max-w-3xl mx-auto bg-secondary/20 text-secondary-foreground p-4 rounded-lg border border-secondary/30 mb-6 flex items-start gap-3">
+        <div className="max-w-3xl mx-auto bg-semi-transparent backdrop-blur-sm text-secondary-foreground p-4 rounded-lg border border-secondary/30 mb-6 flex items-start gap-3">
           <Info className="h-5 w-5 mt-0.5" />
           <div>
             <div className="font-semibold">A matricák jelenleg ki vannak kapcsolva.</div>
