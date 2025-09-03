@@ -85,7 +85,7 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 bg-semi-transparent p-6 rounded-2xl">
         <img src={APP_ICON} alt="Betűkereső ikon" className="mx-auto mb-3 w-16 h-16 rounded-2xl shadow" />
         <h1 className="text-4xl font-extrabold text-foreground mb-2 font-brand-heading">Betűkereső</h1>
         <p className="text-lg text-gray-600">Válaszd ki a gyereket, vagy adj hozzá újat!</p>
@@ -95,8 +95,8 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
         {children.map((child) => (
           <Card 
             key={child.id} 
-            className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
-              currentChild?.id === child.id ? 'ring-2 ring-primary bg-muted' : ''
+            className={`cursor-pointer transition-all duration-200 hover:shadow-lg bg-card-semi backdrop-blur-sm ${
+              currentChild?.id === child.id ? 'ring-2 ring-primary' : ''
             }`}
             onClick={() => onChildSelect(child)}
           >
@@ -112,7 +112,7 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
                     e.stopPropagation();
                     handleDeleteChild(child.id);
                   }}
-                  className="bg-destructive/10 hover:bg-destructive/20 text-destructive border-0"
+                  className="bg-semi-transparent hover:bg-destructive/20 text-destructive border-0"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -120,11 +120,11 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1 bg-semi-transparent">
                   <Star className="h-3 w-3" />
                   {child.streak} sorozat
                 </Badge>
-                <Badge variant="outline" className="flex items-center gap-1">
+                <Badge variant="outline" className="flex items-center gap-1 bg-semi-transparent">
                   <Award className="h-3 w-3" />
                   {child.total_stickers} matrica
                 </Badge>
@@ -140,7 +140,7 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
         ))}
 
         {/* Add New Child Card */}
-        <Card className="border-dashed border-2 border-gray-300 hover:border-primary transition-colors cursor-pointer">
+        <Card className="border-dashed border-2 border-gray-300 hover:border-primary transition-colors cursor-pointer bg-card-semi backdrop-blur-sm">
           <Dialog open={isAddingChild} onOpenChange={setIsAddingChild}>
             <DialogTrigger asChild>
               <div className="h-full flex flex-col items-center justify-center p-6 text-center">
@@ -148,7 +148,7 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
                 <p className="text-gray-600">Új gyerek hozzáadása</p>
               </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md bg-opaque">
               <DialogHeader>
                 <DialogTitle>Új gyerek hozzáadása</DialogTitle>
               </DialogHeader>
@@ -159,6 +159,7 @@ const ChildSelector = ({ onChildSelect, currentChild }) => {
                   onChange={(e) => setNewChildName(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddChild()}
                   autoFocus
+                  className="bg-opaque"
                 />
                 <div className="flex gap-2 justify-end">
                   <Button className="bg-muted hover:bg-accent text-foreground border-0" onClick={() => setIsAddingChild(false)}>
