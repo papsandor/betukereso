@@ -173,7 +173,7 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   if (gameOver) {
     return (
       <div className="w-full max-w-4xl mx-auto p-6 text-center">
-        <Card className="p-8">
+        <Card className="p-8 bg-card-semi backdrop-blur-sm">
           <CardContent className="space-y-6">
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-3xl font-bold text-foreground">Játék vége!</h2>
@@ -182,10 +182,10 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
               <p className="text-lg text-foreground/60">Nagyszerű munka, {child.name}!</p>
             </div>
             <div className="flex justify-center gap-4">
-              <Button onClick={generateNewRound} className="bg-success text-success-foreground hover:bg-success/90 border-0">
+              <Button onClick={generateNewRound} className="bg-success text-success-foreground hover:bg-success/90 border-0 backdrop-blur-sm">
                 Újra játék
               </Button>
-              <Button onClick={onBack} className="bg-muted hover:bg-accent text-foreground border-0">
+              <Button onClick={onBack} className="bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm">
                 Vissza a főmenübe
               </Button>
             </div>
