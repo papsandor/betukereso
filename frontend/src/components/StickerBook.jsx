@@ -39,7 +39,7 @@ const StickerBook = ({ child, onBack }) => {
           const sticker = stickers[idx];
           if (sticker) {
             return (
-              <Card key={`slot-${idx}`} className="bg-card border-2 border-success/40 shadow-sm card-float">
+              <Card key={`slot-${idx}`} className="bg-card-semi backdrop-blur-sm border-2 border-success/40 shadow-sm card-float">
                 <CardContent className="text-center p-4">
                   <div className="text-5xl mb-2">{sticker.emoji || '🏅'}</div>
                   <h3 className="text-base font-bold mb-1 text-foreground">{sticker.name}</h3>
