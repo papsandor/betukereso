@@ -169,8 +169,16 @@ function App() {
     );
   };
 
+  // Determine if we should show background (exclude ParentalSettings and StickerBook)
+  const shouldShowBackground = !showSettings && !showStickerBook;
+
   return (
-    <div className="min-h-screen bg-ivory">
+    <div 
+      className={`min-h-screen ${shouldShowBackground ? 'dynamic-background' : 'bg-ivory'}`}
+      style={shouldShowBackground && currentBackground ? {
+        backgroundImage: `url(${currentBackground})`
+      } : {}}
+    >
       {renderCurrentScreen()}
       {pendingSticker && (
         <StickerReward
