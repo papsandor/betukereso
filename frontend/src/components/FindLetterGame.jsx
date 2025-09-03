@@ -198,19 +198,19 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <Button onClick={onBack} className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0">
+      <div className="flex justify-between items-center mb-6 bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm">
+        <Button onClick={onBack} className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm">
           <ArrowLeft className="h-4 w-4" />
           Vissza
         </Button>
         
         <div className="flex items-center gap-4">
-          <Badge variant="secondary">{round + 1}/{maxRounds} kör</Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
+          <Badge variant="secondary" className="bg-semi-transparent backdrop-blur-sm">{round + 1}/{maxRounds} kör</Badge>
+          <Badge variant="outline" className="flex items-center gap-1 bg-semi-transparent backdrop-blur-sm">
             <Star className="h-3 w-3" />
             {score} pont
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="bg-semi-transparent backdrop-blur-sm">
             {streak} sorozat
           </Badge>
         </div>
@@ -218,16 +218,19 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Game Instruction */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Keresd meg:</h2>
-        <div className="bg-primary/10 rounded-2xl p-8 mb-6 inline-block">
-          <div className="text-8xl font-bold text-primary">
+        <div className="bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Keresd meg:</h2>
+        </div>
+        {/* Target letter - OPAQUE (exception) */}
+        <div className="bg-opaque rounded-2xl p-8 mb-6 inline-block shadow-lg border-4 border-primary">
+          <div className="text-8xl font-bold text-primary text-opaque">
             {currentDisplayLetter}
           </div>
         </div>
         {soundEnabled && (
           <Button 
             size="sm" 
-            className="flex items-center gap-2 mx-auto bg-primary/10 hover:bg-primary/20 text-primary border-0"
+            className="flex items-center gap-2 mx-auto bg-primary/70 hover:bg-primary/80 text-white border-0 backdrop-blur-sm"
             onClick={() => soundService.playLetterSound(currentDisplayLetter)}
           >
             <Volume2 className="h-4 w-4" />
@@ -245,9 +248,9 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         {gridLetters.map((letter, index) => (
           <Button
             key={index}
-            className={`h-24 text-4xl font-bold transition-all duration-200 hover-float border-2 ${
+            className={`h-24 text-4xl font-bold transition-all duration-200 hover-float border-2 backdrop-blur-sm ${
               feedback?.type === 'error' && letter !== currentDisplayLetter ? 
-                'opacity-50 bg-muted border-border text-foreground/50' : 
+                'opacity-50 bg-semi-transparent border-border text-foreground/50' : 
                 letter === currentDisplayLetter && feedback?.type === 'success' ? 
                   'bg-success/10 text-success border-success/50' : 
                   'bg-card hover:bg-accent border-border hover:border-primary text-foreground'
