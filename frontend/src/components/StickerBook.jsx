@@ -56,7 +56,7 @@ const StickerBook = ({ child, onBack }) => {
             );
           }
           return (
-            <Card key={`slot-${idx}`} className="border-2 border-dashed border-border bg-muted">
+            <Card key={`slot-${idx}`} className="border-2 border-dashed border-border bg-card-semi backdrop-blur-sm">
               <CardContent className="text-center p-6">
                 <div className="text-5xl mb-2 opacity-40">❓</div>
                 <p className="text-sm text-foreground/50">Még nincs megszerezve</p>
