@@ -400,21 +400,22 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       {/* Two-layer Canvas: guide (bottom) + drawing (top) */}
       <div className="text-center mb-6">
         {isEraserMode && (
-          <div className="mb-4 p-2 bg-warning/20 text-warning rounded-lg inline-block">
+          <div className="mb-4 p-2 bg-warning/30 text-warning rounded-lg inline-block backdrop-blur-sm">
             🗑️ <strong>Radír mód:</strong> Húzd az egeret/ujjad a törölni kívánt vonalakon!
           </div>
         )}
-        <div className="inline-block bg-card rounded-lg shadow-lg p-4 card-float">
+        {/* Canvas container - OPAQUE (exception) */}
+        <div className="inline-block canvas-opaque rounded-lg shadow-lg p-4 card-float">
           <div className="relative" style={{ width: 400, height: 300 }}>
             <canvas
               ref={guideCanvasRef}
-              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none"
+              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none canvas-opaque"
               width={400}
               height={300}
             />
             <canvas
               ref={drawCanvasRef}
-              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none ${
+              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none canvas-opaque ${
                 isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
               }`}
               width={400}
@@ -433,7 +434,7 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
           <div className="flex justify-center gap-4 mt-4">
             <Button
               onClick={clearCanvas}
-              className="flex items-center gap-2 bg-muted hover:bg-accent text-foreground border-0"
+              className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm"
             >
               <RotateCcw className="h-4 w-4" />
               Újra kezdés
@@ -441,10 +442,10 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             
             <Button
               onClick={toggleEraserMode}
-              className={`flex items-center gap-2 border-0 ${
+              className={`flex items-center gap-2 border-0 backdrop-blur-sm ${
                 isEraserMode 
                   ? 'bg-warning text-warning-foreground hover:bg-warning/90' 
-                  : 'bg-warning/20 hover:bg-warning/30 text-warning'
+                  : 'bg-warning/40 hover:bg-warning/50 text-warning'
               }`}
             >
               <div className="h-4 w-4 rounded-full border-2 border-current" />
