@@ -31,7 +31,10 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
   useEffect(() => {
     if (currentDisplayLetter) {
-      setupCanvases();
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        setupCanvases();
+      }, 100);
     }
   }, [currentDisplayLetter]);
 
