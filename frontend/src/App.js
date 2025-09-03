@@ -10,6 +10,7 @@ import StickerBook from './components/StickerBook';
 import ParentalSettings from './components/ParentalSettings';
 import StickerReward from './components/StickerReward';
 import soundService from './services/SoundService';
+import { useBackground } from './hooks/useBackground';
 
 function App() {
   const [currentChild, setCurrentChild] = useState(null);
