@@ -169,8 +169,8 @@ function App() {
     );
   };
 
-  // Determine if we should show background (exclude ParentalSettings and StickerBook)
-  const shouldShowBackground = !showSettings && !showStickerBook;
+  // Determine if we should show background (exclude only ParentalSettings)
+  const shouldShowBackground = !showSettings;
 
   return (
     <div 
