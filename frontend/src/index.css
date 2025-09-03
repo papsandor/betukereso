@@ -87,29 +87,29 @@
     background-attachment: fixed;
   }
   
-  /* Semi-transparent elements (85% opacity) */
+  /* Semi-transparent elements (90% opacity) */
   .bg-semi-transparent {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.9);
   }
   
   .bg-semi-transparent-dark {
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.9);
   }
   
   .bg-card-semi {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.9);
   }
   
   .bg-button-semi {
-    background-color: rgba(59, 130, 246, 0.85); /* blue */
+    background-color: rgba(59, 130, 246, 0.9); /* blue */
   }
   
   .bg-button-pink-semi {
-    background-color: rgba(236, 72, 153, 0.85); /* pink */
+    background-color: rgba(236, 72, 153, 0.9); /* pink */
   }
   
   .bg-button-gray-semi {
-    background-color: rgba(156, 163, 175, 0.85); /* gray */
+    background-color: rgba(156, 163, 175, 0.9); /* gray */
   }
   
   /* Fully opaque elements (exceptions) */
