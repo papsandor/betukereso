@@ -265,8 +265,8 @@ const FindLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
       {/* Feedback */}
       {feedback && (
-        <div className={`text-center p-4 rounded-lg mb-4 ${
-          feedback.type === 'success' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+        <div className={`text-center p-4 rounded-lg mb-4 backdrop-blur-sm ${
+          feedback.type === 'success' ? 'bg-success/20 text-success' : 'bg-destructive/20 text-destructive'
         }`}>
           <p className="text-xl font-semibold">{feedback.message}</p>
         </div>
