@@ -598,10 +598,10 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             
             <Button
               onClick={toggleEraserMode}
-              className={`flex items-center gap-2 border-0 backdrop-blur-sm text-sm px-3 py-2 ${
+              className={`flex items-center gap-2 border-0 text-sm px-3 py-2 ${
                 isEraserMode 
                   ? 'bg-warning text-warning-foreground hover:bg-warning/90' 
-                  : 'bg-warning/40 hover:bg-warning/50 text-warning'
+                  : 'bg-warning/20 hover:bg-warning/30 text-warning'
               }`}
             >
               <div className="h-4 w-4 rounded-full border-2 border-current" />
