@@ -101,51 +101,89 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const setupCanvases = () => {
     const guideCanvas = guideCanvasRef.current;
     const drawCanvas = drawCanvasRef.current;
-    if (!guideCanvas || !drawCanvas || !currentDisplayLetter) return;
+    
+    // Validation checks
+    if (!guideCanvas || !drawCanvas) {
+      console.warn('Canvas refs not available');
+      return false;
+    }
+    
+    if (!currentDisplayLetter) {
+      console.warn('No current display letter available');
+      return false;
+    }
 
-    const width = 400;
-    const height = 300;
-    
-    // Force canvas dimensions
-    guideCanvas.width = width;
-    guideCanvas.height = height;
-    drawCanvas.width = width;
-    drawCanvas.height = height;
+    try {
+      const width = 400;
+      const height = 300;
+      
+      // Force canvas dimensions
+      guideCanvas.width = width;
+      guideCanvas.height = height;
+      drawCanvas.width = width;
+      drawCanvas.height = height;
 
-    // Setup guide canvas (letter outline) with more visible styling
-    const gctx = guideCanvas.getContext('2d');
-    gctx.clearRect(0, 0, width, height);
-    
-    // White background for the guide canvas
-    gctx.fillStyle = '#ffffff';
-    gctx.fillRect(0, 0, width, height);
-    
-    // Draw letter with more visible outline
-    gctx.font = 'bold 140px Arial';
-    gctx.textAlign = 'center';
-    gctx.textBaseline = 'middle';
-    
-    // Light gray fill for letter
-    gctx.fillStyle = '#D1D5DB';
-    gctx.fillText(currentDisplayLetter, width / 2, height / 2);
-    
-    // Dark gray outline for letter (thicker and more visible)
-    gctx.strokeStyle = '#6B7280';
-    gctx.lineWidth = 4;
-    gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
+      // Setup guide canvas (letter outline) with more visible styling
+      const gctx = guideCanvas.getContext('2d');
+      if (!gctx) {
+        console.error('Failed to get guide canvas context');
+        return false;
+      }
+      
+      gctx.clearRect(0, 0, width, height);
+      
+      // White background for the guide canvas
+      gctx.fillStyle = '#ffffff';
+      gctx.fillRect(0, 0, width, height);
+      
+      // Draw letter with more visible outline
+      gctx.font = 'bold 140px Arial';
+      gctx.textAlign = 'center';
+      gctx.textBaseline = 'middle';
+      
+      // Light gray fill for letter
+      gctx.fillStyle = '#D1D5DB';
+      gctx.fillText(currentDisplayLetter, width / 2, height / 2);
+      
+      // Dark gray outline for letter (thicker and more visible)
+      gctx.strokeStyle = '#6B7280';
+      gctx.lineWidth = 4;
+      gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
 
-    calculateLetterPixels(gctx);
+      // Verify the letter was drawn by checking if canvas has content
+      const imageData = gctx.getImageData(0, 0, width, height);
+      const hasContent = Array.from(imageData.data).some((pixel, index) => 
+        index % 4 < 3 && pixel < 255 // Check RGB values (not alpha)
+      );
+      
+      if (!hasContent) {
+        console.error('Letter was not drawn on canvas');
+        return false;
+      }
 
-    // Setup drawing canvas (user's drawing) - transparent background
-    const dctx = drawCanvas.getContext('2d');
-    dctx.clearRect(0, 0, width, height);
-    dctx.lineCap = 'round';
-    dctx.lineJoin = 'round';
-    dctx.lineWidth = 6;
-    dctx.strokeStyle = '#3B82F6';
-    dctx.globalCompositeOperation = 'source-over';
-    
-    console.log('Canvas setup complete for letter:', currentDisplayLetter);
+      calculateLetterPixels(gctx);
+
+      // Setup drawing canvas (user's drawing) - transparent background
+      const dctx = drawCanvas.getContext('2d');
+      if (!dctx) {
+        console.error('Failed to get drawing canvas context');
+        return false;
+      }
+      
+      dctx.clearRect(0, 0, width, height);
+      dctx.lineCap = 'round';
+      dctx.lineJoin = 'round';
+      dctx.lineWidth = 6;
+      dctx.strokeStyle = '#3B82F6';
+      dctx.globalCompositeOperation = 'source-over';
+      
+      console.log('✅ Canvas setup successful for letter:', currentDisplayLetter);
+      return true;
+      
+    } catch (error) {
+      console.error('Error in setupCanvases:', error);
+      return false;
+    }
   };
 
   const calculateLetterPixels = (ctx) => {
