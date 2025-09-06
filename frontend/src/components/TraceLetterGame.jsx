@@ -541,33 +541,34 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             🗑️ <strong>Radír mód:</strong> Húzd az egeret/ujjad a törölni kívánt vonalakon!
           </div>
         )}
-        {/* Canvas container - OPAQUE (exception) */}
-        <div className="inline-block canvas-opaque rounded-lg shadow-lg p-4 card-float">
-          <div className="relative" style={{ width: 400, height: 300 }}>
-            <canvas
-              ref={guideCanvasRef}
-              className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none"
-              width={400}
-              height={300}
-              style={{ backgroundColor: 'white', zIndex: 1 }}
-            />
-            <canvas
-              ref={drawCanvasRef}
-              className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none ${
-                isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
-              }`}
-              width={400}
-              height={300}
-              onMouseDown={startDrawing}
-              onMouseMove={draw}
-              onMouseUp={stopDrawing}
-              onMouseLeave={stopDrawing}
-              onTouchStart={startTouchDrawing}
-              onTouchMove={touchDraw}
-              onTouchEnd={stopTouchDrawing}
-              style={{ touchAction: 'none', backgroundColor: 'transparent', zIndex: 2 }}
-            />
-          </div>
+        {/* Canvas container - OPAQUE (exception) - Fixed centering */}
+        <div className="flex justify-center">
+          <div className="canvas-opaque rounded-lg shadow-lg p-4 card-float">
+            <div className="relative mx-auto" style={{ width: 400, height: 300 }}>
+              <canvas
+                ref={guideCanvasRef}
+                className="absolute top-0 left-0 border-2 border-border rounded-lg select-none pointer-events-none"
+                width={400}
+                height={300}
+                style={{ backgroundColor: 'white', zIndex: 1 }}
+              />
+              <canvas
+                ref={drawCanvasRef}
+                className={`absolute top-0 left-0 border-2 border-border rounded-lg select-none ${
+                  isEraserMode ? 'cursor-crosshair' : 'cursor-crosshair'
+                }`}
+                width={400}
+                height={300}
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+                onTouchStart={startTouchDrawing}
+                onTouchMove={touchDraw}
+                onTouchEnd={stopTouchDrawing}
+                style={{ touchAction: 'none', backgroundColor: 'transparent', zIndex: 2 }}
+              />
+            </div>
           
           {/* Buttons arranged in two rows to prevent overflow */}
           <div className="mt-4 space-y-3">
