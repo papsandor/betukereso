@@ -84,12 +84,13 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         true
       );
       
-      // Filter out recently used letters (case-sensitive)
+      // Determine case type for this round
+      const caseType = child.settings?.letter_case === 'mixed' ? 
+        ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
+        child.settings?.letter_case || 'lowercase';
+      
+      // Filter out recently used letters (case-sensitive)  
       const availableLetters = randomLetters.filter(letter => {
-        const caseType = child.settings?.letter_case === 'mixed' ? 
-          ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
-          child.settings?.letter_case || 'lowercase';
-        
         const displayForm = getGraphemeCase(letter, caseType);
         return !recentLetters.includes(displayForm);
       });
@@ -99,10 +100,14 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       const targetLetter = letterPool[0];
       setCurrentTarget(targetLetter);
       
-      const caseType = child.settings?.letter_case === 'mixed' ? 
-        ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
-        child.settings?.letter_case || 'lowercase';
+      const displayLetter = getGraphemeCase(targetLetter, caseType);
+      setCurrentDisplayLetter(displayLetter);
       
+      // Add this letter to recent letters list (case-sensitive)
+      setRecentLetters(prev => {
+        const updated = [displayLetter, ...prev];
+        return updated.slice(0, 10); // Keep only last 10 letters
+      });
       const displayLetter = getGraphemeCase(targetLetter, caseType);
       setCurrentDisplayLetter(displayLetter);
       
