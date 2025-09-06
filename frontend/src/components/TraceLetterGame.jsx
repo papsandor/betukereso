@@ -76,13 +76,27 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       setDrawnPixels(new Set());
       setIsEraserMode(false); // AUTO: új körnél rajzolás módra váltunk
       
+      // Get a larger pool of letters to filter from
+      const poolSize = Math.min(20, 40); // Get more letters to choose from
       const randomLetters = await ApiService.getRandomGraphemes(
-        1,
+        poolSize,
         child.settings?.include_foreign_letters || false,
         true
       );
       
-      const targetLetter = randomLetters[0];
+      // Filter out recently used letters (case-sensitive)
+      const availableLetters = randomLetters.filter(letter => {
+        const caseType = child.settings?.letter_case === 'mixed' ? 
+          ['lowercase', 'uppercase', 'titlecase'][Math.floor(Math.random() * 3)] :
+          child.settings?.letter_case || 'lowercase';
+        
+        const displayForm = getGraphemeCase(letter, caseType);
+        return !recentLetters.includes(displayForm);
+      });
+      
+      // If no available letters (shouldn't happen with good pool size), use any letter
+      const letterPool = availableLetters.length > 0 ? availableLetters : randomLetters;
+      const targetLetter = letterPool[0];
       setCurrentTarget(targetLetter);
       
       const caseType = child.settings?.letter_case === 'mixed' ? 
