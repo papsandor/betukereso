@@ -24,6 +24,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
   const [drawnPixels, setDrawnPixels] = useState(new Set());
   const [letterPixels, setLetterPixels] = useState(new Set());
   const [isEraserMode, setIsEraserMode] = useState(false);
+  const [showTemplate, setShowTemplate] = useState(true); // Toggle for template visibility
+  const [recentLetters, setRecentLetters] = useState([]); // Track last 10 letters (case-sensitive)
 
   useEffect(() => {
     generateNewRound();
