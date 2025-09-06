@@ -108,8 +108,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         const updated = [displayLetter, ...prev];
         return updated.slice(0, 10); // Keep only last 10 letters
       });
-      const displayLetter = getGraphemeCase(targetLetter, caseType);
-      setCurrentDisplayLetter(displayLetter);
       
     } catch (err) {
       setError('Failed to load game data');
