@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
-import { ArrowLeft, Star, Volume2, RotateCcw, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Star, Volume2, RotateCcw, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import ApiService, { getGraphemeCase } from '../services/ApiService';
 import soundService from '../services/SoundService';
 
