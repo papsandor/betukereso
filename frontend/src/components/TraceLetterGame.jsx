@@ -210,6 +210,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       return () => clearInterval(interval);
     }
   }, [currentDisplayLetter, gameOver, loading]);
+
+  const calculateLetterPixels = (ctx) => {
     const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
     const pixels = imageData.data;
     const letterPixelSet = new Set();
