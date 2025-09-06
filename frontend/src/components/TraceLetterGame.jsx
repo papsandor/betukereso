@@ -571,9 +571,9 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             </div>
           </div>
         </div>
-          
-          {/* Buttons arranged in two rows to prevent overflow */}
-          <div className="mt-4 space-y-3">
+        
+        {/* Buttons arranged in two rows to prevent overflow */}
+        <div className="mt-4 space-y-3">
             {/* First row: Action buttons */}
             <div className="flex justify-center gap-3">
               <Button
