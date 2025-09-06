@@ -569,6 +569,8 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
                 style={{ touchAction: 'none', backgroundColor: 'transparent', zIndex: 2 }}
               />
             </div>
+          </div>
+        </div>
           
           {/* Buttons arranged in two rows to prevent overflow */}
           <div className="mt-4 space-y-3">
