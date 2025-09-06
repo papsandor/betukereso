@@ -31,12 +31,34 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
 
   useEffect(() => {
     if (currentDisplayLetter) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        setupCanvases();
-      }, 100);
+      // Multiple attempts to ensure canvas setup succeeds
+      const setupWithRetry = (attempts = 0) => {
+        if (attempts >= 5) {
+          console.error('Failed to setup canvas after 5 attempts');
+          return;
+        }
+        
+        setTimeout(() => {
+          const success = setupCanvases();
+          if (!success) {
+            console.warn(`Canvas setup failed, attempt ${attempts + 1}, retrying...`);
+            setupWithRetry(attempts + 1);
+          }
+        }, 100 + (attempts * 50)); // Increasing delay for each retry
+      };
+      
+      setupWithRetry();
     }
   }, [currentDisplayLetter]);
+
+  // Also setup when canvas refs are ready
+  useEffect(() => {
+    if (currentDisplayLetter && guideCanvasRef.current && drawCanvasRef.current) {
+      setTimeout(() => {
+        setupCanvases();
+      }, 50);
+    }
+  }, [guideCanvasRef.current, drawCanvasRef.current, currentDisplayLetter]);
 
   const generateNewRound = async () => {
     if (round >= maxRounds) {
