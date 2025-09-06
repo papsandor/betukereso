@@ -186,7 +186,30 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
   };
 
-  const calculateLetterPixels = (ctx) => {
+  // Verify canvas has content and re-setup if needed
+  const verifyAndFixCanvas = () => {
+    const guideCanvas = guideCanvasRef.current;
+    if (!guideCanvas || !currentDisplayLetter) return;
+    
+    const gctx = guideCanvas.getContext('2d');
+    const imageData = gctx.getImageData(0, 0, guideCanvas.width, guideCanvas.height);
+    const hasContent = Array.from(imageData.data).some((pixel, index) => 
+      index % 4 < 3 && pixel < 255 // Check RGB values (not alpha)
+    );
+    
+    if (!hasContent) {
+      console.warn('Canvas template missing, re-setting up...');
+      setupCanvases();
+    }
+  };
+
+  // Periodic canvas verification
+  useEffect(() => {
+    if (currentDisplayLetter && !gameOver && !loading) {
+      const interval = setInterval(verifyAndFixCanvas, 2000); // Check every 2 seconds
+      return () => clearInterval(interval);
+    }
+  }, [currentDisplayLetter, gameOver, loading]);
     const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
     const pixels = imageData.data;
     const letterPixelSet = new Set();
