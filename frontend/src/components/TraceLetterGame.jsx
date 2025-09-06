@@ -574,69 +574,68 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         
         {/* Buttons arranged in two rows to prevent overflow */}
         <div className="mt-4 space-y-3">
-            {/* First row: Action buttons */}
-            <div className="flex justify-center gap-3">
-              <Button
-                onClick={clearCanvas}
-                className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm text-sm px-3 py-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Újrakezdés
-              </Button>
-              
-              <Button
-                onClick={() => setShowTemplate(!showTemplate)}
-                className={`flex items-center gap-2 border-0 backdrop-blur-sm text-sm px-3 py-2 ${
-                  showTemplate 
-                    ? 'bg-primary/70 hover:bg-primary/80 text-white' 
-                    : 'bg-gray-400/70 hover:bg-gray-500/80 text-white'
-                }`}
-              >
-                {showTemplate ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                {showTemplate ? 'Sablon BE' : 'Sablon KI'}
-              </Button>
-              
-              <Button
-                onClick={toggleEraserMode}
-                className={`flex items-center gap-2 border-0 backdrop-blur-sm text-sm px-3 py-2 ${
-                  isEraserMode 
-                    ? 'bg-warning text-warning-foreground hover:bg-warning/90' 
-                    : 'bg-warning/40 hover:bg-warning/50 text-warning'
-                }`}
-              >
-                <div className="h-4 w-4 rounded-full border-2 border-current" />
-                {isEraserMode ? 'Radír BE' : 'Radír'}
-              </Button>
-            </div>
+          {/* First row: Action buttons */}
+          <div className="flex justify-center gap-3">
+            <Button
+              onClick={clearCanvas}
+              className="flex items-center gap-2 bg-semi-transparent hover:bg-accent text-foreground border-0 backdrop-blur-sm text-sm px-3 py-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              Újrakezdés
+            </Button>
             
-            {/* Second row: Finish button */}
-            <div className="flex justify-center">
-              <Button
-                onClick={handleFinishDrawing}
-                className="flex items-center gap-2 bg-success hover:bg-success/90 text-success-foreground border-0 px-6 py-2"
-              >
-                <CheckCircle className="h-4 w-4" />
-                Kész vagyok!
-              </Button>
-            </div>
+            <Button
+              onClick={() => setShowTemplate(!showTemplate)}
+              className={`flex items-center gap-2 border-0 backdrop-blur-sm text-sm px-3 py-2 ${
+                showTemplate 
+                  ? 'bg-primary/70 hover:bg-primary/80 text-white' 
+                  : 'bg-gray-400/70 hover:bg-gray-500/80 text-white'
+              }`}
+            >
+              {showTemplate ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+              {showTemplate ? 'Sablon BE' : 'Sablon KI'}
+            </Button>
+            
+            <Button
+              onClick={toggleEraserMode}
+              className={`flex items-center gap-2 border-0 backdrop-blur-sm text-sm px-3 py-2 ${
+                isEraserMode 
+                  ? 'bg-warning text-warning-foreground hover:bg-warning/90' 
+                  : 'bg-warning/40 hover:bg-warning/50 text-warning'
+              }`}
+            >
+              <div className="h-4 w-4 rounded-full border-2 border-current" />
+              {isEraserMode ? 'Radír BE' : 'Radír'}
+            </Button>
           </div>
           
-          {/* Recent Letters Indicator - moved below buttons */}
-          {recentLetters.length > 0 && (
-            <div className="mt-4">
-              <div className="bg-semi-transparent p-3 rounded-lg backdrop-blur-sm">
-                <p className="text-xs text-foreground/70 mb-2 text-center">Legutóbbi betűk (nem jelennek meg újra 10 körig):</p>
-                <div className="flex gap-1 justify-center flex-wrap">
-                  {recentLetters.slice(0, 10).map((letter, index) => (
-                    <Badge key={index} variant="outline" className="text-xs bg-muted/50 px-2 py-0.5">
-                      {letter}
-                    </Badge>
-                  ))}
-                </div>
+          {/* Second row: Finish button */}
+          <div className="flex justify-center">
+            <Button
+              onClick={handleFinishDrawing}
+              className="flex items-center gap-2 bg-success hover:bg-success/90 text-success-foreground border-0 px-6 py-2"
+            >
+              <CheckCircle className="h-4 w-4" />
+              Kész vagyok!
+            </Button>
+          </div>
+        </div>
+        
+        {/* Recent Letters Indicator - moved below buttons */}
+        {recentLetters.length > 0 && (
+          <div className="mt-4">
+            <div className="bg-semi-transparent p-3 rounded-lg backdrop-blur-sm">
+              <p className="text-xs text-foreground/70 mb-2 text-center">Legutóbbi betűk (nem jelennek meg újra 10 körig):</p>
+              <div className="flex gap-1 justify-center flex-wrap">
+                {recentLetters.slice(0, 10).map((letter, index) => (
+                  <Badge key={index} variant="outline" className="text-xs bg-muted/50 px-2 py-0.5">
+                    {letter}
+                  </Badge>
+                ))}
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Feedback */}
