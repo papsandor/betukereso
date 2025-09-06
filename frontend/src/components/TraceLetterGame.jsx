@@ -62,6 +62,15 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
     }
   }, [guideCanvasRef.current, drawCanvasRef.current, currentDisplayLetter]);
 
+  // Update canvas when template toggle changes
+  useEffect(() => {
+    if (currentDisplayLetter) {
+      setTimeout(() => {
+        setupCanvases();
+      }, 50);
+    }
+  }, [showTemplate]);
+
   const generateNewRound = async () => {
     if (round >= maxRounds) {
       setGameOver(true);
