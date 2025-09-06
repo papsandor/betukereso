@@ -511,22 +511,6 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
         </div>
       </div>
 
-      {/* Recent Letters Indicator */}
-      {recentLetters.length > 0 && (
-        <div className="text-center mb-4">
-          <div className="bg-semi-transparent p-3 rounded-lg backdrop-blur-sm inline-block">
-            <p className="text-sm text-foreground/70 mb-1">Legutóbbi betűk (nem jelennek meg újra 10 körig):</p>
-            <div className="flex gap-1 justify-center">
-              {recentLetters.slice(0, 10).map((letter, index) => (
-                <Badge key={index} variant="outline" className="text-xs bg-muted/50">
-                  {letter}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Game Instruction */}
       <div className="text-center mb-8">
         <div className="bg-semi-transparent p-4 rounded-2xl backdrop-blur-sm mb-4">
