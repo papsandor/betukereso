@@ -579,6 +579,18 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
             </Button>
             
             <Button
+              onClick={() => setShowTemplate(!showTemplate)}
+              className={`flex items-center gap-2 border-0 backdrop-blur-sm ${
+                showTemplate 
+                  ? 'bg-primary/70 hover:bg-primary/80 text-white' 
+                  : 'bg-gray-400/70 hover:bg-gray-400/80 text-white'
+              }`}
+            >
+              {showTemplate ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+              {showTemplate ? 'Sablon BE' : 'Sablon KI'}
+            </Button>
+            
+            <Button
               onClick={toggleEraserMode}
               className={`flex items-center gap-2 border-0 backdrop-blur-sm ${
                 isEraserMode 
