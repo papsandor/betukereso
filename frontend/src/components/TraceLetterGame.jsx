@@ -155,29 +155,32 @@ const TraceLetterGame = ({ child, onBack, soundEnabled, onStickerEarned }) => {
       gctx.fillStyle = '#ffffff';
       gctx.fillRect(0, 0, width, height);
       
-      // Draw letter with more visible outline
-      gctx.font = 'bold 140px Arial';
-      gctx.textAlign = 'center';
-      gctx.textBaseline = 'middle';
-      
-      // Light gray fill for letter
-      gctx.fillStyle = '#D1D5DB';
-      gctx.fillText(currentDisplayLetter, width / 2, height / 2);
-      
-      // Dark gray outline for letter (thicker and more visible)
-      gctx.strokeStyle = '#6B7280';
-      gctx.lineWidth = 4;
-      gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
+      // Draw letter outline only if template is enabled
+      if (showTemplate) {
+        // Draw letter with more visible outline
+        gctx.font = 'bold 140px Arial';
+        gctx.textAlign = 'center';
+        gctx.textBaseline = 'middle';
+        
+        // Light gray fill for letter
+        gctx.fillStyle = '#D1D5DB';
+        gctx.fillText(currentDisplayLetter, width / 2, height / 2);
+        
+        // Dark gray outline for letter (thicker and more visible)
+        gctx.strokeStyle = '#6B7280';
+        gctx.lineWidth = 4;
+        gctx.strokeText(currentDisplayLetter, width / 2, height / 2);
 
-      // Verify the letter was drawn by checking if canvas has content
-      const imageData = gctx.getImageData(0, 0, width, height);
-      const hasContent = Array.from(imageData.data).some((pixel, index) => 
-        index % 4 < 3 && pixel < 255 // Check RGB values (not alpha)
-      );
-      
-      if (!hasContent) {
-        console.error('Letter was not drawn on canvas');
-        return false;
+        // Verify the letter was drawn by checking if canvas has content
+        const imageData = gctx.getImageData(0, 0, width, height);
+        const hasContent = Array.from(imageData.data).some((pixel, index) => 
+          index % 4 < 3 && pixel < 255 // Check RGB values (not alpha)
+        );
+        
+        if (!hasContent) {
+          console.error('Letter was not drawn on canvas');
+          return false;
+        }
       }
 
       calculateLetterPixels(gctx);
